@@ -1,0 +1,48 @@
+stages:
+  - building
+  - deploying
+  - migrating
+
+image: docker:latest
+services:
+  - docker:dind
+variables:
+  GIT_SSL_NO_VERIFY: 'true'
+  CONTAINER_IMAGE: 'sync'
+  tag_dev: 'imsv2.0.0'
+
+build-staging-image:
+  stage: building
+  environment:
+    name: develop-ims-sync
+  before_script:
+    - docker login -u "${LANIUS_DOCKER_USERNAME}" -p "${LANIUS_DOCKER_PASSWORD}"
+    - apk add --update curl
+  script:
+    - echo "Building container image $CONTAINER_IMAGE"
+    - docker build -t "${LANIUS_DOCKER_USERNAME}"/"${CONTAINER_IMAGE}":"${tag_dev}" .
+    - docker push "${LANIUS_DOCKER_USERNAME}"/"${CONTAINER_IMAGE}":"${tag_dev}"
+  after_script:
+    - echo "Finished"
+  only:
+    - release/anang/ims-integrasi
+  when: manual
+
+deploy:
+  stage: deploying
+  environment:
+    name: develop-ims-sync
+  before_script:
+    - apk add --update curl
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - printenv S_PRIVATE_KEY | ssh-add -
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - ssh mojila@demo-dev.machinevision.global bash --login "/home/mojila/backbone/scripts/ims-backend-update.sh"
+  after_script:
+    - echo "Finished"
+  only:
+    - develop
+  when: manual
