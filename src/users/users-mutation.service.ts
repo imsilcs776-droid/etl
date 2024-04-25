@@ -5,7 +5,6 @@ import { User } from './entities/user.entity';
 import { UserMDMService } from './users-mdm.service';
 import { DepartmentMDMService } from 'src/department/department-mdm.service';
 import { JobMDMService } from 'src/job/job-mdm.service';
-import { PrivilegesPEOService } from 'src/privilage/privilage-peo.service';
 import { Department } from 'src/department/entities/department.entity';
 import { CreateAccountDto } from './dto/create-user.dto';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
@@ -30,7 +29,7 @@ export class UsersMutationService {
     private readonly userMDMservice: UserMDMService,
     private readonly departmentMDMService: DepartmentMDMService,
     private readonly jobMDMService: JobMDMService,
-    private readonly privilegesPEOService: PrivilegesPEOService,
+    private readonly privilegesPEOService: any,
     private readonly syncLogsService: SyncLogsService,
   ) {}
 
@@ -57,9 +56,14 @@ export class UsersMutationService {
     let jobNew = {};
     let privsNew = [];
     if (new_user) {
-      depNew = await this.departmentMDMService.getDepartment({limit:1,objid: new_user.SUBDI})
-      jobNew = await this.jobMDMService.getOneJob({objId: new_user.SHORT})
-      privsNew = await this.privilegesPEOService.getPrivilegeByNipp({nipp: new_user.PNALT_NEW})
+      depNew = await this.departmentMDMService.getDepartment({
+        limit: 1,
+        objid: new_user.SUBDI,
+      });
+      jobNew = await this.jobMDMService.getOneJob({ objId: new_user.SHORT });
+      privsNew = await this.privilegesPEOService.getPrivilegeByNipp({
+        nipp: new_user.PNALT_NEW,
+      });
 
       const { id } =
         (await this.departmentRepository.findOne({
@@ -210,19 +214,21 @@ export class UsersMutationService {
     body.job = jobId;
     await this.create(body);
 
-    const privsNew = await this.privilegesPEOService.getPrivilegeByNipp({nipp: new_user.PNALT_NEW})
-    const [{ IDROLE }] = privsNew || [{}]
+    const privsNew = await this.privilegesPEOService.getPrivilegeByNipp({
+      nipp: new_user.PNALT_NEW,
+    });
+    const [{ IDROLE }] = privsNew || [{}];
 
     if (IDROLE) {
       const userRole = await this.roleRepository.findOne({
         where: {
-          code: 'USER'
-        }
+          code: 'USER',
+        },
       });
       let role = await this.privilegeRepository.findOne({
-        where: { user: currentUser.id,role: userRole?.id },
+        where: { user: currentUser.id, role: userRole?.id },
       });
-    
+
       /**
        * membuat role jika tidak ada
        */
@@ -235,7 +241,7 @@ export class UsersMutationService {
         body.user = currentUser.id;
         body.i_nip = PNALT;
         body.product = 1;
-        
+
         const entity = this.privilegeRepository.create(body);
         await this.privilegeRepository.save(entity);
       }
@@ -243,10 +249,10 @@ export class UsersMutationService {
       const roleCurrent = await this.roleRepository.findOne({
         where: {
           i_id: IDROLE,
-        }
+        },
       });
 
-      if(roleCurrent){
+      if (roleCurrent) {
         const body = new Privilege();
         body.updated_at = new Date();
         body.created_at = new Date(LAST_UPDATED_DATE);
@@ -258,9 +264,9 @@ export class UsersMutationService {
         body.i_role = IDROLE;
         body.product = 1;
 
-        console.log(body)
-        
-        await this.createPrivilage(body)
+        console.log(body);
+
+        await this.createPrivilage(body);
       }
     }
 

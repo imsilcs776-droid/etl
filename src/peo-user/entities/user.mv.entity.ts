@@ -62,6 +62,9 @@ export class UserMvEntity {
   company: number | null;
 
   @Column({ nullable: true })
+  source: string | null;
+
+  @Column({ nullable: true })
   i_department_code: string | null;
 
   @Column({ nullable: true })

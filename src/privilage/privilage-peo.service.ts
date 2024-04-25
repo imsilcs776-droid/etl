@@ -3,9 +3,10 @@ import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 
 @Injectable()
-export class PrivilegesPEOService {
+export class PrivilegesPortalsiService {
   constructor(
-    @InjectConnection('pelindo_portalsi') private readonly connection: Connection,
+    @InjectConnection('pelindo_portalsi')
+    private readonly connection: Connection,
   ) {}
 
   async getPrivileges({ page = 1, limit = 50 }) {
@@ -34,7 +35,7 @@ export class PrivilegesPEOService {
       .innerJoin('USERLOGIN', 'L', 'A.IDUSER = L.ID')
       .innerJoin('ROLES', 'R', `R.ID = A.IDROLE AND R.IDAPLIKASI = '4162'`)
       .orderBy('A.ID')
-      .andWhere('L.NIPP = :nipp', {nipp})
+      .andWhere('L.NIPP = :nipp', { nipp })
       .getRawMany();
   }
 }

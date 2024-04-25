@@ -8,7 +8,7 @@ import { CreatePrivilegeDto } from './dto/privilage.dto';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { User } from 'src/users/entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
-import { PrivilegesPEOService } from './privilage-peo.service';
+import { PrivilegesPortalsiService } from './privilage-peo.service';
 
 @Injectable()
 export class PrivilegesService {
@@ -20,7 +20,7 @@ export class PrivilegesService {
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
     private syncLogService: SyncLogsService,
-    private readonly privilegesPEOService: PrivilegesPEOService,
+    private readonly privilegesPortasiService: PrivilegesPortalsiService,
   ) {}
 
   async deleteOldPrivilega() {
@@ -29,7 +29,7 @@ export class PrivilegesService {
       .delete()
       .from(Privilege)
       .andWhere('updated_at < CURRENT_DATE')
-      .andWhere(`source = 'IMS_INTEGRATION'`)
+      .andWhere('source IN(:...src)', { src: ['PEO', 'IMS_INTEGRATION'] })
       .execute();
   }
 
@@ -50,13 +50,13 @@ export class PrivilegesService {
     }
 
     const processedPrivilege = await this.privilegeRepository.count({
-      where: { source: 'IMS_INTEGRATION' },
+      where: { source: In(['PEO', 'IMS_INTEGRATION']) },
     });
-    const syncData = await this.syncLogService.addLog({
-      code: await this.privilegeRepository.metadata.tableName.toString(),
-      updated_at: new Date(),
-    });
-    return { syncData, total: processedPrivilege };
+    // const syncData = await this.syncLogService.addLog({
+    //   code: await this.privilegeRepository.metadata.tableName.toString(),
+    //   updated_at: new Date(),
+    // });
+    return { total: processedPrivilege };
   }
 
   async bulkInsert(privileges = []) {
@@ -81,7 +81,7 @@ export class PrivilegesService {
         const body = new Privilege();
         body.updated_at = new Date();
         body.created_at = new Date(LAST_UPDATED_DATE);
-        body.source = 'IMS_INTEGRATION';
+        body.source = 'PORTALSI';
         body.role = roleId;
         body.user = userId;
         body.i_id = String(ID);
@@ -147,6 +147,6 @@ export class PrivilegesService {
    */
   async getPrivileges({ page, limit }): Promise<any> {
     console.log('pageLimit=>', page, limit);
-    return await this.privilegesPEOService.getPrivileges({ page, limit });
+    return await this.privilegesPortasiService.getPrivileges({ page, limit });
   }
 }

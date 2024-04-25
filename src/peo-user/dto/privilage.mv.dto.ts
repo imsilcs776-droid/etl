@@ -1,6 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
-export class  CreatePrivilegeDto {
+export class CreatePrivilegeDto {
   @ApiProperty()
   role: number;
 
