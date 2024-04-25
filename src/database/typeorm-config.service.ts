@@ -14,6 +14,7 @@ import { Role } from 'src/role/entities/role.entity';
 import { SyncFailedLog } from 'src/sync-log/entities/sync-failed-log.entity';
 import { SyncLog } from 'src/sync-log/entities/sync-log.entity';
 import { User } from 'src/users/entities/user.entity';
+import { DivisiPeoEntity } from '../peo-department/entities/divisi.peo.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -46,6 +47,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         UserMvEntity,
         DepartmentMvEntity,
         PrivilegeMvEntity,
+        DivisiPeoEntity,
       ],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {

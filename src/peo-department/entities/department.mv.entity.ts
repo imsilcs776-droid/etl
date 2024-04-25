@@ -32,6 +32,9 @@ export class DepartmentMvEntity {
   @Column({ nullable: true })
   source: string | null;
 
+  @Column()
+  department_level: number;
+
   @Column({ nullable: true })
   i_com_code: string | null;
 
@@ -49,6 +52,12 @@ export class DepartmentMvEntity {
 
   @Column({ nullable: true })
   i_endda: Date | null;
+
+  @Column()
+  i_version: number;
+
+  @Column({ nullable: true })
+  i_id_peo: string | null;
 
   @CreateDateColumn()
   i_updated_at: Date;
