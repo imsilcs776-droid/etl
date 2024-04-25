@@ -16,6 +16,7 @@ import { PrivilegesModule } from './privilage/privilage.module';
 import { RolesModule } from './role/role.module';
 import { UsersModule } from './users/users.module';
 import { ImsModule } from './ims/ims.module';
+import { PeoDepartmentsModule } from './peo-department/department.module';
 dotenv.config();
 @Module({
   imports: [
@@ -35,6 +36,7 @@ dotenv.config();
     // RolesModule,
     // PrivilegesModule,
     ImsModule,
+    PeoDepartmentsModule,
   ],
   controllers: [AppController],
   providers: [],

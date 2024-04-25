@@ -1,59 +1,59 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
-import { Department } from './entities/department.entity';
+import { Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
-import { CreateDepartmentDto } from './dto/create-department.dto';
-import { SyncLogsService } from 'src/sync-log/sync-log.service';
-import { DepartmentMDMService } from './department-mdm.service';
 import { DepartmentMvEntity } from './entities/department.mv.entity';
 import { DivisiPeoEntity } from './entities/divisi.peo.entity';
+import * as moment from 'moment';
+import * as console from 'node:console';
 
 @Injectable()
 export class DepartmentsService {
-  private axiosOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    json: true,
-    auth: {
-      username: 'admin',
-      password: '1234',
-    },
-    method: 'post',
-    url: '',
-    data: {},
-  };
   constructor(
     @InjectRepository(DepartmentMvEntity)
     private repositoryDepartmentMv: Repository<DepartmentMvEntity>,
     @InjectRepository(DivisiPeoEntity)
     private repositoryDivisiPeo: Repository<DivisiPeoEntity>,
-    private syncLogService: SyncLogsService,
-    private departmentMDMService: DepartmentMDMService,
-    private readonly httpService: HttpService,
   ) {}
 
-  // async processDepartment() {
-  //   const comCodes = [1000, 1310, 1320, 1330, 1340];
-  //   let index = 0;
-  //   while (comCodes[index]) {
-  //     await this.getDepartment(comCodes[index]);
-  //     index++;
-  //   }
-
-  //   const processedDepartment = await this.repository.count({
-  //     where: { source: 'IMS_INTEGRATION' },
-  //   });
-  //   const syncData = await this.syncLogService.addLog({
-  //     code: await this.repository.metadata.tableName.toString(),
-  //     updated_at: new Date(),
-  //   });
-  //   return { syncData, total: processedDepartment };
-  // }
-
   public async processDepartment() {
+    const limit = 100;
+    let stop = false;
+    let page = 1;
+
+    let version = 1;
+    const checkVersion = await this.repositoryDepartmentMv
+      .createQueryBuilder('department')
+      .orderBy('department.created_at')
+      .getOne();
+
+    if (checkVersion) {
+      version = checkVersion.i_version + 1;
+    }
+
+    while (!stop) {
+      await delay(500);
+      const departments = await this.getDepartments({
+        page,
+        limit,
+      });
+      if (departments && departments.length) {
+        await this.bulkInsert(departments, version);
+      } else {
+        stop = true;
+      }
+      page++;
+    }
+
+    await this.processedUpdateParent();
+
+    const processedDepartment = await this.repositoryDepartmentMv.count({
+      where: { source: 'PEO', is_active: true },
+    });
+    return { total: processedDepartment };
+  }
+
+  private async processedUpdateParent() {
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -65,103 +65,84 @@ export class DepartmentsService {
         limit,
       });
       if (departments && departments.length) {
-        await this.bulkInsert(departments);
+        await this.updateParent(departments);
       } else {
         stop = true;
       }
       page++;
     }
-
-    const processedDepartment = await this.repository.count({
-      where: { source: 'IMS_INTEGRATION' },
-    });
-    const syncData = await this.syncLogService.addLog({
-      code: await this.repository.metadata.tableName.toString(),
-      updated_at: new Date(),
-    });
-    return { syncData, total: processedDepartment };
   }
 
-  private async create(createDepartmentDto: CreateDepartmentDto) {
-    try {
-      return await this.repository.upsert(createDepartmentDto, ['i_objid']);
-    } catch (e) {
-      const { detail, code } = e || {};
-      return await this.syncLogService.addFailedLog({
-        entity: await this.repository.metadata.tableName.toString(),
-        reason: detail || code,
-        created_at: new Date(),
-        updated_at: new Date(),
+  private async updateParent(departments) {
+    for (const department of departments) {
+      const parent = await this.repositoryDepartmentMv.findOne({
+        where: { code: department.kd_induk },
       });
+
+      if (parent) {
+        await this.repositoryDepartmentMv
+          .createQueryBuilder()
+          .update(DepartmentMvEntity)
+          .set({ parent: parent.id })
+          .where('code = :code', { code: department.kd_div_arsip })
+          .andWhere('is_active = :is_active', { is_active: true })
+          .execute();
+      }
     }
   }
 
-  private async bulkInsert(departments = []) {
-    let count = 0;
+  private async bulkInsert(departments = [], version) {
+    const now = moment().toDate();
+    const stringEndda = '9999-12-31 00:00:00';
+    const endda = moment(stringEndda).toDate();
 
-    while (count < departments.length) {
-      const {
-        OBJID,
-        PARID,
-        CREATED_DATE,
-        LAST_UPDATED_DATE,
-        COMPANY_CODE,
-        STEXT,
-        LEVELORGANISASI,
-        DESCBOBOTORGANISASI,
-        KODEUNITKERJA,
-        PERSA,
-        WERKS_NEW,
-        ENDDA,
-      } = departments[count];
+    for (const department of departments) {
+      // update existing data
+      const existDepartment = await this.repositoryDepartmentMv.findOne({
+        where: { code: department.kd_div_arsip },
+      });
 
-      const body = new Department();
-      body.code = KODEUNITKERJA || '-';
-      body.name = STEXT;
+      if (existDepartment) {
+        const updateDepartment = {
+          is_active: false,
+          i_endda: now,
+        };
+        await this.repositoryDepartmentMv.update(
+          existDepartment.id,
+          updateDepartment,
+        );
+      }
+
+      const body = new DepartmentMvEntity();
+      body.code = department.kd_div_arsip;
+      body.created_at = now;
+      body.description = department.nama_dir;
       body.is_active = true;
-      body.updated_at = new Date();
-      body.deleted_at = null;
-      body.i_updated_at = new Date(LAST_UPDATED_DATE);
-      body.created_at = new Date(CREATED_DATE);
-      body.source = 'IMS_INTEGRATION';
-      body.i_com_code = WERKS_NEW;
-      body.i_objid = OBJID;
-      body.i_parid = PARID;
-      body.i_bobot_organisasi = DESCBOBOTORGANISASI;
-      body.i_level_organisasi = LEVELORGANISASI;
-      body.description = STEXT;
-      body.i_endda = ENDDA;
+      body.name = department.nama_dir;
+      body.updated_at = now;
+      body.source = 'PEO';
+      body.i_com_code = department.kd_wil_arsip;
+      body.i_level_organisasi = department.jenis;
+      body.i_updated_at = now;
+      body.i_endda = endda;
+      body.i_version = version;
+      body.i_id_peo = department.id_old;
 
-      await this.create(body);
-      count++;
+      await this.repositoryDepartmentMv.insert(body);
     }
 
     return true;
   }
 
-  /**
-   * get department
-   * @param {
-   *  page, limit, objid
-   * }
-   * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
-   */
   private async getDepartments({ page, limit }): Promise<any> {
-    return await this.departmentMDMService.getDepartment({ page, limit });
-  }
-
-  public async setDepartments({ objid }): Promise<any> {
-    const departments: any[] = await this.departmentMDMService.getDepartment({
-      objid,
-    });
-    await this.bulkInsert(departments);
-    const [department] = departments;
-    const local = await this.repository.findOneBy({
-      i_objid: department.OBJID,
-    });
-    return {
-      local,
-      department,
-    };
+    try {
+      const offset = limit * (page - 1);
+      return await this.repositoryDivisiPeo.find({
+        skip: offset,
+        take: limit,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
