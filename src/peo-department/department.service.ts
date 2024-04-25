@@ -5,7 +5,6 @@ import { delay } from 'src/utils/delay';
 import { DepartmentMvEntity } from './entities/department.mv.entity';
 import { DivisiPeoEntity } from './entities/divisi.peo.entity';
 import * as moment from 'moment';
-import * as console from 'node:console';
 
 @Injectable()
 export class DepartmentsService {
