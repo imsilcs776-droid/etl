@@ -3,6 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Department } from 'src/department/entities/department.entity';
 import { Job } from 'src/job/entities/job.entity';
+import { DepartmentMvEntity } from 'src/peo-department/entities/department.mv.entity';
+import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
+import { RolePeoEntity } from 'src/peo-role/entity/role.peo.entity';
+import { PrivilegeMvEntity } from 'src/peo-user/entities/privilage.mv.entity';
+import { UserMvEntity } from 'src/peo-user/entities/user.mv.entity';
 import { Privilege } from 'src/privilage/entities/privilage.entity';
 import { RoleSystem } from 'src/role/entities/role-system.entity';
 import { Role } from 'src/role/entities/role.entity';
@@ -36,6 +41,11 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         SyncLog,
         Privilege,
         RoleSystem,
+        RolePeoEntity,
+        RoleMvEntity,
+        UserMvEntity,
+        DepartmentMvEntity,
+        PrivilegeMvEntity,
       ],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {

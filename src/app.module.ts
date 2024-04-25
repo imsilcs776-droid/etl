@@ -12,10 +12,10 @@ import {
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { DepartmentsModule } from './department/department.module';
 import { JobsModule } from './job/job.module';
-import { PrivilegesModule } from './privilage/privilage.module';
+// import { PrivilegesModule } from './privilage/privilage.module';
 import { RolesModule } from './role/role.module';
-import { UsersModule } from './users/users.module';
 import { ImsModule } from './ims/ims.module';
+import { UsersModule } from './peo-user/users.module';
 dotenv.config();
 @Module({
   imports: [
@@ -29,7 +29,7 @@ dotenv.config();
     // TypeOrmModule.forRoot(pelindoMDMOption),
     // TypeOrmModule.forRoot(pelindoPEOOption),
     // TypeOrmModule.forRoot(pelindoPortalsi),
-    // UsersModule,
+    UsersModule,
     // DepartmentsModule,
     // JobsModule,
     // RolesModule,
