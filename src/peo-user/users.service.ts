@@ -118,6 +118,10 @@ export class UsersService {
       where: {
         nipp: Not(IsNull()),
         nipp_baru: Not(IsNull()),
+        pegawai: 'SPTP',
+      },
+      order: {
+        nipp_baru: 'ASC',
       },
     });
     return { data, total };
