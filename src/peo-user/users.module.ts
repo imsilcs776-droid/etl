@@ -10,6 +10,8 @@ import { RoleSystem } from 'src/role/entities/role-system.entity';
 import { PrivilegeMvEntity } from './entities/privilage.mv.entity';
 import { UserPrivilegeService } from './users-privilege.service';
 import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
+import { UserDepartmentService } from './users-department.service';
+import { DepartmentMvEntity } from 'src/peo-department/entities/department.mv.entity';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
       RoleMvEntity,
       PrivilegeMvEntity,
       UserMvEntity,
+      DepartmentMvEntity,
     ]),
     SyncLogsModule,
   ],
@@ -41,7 +44,8 @@ import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
     // DepartmentMDMService,
     // JobMDMService,
     // PrivilegesPEOService,
+    UserDepartmentService,
   ],
-  exports: [UsersService, UserPrivilegeService],
+  exports: [UsersService, UserPrivilegeService, UserDepartmentService],
 })
 export class UsersModule {}

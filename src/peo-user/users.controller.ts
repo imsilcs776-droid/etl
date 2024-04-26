@@ -12,6 +12,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UserPrivilegeService } from './users-privilege.service';
+import { UserDepartmentService } from './users-department.service';
 
 @ApiTags('Sync Account')
 @Controller({
@@ -21,6 +22,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly userPrivService: UserPrivilegeService,
+    private readonly userDepService: UserDepartmentService,
   ) {}
 
   @Post()
@@ -33,5 +35,11 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   async syngUserRole() {
     return await this.userPrivService.processAccountRole();
+  }
+
+  @Post('department')
+  @HttpCode(HttpStatus.CREATED)
+  async syngUserDepartment() {
+    return await this.userDepService.processUserDepartment();
   }
 }
