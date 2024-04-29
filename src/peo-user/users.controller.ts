@@ -9,7 +9,7 @@ import {
   Param,
   Put,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UserPrivilegeService } from './users-privilege.service';
 import { UserDepartmentService } from './users-department.service';
@@ -39,7 +39,13 @@ export class UsersController {
 
   @Post('department')
   @HttpCode(HttpStatus.CREATED)
-  async syngUserDepartment() {
-    return await this.userDepService.processUserDepartment();
+  @ApiQuery({
+    name: 'nipp_new',
+    type: String,
+    description: 'A parameter. Optional',
+    required: false,
+  })
+  async syngUserDepartment(@Query('nipp_new') nippNew: string) {
+    return await this.userDepService.processUserDepartment({ nippNew });
   }
 }

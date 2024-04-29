@@ -19,7 +19,7 @@ export class UserDepartmentService {
     private repositoryDepartmentMv: Repository<DepartmentMvEntity>,
   ) {}
 
-  public async processUserDepartment() {
+  public async processUserDepartment({ nippNew = '' }) {
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -27,6 +27,7 @@ export class UserDepartmentService {
     while (!stop) {
       await delay(500);
       const { data } = await this.getPeoPegawai({
+        nippNew,
         page,
         limit,
       });
@@ -59,8 +60,8 @@ export class UserDepartmentService {
 
       if (dept) {
         await this.repositoryUserMv.update(
-          { department: dept.id },
           { nip_new: nipp_baru },
+          { department: dept.id },
         );
       }
 
@@ -77,7 +78,23 @@ export class UserDepartmentService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
-  private async getPeoPegawai({ page, limit }): Promise<any> {
+  private async getPeoPegawai({ page, limit, nippNew = '' }): Promise<any> {
+    if (nippNew) {
+      const [data, total] = await this.repositoryRolePegawaiPeo.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+        where: {
+          nipp: Not(IsNull()),
+          pegawai: 'SPTP',
+          nipp_baru: nippNew,
+        },
+        order: {
+          nipp_baru: 'ASC',
+        },
+      });
+      return { data, total };
+    }
+
     const [data, total] = await this.repositoryRolePegawaiPeo.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
