@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Equal, IsNull, Not, Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { UserMvEntity } from './entities/user.mv.entity';
 import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
@@ -55,6 +55,9 @@ export class UserDepartmentService {
         select: ['id'],
         where: {
           code: kd_div_arsip,
+        },
+        order: {
+          i_endda: 'DESC',
         },
       });
 
