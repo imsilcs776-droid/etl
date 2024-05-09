@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserMvEntity } from './entities/user.mv.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { And, ILike, IsNull, Like, Not, Repository } from 'typeorm';
 import { RolePeoEntity } from 'src/peo-role/entity/role.peo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { delay } from 'src/utils/delay';
@@ -79,7 +79,9 @@ export class UsersService {
       const nameLegth = full_names.length;
 
       const body = new UserMvEntity();
-      body.email = email?.includes('@') ? email : `${nipp_baru}@mail.com`;
+      body.email = email?.includes('@')
+        ? email.toUpperCase()
+        : `${nipp_baru}@MAIL.COM`;
       body.full_name = nama + ' # ' + String(nama_jabatan);
       body.first_name = String(nama).split(' ')[0];
       body.last_name =
@@ -118,7 +120,12 @@ export class UsersService {
       where: {
         nipp: Not(IsNull()),
         nipp_baru: Not(IsNull()),
-        pegawai: 'SPTP',
+        nama: And(
+          Not(ILike('%test%')),
+          Not(ILike('%pekerja%')),
+          Not(ILike('%travel%')),
+          Not(ILike('sit %')),
+        ),
       },
       order: {
         nipp_baru: 'ASC',
