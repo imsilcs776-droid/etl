@@ -2,10 +2,12 @@ import { BadRequestException, Injectable, UploadedFile } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { UploadDivisiDto } from './dto/upload-divisi.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Column, Repository } from 'typeorm';
 import { DivisiMvEntity } from './entities/divisi.mv.entity';
 import { UploadPegawaiDto } from './dto/upload-pegawai.dto';
 import { RolePegawaiMvEntity } from './entities/role-pegawai.mv.entity';
+import { UploadAtasanBawahanDto } from './dto/upload-atasan-bawahan.dto';
+import { AtasanBawahanMvEntity } from './entities/atasan-bawahan.mv.entity';
 
 @Injectable()
 export class PeoUploadService {
@@ -14,6 +16,8 @@ export class PeoUploadService {
     private repoDivisi: Repository<DivisiMvEntity>,
     @InjectRepository(RolePegawaiMvEntity)
     private repoRole: Repository<RolePegawaiMvEntity>,
+    @InjectRepository(AtasanBawahanMvEntity)
+    private repoAtasanBawahan: Repository<AtasanBawahanMvEntity>,
   ) {}
   private async excellToJSon(@UploadedFile() file) {
     try {
@@ -168,7 +172,7 @@ export class PeoUploadService {
           ttl: role.TTL,
           tunjangan: role.TUNJANGAN,
           werks_new: role.WERKS_NEW,
-        }
+        };
 
         const insertRole = await this.repoRole.insert(insertObject);
         if (insertRole) {
@@ -179,7 +183,7 @@ export class PeoUploadService {
         messages.push(message);
       }
       return {
-        status: 'upload divisi done',
+        status: 'upload role pegawai done',
         messages,
       };
     } catch (e) {
@@ -189,8 +193,57 @@ export class PeoUploadService {
 
   public async processAtasanBawahan(@UploadedFile() file) {
     try {
+      const messages = [];
+      let message;
       const data = await this.excellToJSon(file);
-      return data;
+      for (const atasanBawahan of data as UploadAtasanBawahanDto[]) {
+        const insertObj = {
+          nipp: atasanBawahan.NIPP,
+          nipp_ats: atasanBawahan.NIPP_ATS,
+          nama: atasanBawahan.NAMA,
+          nama_jabatan: atasanBawahan.NAMA_JABATAN,
+          kd_cabang_sap: atasanBawahan.KD_CABANG_SAP,
+          sub_area: atasanBawahan.SUB_AREA,
+          kd_pel: atasanBawahan.KD_PEL,
+          nama_ats: atasanBawahan.NAMA_ATS,
+          nama_jabatan_ats: atasanBawahan.NAMA_JABATAN_ATS,
+          kd_cabang_sap_ats: atasanBawahan.KD_CABANG_SAP_ATS,
+          sub_area_ats: atasanBawahan.SUB_AREA_ATS,
+          kd_pel_ats: atasanBawahan.KD_PEL_ATS,
+          lvl: atasanBawahan.LVL,
+          company_code: atasanBawahan.COMPANY_CODE,
+          company_code_ats: atasanBawahan.COMPANY_CODE_ATS,
+          email: atasanBawahan.EMAIL,
+          email_ats: atasanBawahan.EMAIL_ATS,
+          pembuat_lvl: atasanBawahan.PEMBUAT_LVL,
+          kode_wil: atasanBawahan.KODE_WIL,
+          kd_div: atasanBawahan.KD_DIV,
+          kd_wil_ats: atasanBawahan.KD_WIL_ATS,
+          kd_div_ats: atasanBawahan.KD_DIV_ATS,
+          short: atasanBawahan.SHORT,
+          subdi: atasanBawahan.SUBDI,
+          short_ats: atasanBawahan.SHORT_ATS,
+          subdi_ats: atasanBawahan.SUBDI_ATS,
+          nipp_baru: atasanBawahan.NIPP_BARU,
+          nipp_ats_baru: atasanBawahan.NIPP_ATS_BARU,
+          instansi: atasanBawahan.INSTANSI,
+          instansi_ats: atasanBawahan.INSTANSI_ATS,
+          pegawai: atasanBawahan.PEGAWAI,
+        };
+        const insertAtasanBawahan = await this.repoAtasanBawahan.insert(
+          insertObj,
+        );
+        if (insertAtasanBawahan) {
+          message = 'Insert NIPP ' + atasanBawahan.NIPP + ' success';
+        } else {
+          message = 'Insert NIPP ' + atasanBawahan.NIPP + ' failed';
+        }
+        messages.push(message);
+      }
+      return {
+        status: 'upload atasan bawahan done',
+        messages,
+      };
     } catch (e) {
       throw e.message;
     }
