@@ -71,7 +71,7 @@ export class RolePeoEntity {
   sub_area: string;
 
   @Column({ nullable: true })
-  nama_subarea: string;
+  nama_sub_area: string;
 
   @Column({ nullable: true })
   jenis: string;

@@ -147,7 +147,7 @@ export class PeoUploadService {
           nama_jabatan_sk: role.NAMA_JABATAN_SK,
           nama_sub: role.NAMA_SUB,
           nama_sub_travel: role.NAMA_SUB_TRAVEL,
-          nama_subarea: role.NAMA_SUB_AREA,
+          nama_sub_area: role.NAMA_SUB_AREA,
           nipp: role.NIPP,
           nipp_baru: role.NIPP_BARU,
           notif: role.NOTIF,

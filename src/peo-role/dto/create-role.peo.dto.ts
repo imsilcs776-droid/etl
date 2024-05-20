@@ -68,7 +68,7 @@ export class EmployeeDTO {
   sub_area: string;
 
   @ApiProperty()
-  nama_subarea: string;
+  nama_sub_area: string;
 
   @ApiProperty()
   jenis: string;
