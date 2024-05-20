@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { DepartmentMvEntity } from './entities/department.mv.entity';
 import { DivisiPeoEntity } from './entities/divisi.peo.entity';
@@ -13,6 +13,7 @@ export class DepartmentsService {
     private repositoryDepartmentMv: Repository<DepartmentMvEntity>,
     @InjectRepository(DivisiPeoEntity)
     private repositoryDivisiPeo: Repository<DivisiPeoEntity>,
+    private readonly connection: Connection,
   ) {}
 
   public async processDepartment() {
@@ -97,20 +98,20 @@ export class DepartmentsService {
 
     for (const department of departments) {
       // update existing data
-      const existDepartment = await this.repositoryDepartmentMv.findOne({
-        where: { code: department.kd_div_arsip },
-      });
+      // const existDepartment = await this.repositoryDepartmentMv.findOne({
+      //   where: { code: department.kd_div_arsip },
+      // });
 
-      if (existDepartment) {
-        const updateDepartment = {
-          is_active: false,
-          i_endda: now,
-        };
-        await this.repositoryDepartmentMv.update(
-          existDepartment.id,
-          updateDepartment,
-        );
-      }
+      // if (existDepartment) {
+      //   const updateDepartment = {
+      //     is_active: false,
+      //     i_endda: now,
+      //   };
+      //   await this.repositoryDepartmentMv.update(
+      //     existDepartment.id,
+      //     updateDepartment,
+      //   );
+      // }
 
       const body = new DepartmentMvEntity();
       body.code = department.kd_div_arsip;
@@ -125,12 +126,59 @@ export class DepartmentsService {
       body.i_updated_at = now;
       body.i_endda = endda;
       body.i_version = version;
-      body.i_id_peo = department.id_old;
+      body.i_kd_sub = department.kd_sub;
 
-      await this.repositoryDepartmentMv.insert(body);
+      // await this.repositoryDepartmentMv.insert(body);
+      await this.upsertDepartment(body, version);
     }
 
     return true;
+  }
+
+  async upsertDepartment(department: any, version): Promise<void> {
+    const now = new Date();
+    const endda = new Date('9999-12-31'); // Assuming this is your default end date
+
+    const existingRecord = await this.repositoryDepartmentMv.findOne({
+      where: {
+        i_kd_sub: department.i_kd_sub,
+        code: department.code,
+      },
+    });
+
+    if (existingRecord) {
+      await this.repositoryDepartmentMv.update(existingRecord.id, {
+        description: department.nama_dir,
+        is_active: true,
+        name: department.nama_dir,
+        updated_at: now,
+        source: 'PEO',
+        i_com_code: department.kd_wil_arsip,
+        i_level_organisasi: department.jenis,
+        i_updated_at: now,
+        i_endda: endda,
+        i_version: version,
+      });
+    } else {
+      const newRecord = new DepartmentMvEntity();
+      newRecord.code = department.kd_div_arsip;
+      newRecord.created_at = now;
+      newRecord.description = department.nama_dir;
+      newRecord.is_active = true;
+      newRecord.name = department.nama_dir;
+      newRecord.updated_at = now;
+      newRecord.source = 'PEO';
+      newRecord.i_com_code = department.kd_wil_arsip;
+      newRecord.i_level_organisasi = department.jenis;
+      newRecord.i_updated_at = now;
+      newRecord.i_endda = endda;
+      newRecord.i_version = version;
+      newRecord.i_kd_sub = department.kd_sub;
+
+      await this.repositoryDepartmentMv.insert(newRecord);
+    }
+
+    return;
   }
 
   private async getDepartments({ page, limit }): Promise<any> {

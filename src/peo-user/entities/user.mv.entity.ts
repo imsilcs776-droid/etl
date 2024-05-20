@@ -85,6 +85,18 @@ export class UserMvEntity {
   @Column({ nullable: true })
   i_endda: string | null;
 
+  @Column({ nullable: true })
+  pegawai: string | null;
+
+  @Column({ nullable: true })
+  instansi: string | null;
+
+  @Column({ nullable: true })
+  i_nama_cabang: string | null;
+
+  @Column({ nullable: true })
+  i_kd_sub: string | null;
+
   @CreateDateColumn()
   created_at: Date;
 

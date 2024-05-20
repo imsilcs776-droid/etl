@@ -73,6 +73,9 @@ export class UsersService {
         pegawai,
         last_updated_date,
         werks_new,
+        kd_cabang_sap,
+        nama_cabang,
+        kd_sub,
       } = users[count];
 
       const full_names: string[] = String(nama).split(' ');
@@ -87,7 +90,8 @@ export class UsersService {
       body.last_name =
         nameLegth > 1 ? full_names[nameLegth - 1] : full_names[0];
       body.nip = nipp;
-      body.i_com_code = pegawai;
+      body.i_com_code = kd_cabang_sap;
+      body.pegawai = pegawai;
       //   body.i_department_code = SUBDI;
       body.password = DEF_PW || 'L4n1usLab!';
       body.updated_at = new Date();
@@ -99,6 +103,9 @@ export class UsersService {
       body.nip_new = nipp_baru;
       body.i_endda = '9999-12-31';
       body.source = 'PEO';
+      body.i_nama_cabang = nama_cabang;
+      body.instansi = pegawai;
+      body.i_kd_sub = kd_sub;
       await this.create(body);
       count++;
     }

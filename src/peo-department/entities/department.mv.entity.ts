@@ -57,7 +57,13 @@ export class DepartmentMvEntity {
   i_version: number;
 
   @Column({ nullable: true })
-  i_id_peo: string | null;
+  instansi: string | null;
+
+  @Column({ nullable: true })
+  i_nama_cabang: string | null;
+
+  @Column({ nullable: true })
+  i_kd_sub: string | null;
 
   @CreateDateColumn()
   i_updated_at: Date;

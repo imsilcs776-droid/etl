@@ -34,6 +34,15 @@ export class CreateDepartmentDto {
   i_bobot_organisasi: string | null;
 
   @ApiProperty()
+  instansi: string | null;
+
+  @ApiProperty()
+  i_nama_cabang: string | null;
+
+  @ApiProperty()
+  i_kd_sub: string | null;
+
+  @ApiProperty()
   i_updated_at: Date;
 
   @ApiProperty()

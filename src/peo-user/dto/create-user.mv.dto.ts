@@ -54,4 +54,13 @@ export class CreateAccountDto {
   @ApiProperty({ example: '12345354' })
   @IsNotEmpty()
   i_id: string | null;
+
+  @ApiProperty()
+  instansi: string | null;
+
+  @ApiProperty()
+  i_nama_cabang: string | null;
+
+  @ApiProperty()
+  i_kd_sub: string | null;
 }
