@@ -40,7 +40,7 @@ export class CreateDepartmentDto {
   i_nama_cabang: string | null;
 
   @ApiProperty()
-  i_kd_sub: string | null;
+  i_kd_wil: string | null;
 
   @ApiProperty()
   i_updated_at: Date;

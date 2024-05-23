@@ -97,6 +97,9 @@ export class UserMvEntity {
   @Column({ nullable: true })
   i_kd_sub: string | null;
 
+  @Column({ nullable: true })
+  i_kd_wil: string | null;
+
   @CreateDateColumn()
   created_at: Date;
 

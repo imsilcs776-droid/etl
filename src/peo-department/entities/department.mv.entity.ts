@@ -63,7 +63,7 @@ export class DepartmentMvEntity {
   i_nama_cabang: string | null;
 
   @Column({ nullable: true })
-  i_kd_sub: string | null;
+  i_kd_wil: string | null;
 
   @CreateDateColumn()
   i_updated_at: Date;

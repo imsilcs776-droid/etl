@@ -76,6 +76,7 @@ export class UsersService {
         kd_cabang_sap,
         nama_cabang,
         kd_sub,
+        kd_wil_arsip,
       } = users[count];
 
       const full_names: string[] = String(nama).split(' ');
@@ -106,6 +107,7 @@ export class UsersService {
       body.i_nama_cabang = nama_cabang;
       body.instansi = pegawai;
       body.i_kd_sub = kd_sub;
+      body.i_kd_wil = kd_wil_arsip;
       await this.create(body);
       count++;
     }
