@@ -1,0 +1,34 @@
+export class UploadAtasanBawahanDto {
+  NIPP: string;
+  NIPP_ATS: string;
+  NAMA: string;
+  NAMA_JABATAN: string;
+  KD_CABANG_SAP: string;
+  SUB_AREA: string;
+  KD_PEL: string;
+  NAMA_ATS: string;
+  NAMA_JABATAN_ATS: string;
+  KD_CABANG_SAP_ATS: string;
+  SUB_AREA_ATS: string;
+  KD_PEL_ATS: string;
+  LVL: string;
+  COMPANY_CODE: string;
+  COMPANY_CODE_ATS: string;
+  EMAIL: string;
+  EMAIL_ATS: string;
+  PEMBUAT_LVL: string;
+  KD_WIL: string;
+  KD_DIV: string;
+  KD_WIL_ATS: string;
+  KD_DIV_ATS: string;
+  SHORT: string;
+  SUBDI: string;
+  SHORT_ATS: string;
+  SUBDI_ATS: string;
+  NIPP_BARU: string;
+  NIPP_ATS_BARU: string;
+  INSTANSI: string;
+  INSTANSI_ATS: string;
+  PEGAWAI: string;
+  KODE_WIL: string;
+}

@@ -1,0 +1,36 @@
+export class UploadDivisiDto {
+  KD_DIV_ARSIP: string;
+  KD_INDUK: string;
+  NAMA_DIR: string;
+  KD_WIL_ARSIP: string;
+  NAMA_CABANG: string;
+  UPDATED: string;
+  KD_SUB: string;
+  NIP_PEJABAT: string;
+  NAMA_PEJABAT: string;
+  EMAIL_PEJABAT: string;
+  PARENT: string;
+  LABEL_PARENT: string;
+  ID: string;
+  KD_SEK: string;
+  KODE_NOMOR: string;
+  KODE_DIREKTORAT: string;
+  NAMA_DIREKTORAT: string;
+  KELOMPOK: string;
+  AKSES_SURAT: string;
+  TTD: string;
+  GRUP: string;
+  PENGOLAH: string;
+  KD_SUBSI: string;
+  INSTANSI: string;
+  KD_JABATAN: string;
+  PEJABAT: string;
+  JENIS: string;
+  NAMA_SUB_TRAVEL: string;
+  CREATED_BY: string;
+  IS_DELETED: string;
+  CREATED: string;
+  CREATED_NAME: string;
+  UPDATED_BY: string;
+  UPDATED_NAME: string;
+}

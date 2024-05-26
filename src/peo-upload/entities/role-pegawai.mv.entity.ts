@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('peo_role', {
   synchronize: true,
 })
-export class RolePeoEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class RolePegawaiMvEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ nullable: true })
   kode_sap: string;

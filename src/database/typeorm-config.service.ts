@@ -15,6 +15,9 @@ import { SyncFailedLog } from 'src/sync-log/entities/sync-failed-log.entity';
 import { SyncLog } from 'src/sync-log/entities/sync-log.entity';
 import { User } from 'src/users/entities/user.entity';
 import { DivisiPeoEntity } from '../peo-department/entities/divisi.peo.entity';
+import { DivisiMvEntity } from '../peo-upload/entities/divisi.mv.entity';
+import { AtasanBawahanMvEntity } from '../peo-upload/entities/atasan-bawahan.mv.entity';
+import { RolePegawaiMvEntity } from '../peo-upload/entities/role-pegawai.mv.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -48,6 +51,9 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         DepartmentMvEntity,
         PrivilegeMvEntity,
         DivisiPeoEntity,
+        DivisiMvEntity,
+        AtasanBawahanMvEntity,
+        RolePegawaiMvEntity,
       ],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {
