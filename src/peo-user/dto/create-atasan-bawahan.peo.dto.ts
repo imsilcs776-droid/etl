@@ -1,6 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
-export class EmployeeDTO {
+export class CreateAtasanBawahanPeoDto {
   @ApiHideProperty()
   id: string;
   @ApiProperty()
