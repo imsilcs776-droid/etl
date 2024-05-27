@@ -17,4 +17,4 @@ import { AtasanBawahanPeoEntity } from 'src/peo-user/entities/atasan-bawahan.peo
   providers: [AtasanBawahanService, AtasanBawahanPeoService],
   exports: [AtasanBawahanService, AtasanBawahanPeoService],
 })
-export class AtasanBawahanModule {}
+export class SinkAtasanBawahanModule {}

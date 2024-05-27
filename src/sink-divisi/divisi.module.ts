@@ -17,4 +17,4 @@ import { DivisiPeoService } from './divisi-peo.service';
   providers: [DivisiService, DivisiPeoService],
   exports: [DivisiService, DivisiPeoService],
 })
-export class DivisiModule {}
+export class SinkDivisiModule {}

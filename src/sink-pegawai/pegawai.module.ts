@@ -17,4 +17,4 @@ import { RolePeoEntity } from 'src/peo-role/entity/role.peo.entity';
   providers: [PegawaiService, PegawaiPeoService],
   exports: [PegawaiService, PegawaiPeoService],
 })
-export class PegawaiModule {}
+export class SinkPegawaiModule {}
