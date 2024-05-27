@@ -15,7 +15,7 @@ import { DivisiService } from './divisi.service';
 import { ApiTags } from '@nestjs/swagger';
 import { DivisiPeoService } from './divisi-peo.service';
 
-@ApiTags('Sink Divisi Peo')
+@ApiTags('Sink Peo')
 @Controller({
   path: 'sink-divisi',
 })

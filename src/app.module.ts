@@ -32,7 +32,7 @@ dotenv.config();
       useClass: TypeOrmConfigService,
     }),
     // TypeOrmModule.forRoot(pelindoMDMOption),
-    TypeOrmModule.forRoot(pelindoPEOOption),
+    // TypeOrmModule.forRoot(pelindoPEOOption),
     // TypeOrmModule.forRoot(pelindoPortalsi),
     UsersModule,
     // DepartmentsModule,
@@ -46,9 +46,9 @@ dotenv.config();
     /**
      * sink modules using pelindoPEOOption
      */
-    SinkAtasanBawahanModule,
-    SinkDivisiModule,
-    SinkPegawaiModule,
+    // SinkAtasanBawahanModule,
+    // SinkDivisiModule,
+    // SinkPegawaiModule,
   ],
   controllers: [AppController],
   providers: [],

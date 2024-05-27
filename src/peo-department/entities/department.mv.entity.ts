@@ -65,6 +65,9 @@ export class DepartmentMvEntity {
   @Column({ nullable: true })
   i_kd_wil: string | null;
 
+  @Column({ nullable: true })
+  i_parent: string | null;
+
   @CreateDateColumn()
   i_updated_at: Date;
 

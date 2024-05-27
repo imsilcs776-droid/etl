@@ -2,6 +2,9 @@ import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateDepartmentDto {
+  @ApiHideProperty()
+  id: number;
+
   @ApiProperty()
   @IsNotEmpty()
   code: string | null;
@@ -53,4 +56,7 @@ export class CreateDepartmentDto {
 
   @ApiHideProperty()
   updated_at: Date;
+
+  @ApiProperty()
+  i_parent: string | null;
 }

@@ -15,7 +15,7 @@ import { AtasanBawahanService } from './atasan-bawahan.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AtasanBawahanPeoService } from './atasan-bawahan-peo.service';
 
-@ApiTags('Sink Atasan Bawahan Peo')
+@ApiTags('Sink Peo')
 @Controller({
   path: 'sink-atasan-bawahan',
 })

@@ -14,7 +14,7 @@ import { UsersService } from './users.service';
 import { UserPrivilegeService } from './users-privilege.service';
 import { UserDepartmentService } from './users-department.service';
 
-@ApiTags('Sync Account')
+@ApiTags('Sink MV')
 @Controller({
   path: 'sync-account',
 })

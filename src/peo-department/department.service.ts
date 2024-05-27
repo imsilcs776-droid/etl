@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Body } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { DepartmentMvEntity } from './entities/department.mv.entity';
 import { DivisiPeoEntity } from './entities/divisi.peo.entity';
 import * as moment from 'moment';
+import { CreateDepartmentDto } from './dto/create-department.dto';
 
 @Injectable()
 export class DepartmentsService {
@@ -21,23 +22,23 @@ export class DepartmentsService {
     let stop = false;
     let page = 1;
 
-    const version = 1;
+    const version = 2;
 
     while (!stop) {
       await delay(500);
-      const departments = await this.getDepartments({
+      const peoDivs = await this.getDivisions({
         page,
         limit,
       });
-      if (departments && departments.length) {
-        await this.bulkInsert(departments, version);
+      if (peoDivs && peoDivs.length) {
+        await this.bulkInsert(peoDivs, version);
       } else {
         stop = true;
       }
       page++;
     }
 
-    await this.processedUpdateParent();
+    // await this.processedUpdateParent();
 
     const processedDepartment = await this.repositoryDepartmentMv.count({
       where: { source: 'PEO', is_active: true },
@@ -45,7 +46,7 @@ export class DepartmentsService {
     return { total: processedDepartment };
   }
 
-  private async processedUpdateParent() {
+  public async processedUpdateParent() {
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -65,79 +66,93 @@ export class DepartmentsService {
     }
   }
 
-  private async updateParent(departments) {
+  private async updateParent(departments: CreateDepartmentDto[]) {
     for (const department of departments) {
-      const parent = await this.repositoryDepartmentMv.findOne({
-        where: { code: department.kd_induk },
-      });
+      if (department.i_parent) {
+        console.log('i_parent', department.i_parent);
+        const parList = department.i_parent.split(';');
+        parList.shift();
+        const myParent = parList.join(';');
 
-      if (parent) {
-        await this.repositoryDepartmentMv
-          .createQueryBuilder()
-          .update(DepartmentMvEntity)
-          .set({ parent: parent.id })
-          .where('code = :code', { code: department.kd_div_arsip })
-          .andWhere('is_active = :is_active', { is_active: true })
-          .execute();
+        if (myParent) {
+          const parent = await this.repositoryDepartmentMv.findOne({
+            where: { i_parent: myParent },
+          });
+
+          if (parent) {
+            await this.repositoryDepartmentMv
+              .createQueryBuilder()
+              .update(DepartmentMvEntity)
+              .set({ parent: parent.id })
+              .where('id = :id', { id: department.id })
+              .execute();
+          }
+        }
       }
     }
   }
 
-  private async bulkInsert(departments: DivisiPeoEntity[], version) {
+  private async bulkInsert(divisions: DivisiPeoEntity[], version) {
     const now = moment().toDate();
     const stringEndda = '9999-12-31 00:00:00';
     const endda = moment(stringEndda).toDate();
 
-    for (const department of departments) {
+    for (const peoDiv of divisions) {
       const existingRecord = await this.repositoryDepartmentMv.findOne({
         where: {
-          i_kd_wil: department.kd_wil_arsip,
-          code: department.kd_div_arsip,
+          i_kd_wil: peoDiv.kd_wil_arsip,
+          code: peoDiv.kd_div_arsip,
         },
       });
 
       if (existingRecord) {
-        await this.repositoryDepartmentMv.update(existingRecord.id, {
-          description: department.nama_dir,
+        const body = {
+          description: peoDiv.nama_dir,
           is_active: true,
-          name: department.nama_dir,
+          name: peoDiv.nama_dir,
           updated_at: now,
           source: 'PEO',
-          // i_com_code: department.kd_wil_arsip,
-          i_level_organisasi: Number(department.jenis || null),
+          // i_com_code: peoDiv.kd_wil_arsip,
+          i_level_organisasi: Number(peoDiv.jenis || null),
           i_updated_at: now,
           i_endda: endda,
           i_version: version,
+          i_parent: peoDiv.parent,
           instansi:
-            department.instansi === 'PLTP'
+            peoDiv.instansi === 'PLTP'
               ? 'SPTP'
-              : department.instansi === 'PLND'
+              : peoDiv.instansi === 'PLND'
               ? 'PELINDO'
-              : department.instansi,
-          code: department.kd_div_arsip,
-          i_kd_wil: department.kd_wil_arsip,
-        });
+              : peoDiv.instansi,
+          code: peoDiv.kd_div_arsip,
+          i_kd_wil: peoDiv.kd_wil_arsip,
+        };
+
+        // console.log(body);
+
+        await this.repositoryDepartmentMv.update(existingRecord.id, body);
       } else {
         const body = new DepartmentMvEntity();
-        body.code = department.kd_div_arsip;
+        body.code = peoDiv.kd_div_arsip;
         body.created_at = now;
-        body.description = department.nama_dir;
+        body.description = peoDiv.nama_dir;
         body.is_active = true;
-        body.name = department.nama_dir;
+        body.name = peoDiv.nama_dir;
         body.updated_at = now;
         body.source = 'PEO';
-        // body.i_com_code = department.kd_wil_arsip;
-        body.i_level_organisasi = Number(department.jenis || null);
+        // body.i_com_code = peoDiv.kd_wil_arsip;
+        body.i_level_organisasi = Number(peoDiv.jenis || null);
         body.i_updated_at = now;
         body.i_endda = endda;
         body.i_version = version;
-        body.i_kd_wil = department.kd_wil_arsip;
+        body.i_kd_wil = peoDiv.kd_wil_arsip;
+        body.i_parent = peoDiv.parent;
         body.instansi =
-          department.instansi === 'PLTP'
+          peoDiv.instansi === 'PLTP'
             ? 'SPTP'
-            : department.instansi === 'PLND'
+            : peoDiv.instansi === 'PLND'
             ? 'PELINDO'
-            : department.instansi;
+            : peoDiv.instansi;
         await this.repositoryDepartmentMv.insert(body);
       }
     }
@@ -145,12 +160,26 @@ export class DepartmentsService {
     return true;
   }
 
-  private async getDepartments({ page, limit }): Promise<DivisiPeoEntity[]> {
+  private async getDivisions({ page, limit }): Promise<DivisiPeoEntity[]> {
     try {
       const offset = limit * (page - 1);
       return await this.repositoryDivisiPeo.find({
         skip: offset,
         take: limit,
+        order: { id: 'ASC' },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  private async getDepartments({ page, limit }): Promise<DepartmentMvEntity[]> {
+    try {
+      const offset = limit * (page - 1);
+      return await this.repositoryDepartmentMv.find({
+        skip: offset,
+        take: limit,
+        order: { id: 'ASC' },
       });
     } catch (err) {
       console.log(err);
