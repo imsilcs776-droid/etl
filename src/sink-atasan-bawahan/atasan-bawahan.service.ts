@@ -25,12 +25,12 @@ export class AtasanBawahanService {
 
     while (!stop) {
       await delay(500);
-      const departments = await this.getAtasanBawahan({
+      const atasanBawahans = await this.getAtasanBawahan({
         page,
         limit,
       });
-      if (departments && departments.length) {
-        await this.bulkInsert(departments);
+      if (atasanBawahans && atasanBawahans.length) {
+        await this.bulkInsert(atasanBawahans);
       } else {
         stop = true;
       }
@@ -47,7 +47,9 @@ export class AtasanBawahanService {
 
   private async create(createAtasanBawahanDto: CreateAtasanBawahanPeoDto) {
     try {
-      return await this.repository.upsert(createAtasanBawahanDto, ['i_objid']);
+      return await this.repository.upsert(createAtasanBawahanDto, [
+        'nipp_baru_bwh_ats',
+      ]);
     } catch (e) {
       const { detail, code } = e || {};
       return await this.syncLogService.addFailedLog({
@@ -59,43 +61,78 @@ export class AtasanBawahanService {
     }
   }
 
-  private async bulkInsert(departments = []) {
+  private async bulkInsert(atasanBawahans = []) {
     let count = 0;
 
-    while (count < departments.length) {
+    while (count < atasanBawahans.length) {
       const {
-        OBJID,
-        PARID,
-        CREATED_DATE,
-        LAST_UPDATED_DATE,
+        NIPP,
+        NIPP_ATS,
+        NAMA,
+        NAMA_JABATAN,
+        KD_CABANG_SAP,
+        SUB_AREA,
+        KD_PEL,
+        NAMA_ATS,
+        NAMA_JABATAN_ATS,
+        KD_CABANG_SAP_ATS,
+        SUB_AREA_ATS,
+        KD_PEL_ATS,
+        LVL,
         COMPANY_CODE,
-        STEXT,
-        LEVELORGANISASI,
-        DESCBOBOTORGANISASI,
-        KODEUNITKERJA,
-        PERSA,
-        WERKS_NEW,
-        ENDDA,
-      } = departments[count];
+        COMPANY_CODE_ATS,
+        EMAIL,
+        EMAIL_ATS,
+        PEMBUAT_LVL,
+        KD_WIL,
+        KD_DIV,
+        KD_WIL_ATS,
+        KD_DIV_ATS,
+        SHORT,
+        SUBDI,
+        SHORT_ATS,
+        SUBDI_ATS,
+        NIPP_BARU,
+        NIPP_ATS_BARU,
+        INSTANSI,
+        INSTANSI_ATS,
+        PEGAWAI,
+      } = atasanBawahans[count];
 
-      const body = new CreateAtasanBawahanPeoDto();
-      // body.code = KODEUNITKERJA || '-';
-      // body.name = STEXT;
-      // body.is_active = true;
-      // body.updated_at = new Date();
-      // body.deleted_at = null;
-      // body.i_updated_at = new Date(LAST_UPDATED_DATE);
-      // body.created_at = new Date(CREATED_DATE);
-      // body.source = 'IMS_INTEGRATION';
-      // body.i_com_code = WERKS_NEW;
-      // body.i_objid = OBJID;
-      // body.i_parid = PARID;
-      // body.i_bobot_organisasi = DESCBOBOTORGANISASI;
-      // body.i_level_organisasi = LEVELORGANISASI;
-      // body.description = STEXT;
-      // body.i_endda = ENDDA;
-
-      await this.create(body);
+      const dto = new CreateAtasanBawahanPeoDto();
+      dto.nipp = NIPP;
+      dto.nipp_ats = NIPP_ATS;
+      dto.nama = NAMA;
+      dto.nama_jabatan = NAMA_JABATAN;
+      dto.kd_cabang_sap = KD_CABANG_SAP;
+      dto.sub_area = SUB_AREA;
+      dto.kd_pel = KD_PEL;
+      dto.nama_ats = NAMA_ATS;
+      dto.nama_jabatan_ats = NAMA_JABATAN_ATS;
+      dto.kd_cabang_sap_ats = KD_CABANG_SAP_ATS;
+      dto.sub_area_ats = SUB_AREA_ATS;
+      dto.kd_pel_ats = KD_PEL_ATS;
+      dto.lvl = LVL;
+      dto.company_code = COMPANY_CODE;
+      dto.company_code_ats = COMPANY_CODE_ATS;
+      dto.email = EMAIL;
+      dto.email_ats = EMAIL_ATS;
+      dto.pembuat_lvl = PEMBUAT_LVL;
+      dto.kode_wil = KD_WIL;
+      dto.kd_div = KD_DIV;
+      dto.kd_wil_ats = KD_WIL_ATS;
+      dto.kd_div_ats = KD_DIV_ATS;
+      dto.short = SHORT;
+      dto.subdi = SUBDI;
+      dto.short_ats = SHORT_ATS;
+      dto.subdi_ats = SUBDI_ATS;
+      dto.nipp_baru = NIPP_BARU;
+      dto.nipp_ats_baru = NIPP_ATS_BARU;
+      dto.instansi = INSTANSI;
+      dto.instansi_ats = INSTANSI_ATS;
+      dto.pegawai = PEGAWAI;
+      dto.nipp_baru_bwh_ats = `${NIPP_BARU};${NIPP_ATS_BARU}`;
+      await this.create(dto);
       count++;
     }
 
@@ -114,11 +151,11 @@ export class AtasanBawahanService {
   }
 
   // public async setAtasanBawahan({ objid }): Promise<any> {
-  //   const departments: any[] = await this.atasanBawahanPeoService.getAtasanBawahan({
+  //   const atasanBawahans: any[] = await this.atasanBawahanPeoService.getAtasanBawahan({
   //     objid,
   //   });
-  //   await this.bulkInsert(departments);
-  //   const [department] = departments;
+  //   await this.bulkInsert(atasanBawahans);
+  //   const [department] = atasanBawahans;
   //   const local = await this.repository.findOneBy({
   //     i_objid: department.OBJID,
   //   });

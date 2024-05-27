@@ -52,6 +52,9 @@ export class CreateAtasanBawahanPeoDto {
   email: string;
 
   @ApiProperty()
+  lvl: string;
+
+  @ApiProperty()
   email_ats: string;
 
   @ApiProperty()
@@ -95,4 +98,7 @@ export class CreateAtasanBawahanPeoDto {
 
   @ApiProperty()
   pegawai: string;
+
+  @ApiProperty()
+  nipp_baru_bwh_ats: string;
 }

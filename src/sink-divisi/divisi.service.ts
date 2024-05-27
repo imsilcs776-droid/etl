@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
@@ -25,12 +24,12 @@ export class DivisiService {
 
     while (!stop) {
       await delay(500);
-      const departments = await this.getDivisi({
+      const divisions = await this.getDivisi({
         page,
         limit,
       });
-      if (departments && departments.length) {
-        await this.bulkInsert(departments);
+      if (divisions && divisions.length) {
+        await this.bulkInsert(divisions);
       } else {
         stop = true;
       }
@@ -47,7 +46,7 @@ export class DivisiService {
 
   private async create(createDivisiDto: CreateDivisiPeoDto) {
     try {
-      return await this.repository.upsert(createDivisiDto, ['i_objid']);
+      return await this.repository.upsert(createDivisiDto, ['div_wil']);
     } catch (e) {
       const { detail, code } = e || {};
       return await this.syncLogService.addFailedLog({
@@ -59,43 +58,83 @@ export class DivisiService {
     }
   }
 
-  private async bulkInsert(departments = []) {
+  private async bulkInsert(divisions = []) {
     let count = 0;
 
-    while (count < departments.length) {
+    while (count < divisions.length) {
       const {
-        OBJID,
-        PARID,
-        CREATED_DATE,
-        LAST_UPDATED_DATE,
-        COMPANY_CODE,
-        STEXT,
-        LEVELORGANISASI,
-        DESCBOBOTORGANISASI,
-        KODEUNITKERJA,
-        PERSA,
-        WERKS_NEW,
-        ENDDA,
-      } = departments[count];
+        KD_DIV_ARSIP,
+        KD_INDUK,
+        NAMA_DIR,
+        KD_WIL_ARSIP,
+        NAMA_CABANG,
+        UPDATED,
+        KD_SUB,
+        NIP_PEJABAT,
+        NAMA_PEJABAT,
+        EMAIL_PEJABAT,
+        PARENT,
+        LABEL_PARENT,
+        KD_SEK,
+        KODE_NOMOR,
+        KODE_DIREKTORAT,
+        NAMA_DIREKTORAT,
+        KELOMPOK,
+        AKSES_SURAT,
+        TTD,
+        GROUP,
+        PENGOLAH,
+        KD_SUBSI,
+        INSTANSI,
+        KD_JABATAN,
+        PEJABAT,
+        JENIS,
+        NAMA_SUB_TRAVEL,
+        CREATED_BY,
+        IS_DELETED,
+        CREATED,
+        CREATED_NAME,
+        UPDATED_BY,
+        UPDATED_NAME,
+      } = divisions[count];
 
-      const body = new CreateDivisiPeoDto();
-      // body.code = KODEUNITKERJA || '-';
-      // body.name = STEXT;
-      // body.is_active = true;
-      // body.updated_at = new Date();
-      // body.deleted_at = null;
-      // body.i_updated_at = new Date(LAST_UPDATED_DATE);
-      // body.created_at = new Date(CREATED_DATE);
-      // body.source = 'IMS_INTEGRATION';
-      // body.i_com_code = WERKS_NEW;
-      // body.i_objid = OBJID;
-      // body.i_parid = PARID;
-      // body.i_bobot_organisasi = DESCBOBOTORGANISASI;
-      // body.i_level_organisasi = LEVELORGANISASI;
-      // body.description = STEXT;
-      // body.i_endda = ENDDA;
+      const dto = new CreateDivisiPeoDto();
+      dto.kd_div_arsip = KD_DIV_ARSIP;
+      dto.kd_induk = KD_INDUK;
+      dto.nama_dir = NAMA_DIR;
+      dto.kd_wil_arsip = KD_WIL_ARSIP;
+      dto.nama_cabang = NAMA_CABANG;
+      dto.updated = UPDATED;
+      dto.kd_sub = KD_SUB;
+      dto.nip_pejabat = NIP_PEJABAT;
+      dto.nama_pejabat = NAMA_PEJABAT;
+      dto.email_pejabat = EMAIL_PEJABAT;
+      dto.parent = PARENT;
+      dto.label_parent = LABEL_PARENT;
+      dto.kd_sek = KD_SEK;
+      dto.kode_nomor = KODE_NOMOR;
+      dto.kode_direktorat = KODE_DIREKTORAT;
+      dto.nama_direktorat = NAMA_DIREKTORAT;
+      dto.kelompok = KELOMPOK;
+      dto.akses_surat = AKSES_SURAT;
+      dto.ttd = TTD;
+      dto.group = GROUP;
+      dto.pengolah = PENGOLAH;
+      dto.kd_subsi = KD_SUBSI;
+      dto.instansi = INSTANSI;
+      dto.kd_jabatan = KD_JABATAN;
+      dto.pejabat = PEJABAT;
+      dto.jenis = JENIS;
+      dto.nama_sub_travel = NAMA_SUB_TRAVEL;
+      dto.created_by = CREATED_BY;
+      dto.is_deleted = IS_DELETED;
+      dto.created = CREATED;
+      dto.created_name = CREATED_NAME;
+      dto.updated_by = UPDATED_BY;
+      dto.updated_name = UPDATED_NAME;
+      dto.div_wil = `${KD_DIV_ARSIP};${KD_WIL_ARSIP}`;
 
-      await this.create(body);
+      await this.create(dto);
       count++;
     }
 
@@ -114,11 +153,11 @@ export class DivisiService {
   }
 
   // public async setDivisi({ objid }): Promise<any> {
-  //   const departments: any[] = await this.divisiPeoService.getDivisi({
+  //   const divisions: any[] = await this.divisiPeoService.getDivisi({
   //     objid,
   //   });
-  //   await this.bulkInsert(departments);
-  //   const [department] = departments;
+  //   await this.bulkInsert(divisions);
+  //   const [department] = divisions;
   //   const local = await this.repository.findOneBy({
   //     i_objid: department.OBJID,
   //   });

@@ -100,4 +100,7 @@ export class AtasanBawahanPeoEntity {
 
   @Column({ nullable: true })
   pegawai: string;
+
+  @Column({ nullable: true })
+  nipp_baru_bwh_ats: string;
 }

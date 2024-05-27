@@ -10,120 +10,28 @@ export class AtasanBawahanPeoService {
 
   async getAtasanBawahan({ page = 1, limit = 50, objid = '' }) {
     return await this.connection.query(`
-      WITH
-        ACCOUNT AS (
-          SELECT
-            CNAME,
-            PNALT,
-            COMPANY_CODE,
-            ANSVH,
-            SHORT,
-            PGTXT,
-            PKTXT,
-            PLANS,
-            PBTXT,
-            BTRTX,
-            LAST_UPDATED_DATE,
-            KD_AKTIF,
-            WERKS_NEW,
-            WERKS,
-            SUBDI,
-            ROW_NUMBER () OVER (
-              PARTITION BY PNALT
-              ORDER BY
-                LAST_UPDATED_DATE DESC
-            ) AS rn
-          FROM
-            "SAFM_PERUBAHAN_ORGANISASI"
-          WHERE
-            KD_AKTIF = 'A'
-            AND COMPANY_CODE = '1000'
-            AND TO_CHAR (enda, 'ddmmyyyy') = '31129999'
-            AND SHORT <> '99999999'
-            AND CNAME <> 'DUMMY PCP'
-            AND PGTXT <> 'Pensiun'
-            AND PLANS NOT LIKE 'CPDMT'
-        ),
-        SORT_ACCOUNT AS (
-          SELECT
-            *
-          FROM
-            ACCOUNT
-          WHERE
-            RN = 1
-        ),
-        DEPT AS (
-          SELECT
-            SO.OBJID,
-            SO.PARID,
-            SO.SHORT,
-            SO.LAST_UPDATED_DATE,
-            SO.KD_AKTIF,
-            SO.STEXT,
-            SO.ENDDA,
-            SO.CREATED_DATE,
-            SO.COMPANY_CODE,
-            SO.DESCBOBOTORGANISASI,
-            SO.LEVELORGANISASI,
-            SO.KODEUNITKERJA,
-            SO.PERSA,
-            SORT_ACCOUNT.WERKS,
-            SORT_ACCOUNT.WERKS_NEW,
-            ROW_NUMBER () OVER (
-              PARTITION BY SO.OBJID
-              ORDER BY
-                SO.LAST_UPDATED_DATE DESC
-            ) AS DRN
-          FROM
-            "SAFM_STRUKTUR_ORGANISASI" "SO"
-            LEFT JOIN SORT_ACCOUNT ON SO.OBJID = SORT_ACCOUNT.SUBDI
-          WHERE
-            SO.COMPANY_CODE = '1000'
-            AND SO.OTYPE IN ('O')
-            AND TO_CHAR (SO.ENDDA, 'ddmmyyyy') = '31129999'
-            AND TRUNC(SO.LAST_UPDATED_DATE) = TRUNC(sysdate)
-            AND SO.KD_AKTIF = 'A'
+      SELECT ab.*,
+          CASE 
+            WHEN ab.INSTANSI = 'PLND' THEN 'PELINDO'
+            ELSE 'SPTP'
+          END AS PEGAWAI
+        FROM ATASAN_BAWAHAN ab 
+        WHERE NIPP IN (
+          SELECT DISTINCT NIPP
+          FROM PSO_ROLE_PEGAWAI a
+          WHERE WERKS_NEW IN (
+            '1000','1310','1320','1330','1340',
+            '778', '878', '857', '617', '777', '797', '577',
+            '1221', '1461', '1241', '1201', '879', '1981',
+            '457', '637', '858', '877', '2002', '657', '779',
+            '859', '860', '2001'
+          )
         )
-      SELECT
-        *
-      FROM
-        DEPT
-      WHERE
-        DRN = 1
-        ${objid ? 'AND OBJID = ' + objid : ''}
-      ORDER BY
-        LAST_UPDATED_DATE
+        AND a.NIPP_BARU IS NOT NULL
+        AND a.NIPP_ATS_BARU IS NOT NULL
+      ORDER BY a.NIPP_BARU, a.NIPP_ATS_BARU ASC
       OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY
     `);
-  }
-
-  async searchAtasanBawahan() {
-    return await this.connection.query(`
-      SELECT
-          SO.OBJID,
-          SO.PARID,
-          SO.SHORT,
-          SO.LAST_UPDATED_DATE,
-          SO.KD_AKTIF,
-          SO.STEXT,
-          SO.ENDDA,
-          SO.CREATED_DATE,
-          SO.COMPANY_CODE,
-          SO.DESCBOBOTORGANISASI,
-          SO.LEVELORGANISASI,
-          SO.KODEUNITKERJA,
-          SO.PERSA
-      FROM
-          "SAFM_STRUKTUR_ORGANISASI" "SO"
-      WHERE
-          SO.COMPANY_CODE = '1000'
-          AND UPPER(SO.STEXT) LIKE '%GROUP MANAJEMEN RISIKO%'
-          AND SO.OTYPE IN ('O')
-          AND TO_CHAR(SO.ENDDA, 'ddmmyyyy') = '31129999'
-          AND TRUNC(SO.LAST_UPDATED_DATE) = TRUNC(sysdate)
-          AND SO.KD_AKTIF = 'A'
-      FETCH FIRST 10 ROWS ONLY
-      `);
   }
 
   // async getAtasanBawahan({ page = 1, limit = 50, objid = '' }) {

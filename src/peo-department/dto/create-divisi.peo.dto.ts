@@ -106,4 +106,7 @@ export class CreateDivisiPeoDto {
 
   @ApiProperty()
   updated_name: string;
+
+  @ApiProperty()
+  div_wil: string;
 }
