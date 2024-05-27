@@ -15,9 +15,9 @@ import { AtasanBawahanService } from './atasan-bawahan.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AtasanBawahanPeoService } from './atasan-bawahan-peo.service';
 
-@ApiTags('Sync Atasan Bawahan Peo')
+@ApiTags('Sink Atasan Bawahan Peo')
 @Controller({
-  path: 'sync-atasan-bawahan',
+  path: 'sink-atasan-bawahan',
 })
 export class AtasanBawahanController {
   constructor(

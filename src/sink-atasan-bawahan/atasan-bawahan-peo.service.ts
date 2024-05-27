@@ -27,9 +27,9 @@ export class AtasanBawahanPeoService {
             '859', '860', '2001'
           )
         )
-        AND a.NIPP_BARU IS NOT NULL
-        AND a.NIPP_ATS_BARU IS NOT NULL
-      ORDER BY a.NIPP_BARU, a.NIPP_ATS_BARU ASC
+        AND ab.NIPP_BARU IS NOT NULL
+        AND ab.NIPP_ATS_BARU IS NOT NULL
+      ORDER BY ab.NIPP_BARU, ab.NIPP_ATS_BARU ASC
       OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY
     `);
   }

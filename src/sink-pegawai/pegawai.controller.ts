@@ -15,9 +15,9 @@ import { PegawaiService } from './pegawai.service';
 import { ApiTags } from '@nestjs/swagger';
 import { PegawaiPeoService } from './pegawai-peo.service';
 
-@ApiTags('Sync Pegawai Peo')
+@ApiTags('Sink Pegawai Peo')
 @Controller({
-  path: 'sync-pegawai',
+  path: 'sink-pegawai',
 })
 export class PegawaiController {
   constructor(

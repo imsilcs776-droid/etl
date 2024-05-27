@@ -24,8 +24,8 @@
         "protobuf:generate-ts:linux": "tools/gen-json.sh && tools/gen-js.sh && tools/gen-ts.sh",
         "seed": "node dist/seeder",
         "seed:refresh": "node dist/seeder --refresh",
-        "docker:build": "docker build -t mvdevops/sync:imsv2.0.0 .",
-        "docker:push": "docker push mvdevops/sync:imsv2.0.0"
+        "docker:build": "docker build -t mvdevops/sync:imsv3.0.0 .",
+        "docker:push": "docker push mvdevops/sync:imsv3.0.0"
     },
     "dependencies": {
         "@elastic/elasticsearch": "^7.12.0",

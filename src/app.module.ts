@@ -20,6 +20,7 @@ import { PeoDepartmentsModule } from './peo-department/department.module';
 import { PeoUploadModule } from './peo-upload/peo-upload.module';
 import { SinkAtasanBawahanModule } from './sink-atasan-bawahan/atasan-bawahan.module';
 import { SinkDivisiModule } from './sink-divisi/divisi.module';
+import { SinkPegawaiModule } from './sink-pegawai/pegawai.module';
 dotenv.config();
 @Module({
   imports: [
@@ -47,7 +48,7 @@ dotenv.config();
      */
     SinkAtasanBawahanModule,
     SinkDivisiModule,
-    SinkAtasanBawahanModule,
+    SinkPegawaiModule,
   ],
   controllers: [AppController],
   providers: [],
