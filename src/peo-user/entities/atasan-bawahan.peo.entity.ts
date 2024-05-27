@@ -45,7 +45,7 @@ export class AtasanBawahanPeoEntity {
   kd_pel_ats: string;
 
   @Column({ nullable: true })
-  Ivl: string;
+  lvl: string;
 
   @Column({ nullable: true })
   company_code: string;
