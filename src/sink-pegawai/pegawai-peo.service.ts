@@ -24,6 +24,7 @@ export class PegawaiPeoService {
       '859', '860', '2001'
     )
     AND a.NAMA_JABATAN <> 'Alih Daya' 
+    AND lower(a.NAMA) NOT LIKE '%dummy%'
     AND a.KD_DIV_ARSIP IS NOT NULL
     ORDER BY
       a.NIPP ASC

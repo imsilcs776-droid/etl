@@ -17,8 +17,7 @@ import { DepartmentsdetachedService } from './department/department-detached.ser
   path: 'Sequence',
 })
 export class AppController {
-  constructor() // private readonly usersService: UsersService,
-  // private readonly usersDepartmentService: UserDepartmentService,
+  constructor() // private readonly usersDepartmentService: UserDepartmentService, // private readonly usersService: UsersService,
   // private readonly userJobService: UserJobService,
   // private readonly userPEOService: UserPEOService,
   // private readonly departmentsService: DepartmentsService,

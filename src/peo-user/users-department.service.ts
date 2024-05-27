@@ -49,12 +49,13 @@ export class UserDepartmentService {
     let count = 0;
 
     while (count < users.length) {
-      const { nipp_baru, kd_div_arsip } = users[count];
+      const { nipp_baru, kd_div_arsip, kd_wil_arsip } = users[count];
 
       const dept = await this.repositoryDepartmentMv.findOne({
         select: ['id'],
         where: {
           code: kd_div_arsip,
+          i_kd_wil: kd_wil_arsip,
         },
         order: {
           i_endda: 'DESC',

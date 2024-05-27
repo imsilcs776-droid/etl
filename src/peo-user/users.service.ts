@@ -134,10 +134,20 @@ export class UsersService {
           Not(ILike('%pekerja%')),
           Not(ILike('%travel%')),
           Not(ILike('sit %')),
+          Not(ILike('user%')),
+          Not(ILike('dummy%')),
+          Not(ILike('bios%')),
         ),
+        email: And(
+          Not(IsNull()),
+          Not(ILike('ABC%')),
+          Not(ILike('ALIFPRASETYOAJI97%')),
+        ),
+        kd_div_arsip: Not(IsNull()),
+        kd_wil_arsip: Not(IsNull()),
       },
       order: {
-        nipp_baru: 'ASC',
+        nipp: 'ASC',
       },
     });
     return { data, total };
@@ -145,9 +155,23 @@ export class UsersService {
 
   private async create(createAccountDto: CreateAccountDto) {
     try {
-      const entity = this.repositoryUserMv.create(createAccountDto);
-      // return await this.accountRepository.update({ nip: entity.nip }, entity);
-      return await this.repositoryUserMv.upsert(entity, ['nip']);
+      const existingRecord = await this.repositoryUserMv.findOne({
+        where: {
+          nip_new: createAccountDto.nip_new,
+        },
+      });
+
+      if (existingRecord) {
+        await this.repositoryUserMv.update(existingRecord.id, createAccountDto);
+      } else {
+        await this.repositoryUserMv.insert(createAccountDto);
+      }
+
+      return;
+
+      // const entity = this.repositoryUserMv.create(createAccountDto);
+      // // return await this.accountRepository.update({ nip: entity.nip }, entity);
+      // return await this.repositoryUserMv.upsert(entity, ['nip']);
     } catch (e) {
       //   const { detail, code } = e || {};
       //   return await this.syncLogsService.addFailedLog({
