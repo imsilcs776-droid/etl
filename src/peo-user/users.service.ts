@@ -8,6 +8,7 @@ import { CreateAccountDto } from './dto/create-user.mv.dto';
 import { DEF_PW } from 'src/configs/datacore.config';
 import { RoleSystem } from 'src/role/entities/role-system.entity';
 import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
+import { SyncLogsService } from 'src/sync-log/sync-log.service';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +23,7 @@ export class UsersService {
     private roleSystemRepository: Repository<RoleSystem>,
     @InjectRepository(RoleMvEntity)
     private roleMvRepository: Repository<RoleMvEntity>,
+    private syncLogService: SyncLogsService,
   ) {}
 
   public async processUser() {
@@ -173,13 +175,13 @@ export class UsersService {
       // // return await this.accountRepository.update({ nip: entity.nip }, entity);
       // return await this.repositoryUserMv.upsert(entity, ['nip']);
     } catch (e) {
-      //   const { detail, code } = e || {};
-      //   return await this.syncLogsService.addFailedLog({
-      //     entity: await this.repositoryUserMv.metadata.tableName.toString(),
-      //     reason: detail || code,
-      //     created_at: new Date(),
-      //     updated_at: new Date(),
-      //   });
+      const { detail, code } = e || {};
+      return await this.syncLogService.addFailedLog({
+        entity: await this.repositoryUserMv.metadata.tableName.toString(),
+        reason: detail || code,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
     }
   }
 }
