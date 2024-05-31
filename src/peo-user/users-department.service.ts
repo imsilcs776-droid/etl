@@ -89,7 +89,6 @@ export class UserDepartmentService {
         take: limit,
         where: {
           nipp: Not(IsNull()),
-          pegawai: 'SPTP',
           nipp_baru: nippNew,
         },
         order: {
@@ -105,7 +104,6 @@ export class UserDepartmentService {
       where: {
         nipp: Not(IsNull()),
         nipp_baru: Not(IsNull()),
-        pegawai: 'SPTP',
       },
       order: {
         nipp_baru: 'ASC',
