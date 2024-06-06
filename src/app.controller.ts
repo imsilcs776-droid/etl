@@ -12,14 +12,12 @@ import { PrivilegesService } from 'src/privilage/privilage.service';
 import { UserPrivilegeService } from './users/users-privilege.service';
 import { DepartmentsdetachedService } from './department/department-detached.service';
 
-@ApiTags('Sync Sequence')
+@ApiTags('Sink Sequence')
 @Controller({
-  path: 'Sequence',
+  path: 'sink-sequence',
 })
 export class AppController {
-  constructor() // private readonly usersDepartmentService: UserDepartmentService, // private readonly usersService: UsersService,
-  // private readonly userJobService: UserJobService,
-  // private readonly userPEOService: UserPEOService,
+  constructor() // private readonly userPEOService: UserPEOService, // private readonly userJobService: UserJobService, // private readonly usersDepartmentService: UserDepartmentService, // private readonly usersService: UsersService,
   // private readonly departmentsService: DepartmentsService,
   // private readonly departmentsParentService: DepartmentsParentService,
   // private readonly jobsService: JobsService,

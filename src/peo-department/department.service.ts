@@ -69,14 +69,13 @@ export class DepartmentsService {
   private async updateParent(departments: CreateDepartmentDto[]) {
     for (const department of departments) {
       if (department.i_parent) {
-        console.log('i_parent', department.i_parent);
+        // console.log('i_parent', department.i_parent);
         const parList = department.i_parent.split(';');
         parList.shift();
-        const myParent = parList.join(';');
-
+        const [myParent] = parList || [];
         if (myParent) {
           const parent = await this.repositoryDepartmentMv.findOne({
-            where: { i_parent: myParent },
+            where: { code: myParent },
           });
 
           if (parent) {
