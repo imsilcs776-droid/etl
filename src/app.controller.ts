@@ -1,67 +1,69 @@
 import { Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { DepartmentsParentService } from './department/department-parent.service';
-import { DepartmentsService } from './department/department.service';
-import { JobsService } from './job/job.service';
 import { UserDepartmentService } from './users/users-department.service';
-import { UserJobService } from './users/users-job.service';
-import { UserPEOService } from './users/users-peo.service';
-import { UsersService } from './users/users.service';
-import { RolesService } from 'src/role/role.service';
-import { PrivilegesService } from 'src/privilage/privilage.service';
-import { UserPrivilegeService } from './users/users-privilege.service';
-import { DepartmentsdetachedService } from './department/department-detached.service';
+import { DivisiService } from './sink-divisi/divisi.service';
+import { PegawaiService } from './sink-pegawai/pegawai.service';
+import { AtasanBawahanService } from './sink-atasan-bawahan/atasan-bawahan.service';
+import { DepartmentsService } from './peo-department/department.service';
+import { UsersService } from './peo-user/users.service';
+import { ImsPrivilegeService } from './ims/ims-privilege.service';
 
 @ApiTags('Sink Sequence')
 @Controller({
   path: 'sink-sequence',
 })
 export class AppController {
-  constructor() // private readonly userPEOService: UserPEOService, // private readonly userJobService: UserJobService, // private readonly usersDepartmentService: UserDepartmentService, // private readonly usersService: UsersService,
-  // private readonly departmentsService: DepartmentsService,
-  // private readonly departmentsParentService: DepartmentsParentService,
-  // private readonly jobsService: JobsService,
-  // private readonly RolesService: RolesService,
-  // private readonly PrivilegesService: PrivilegesService,
-  // private readonly userPrivService: UserPrivilegeService,
-  // private readonly departmentsdetachedService: DepartmentsdetachedService,
-  {}
+  constructor(
+    /**
+     * sink peo
+     */
+    private readonly divisiService: DivisiService,
+    private readonly pegawaiService: PegawaiService,
+    private readonly atasanBawahanService: AtasanBawahanService,
 
-  // @Post()
-  // @HttpCode(HttpStatus.CREATED)
-  // async findAll() {
-  //   /**
-  //    * department master
-  //    */
-  //   await this.departmentsService.processDepartment();
-  //   await this.departmentsParentService.processDepartmentParent();
-  //   // await this.departmentsdetachedService.processDepartmentDetach();
+    /**
+     * sink mv
+     */
+    private readonly departmentsService: DepartmentsService,
+    private readonly usersService: UsersService,
+    private readonly userDepartmentService: UserDepartmentService,
 
-  //   /**
-  //    * job master
-  //    */
-  //   await this.jobsService.processJob();
+    /**
+     * default Privilege
+     */
+    private readonly ImsPrivilegeService: ImsPrivilegeService,
+  ) {}
 
-  //   /**
-  //    * role master
-  //    */
-  //   await this.RolesService.processRoles();
+  @Post('peo')
+  @HttpCode(HttpStatus.CREATED)
+  async sinkPeo() {
+    await this.divisiService.processDivisi();
+    await this.pegawaiService.processPegawai();
+    await this.atasanBawahanService.processAtasanBawahan();
 
-  //   /**
-  //    * user
-  //    */
-  //   await this.usersService.getAccounts();
-  //   await this.userPEOService.processAccountPeo();
-  //   await this.usersDepartmentService.processAccountdepartment();
-  //   await this.userJobService.processAccountjob();
-  //   await this.userPrivService.processAccountRole();
+    return;
+  }
 
-  //   /**
-  //    * privilege
-  //    */
-  //   await this.PrivilegesService.processPrivilege();
-  //   await this.PrivilegesService.deleteOldPrivilega();
+  @Post('mv')
+  @HttpCode(HttpStatus.CREATED)
+  async sinkMv() {
+    /**
+     * department master
+     */
+    await this.departmentsService.processDepartment();
+    await this.departmentsService.processedUpdateParent();
 
-  //   return 'done';
-  // }s
+    /**
+     * user
+     */
+    await this.usersService.processUser();
+    await this.userDepartmentService.processAccountdepartment();
+
+    /**
+     * privilege
+     */
+    await this.ImsPrivilegeService.processAccountRole();
+
+    return;
+  }
 }
