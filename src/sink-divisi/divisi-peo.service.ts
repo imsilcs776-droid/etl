@@ -12,10 +12,10 @@ export class DivisiPeoService {
     return await this.connection.query(`
     SELECT *
       FROM PSO_DIVISI
-      WHERE KD_WIL_ARSIP IN ('PLND', 'REG1', 'REG2', 'REG3', 'PLTP')
+      WHERE GRUP IN ('PLND', 'PLTP')
     ORDER BY
       KD_DIV_ARSIP,
-      KD_WIL_ARSIP ASC
+      GRUP ASC
     OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY
     `);
   }

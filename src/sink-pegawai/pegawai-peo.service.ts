@@ -12,13 +12,7 @@ export class PegawaiPeoService {
     return await this.connection.query(`      
     SELECT a.*
     FROM PSO_ROLE_PEGAWAI a
-    WHERE WERKS_NEW IN (
-      '1000', '1310', '1320', '1330', '1340',
-      '778', '878', '857', '617', '777', '797', '577',
-      '1221', '1461', '1241', '1201', '879', '1981',
-      '457', '637', '858', '877', '2002', '657', '779',
-      '859', '860', '2001'
-    )
+    WHERE a.GRUP IN ('PLTP', 'PLND')
     AND a.NAMA_JABATAN <> 'Alih Daya' 
     AND a.INSTANSI <> '9999'
     AND lower(a.NAMA) NOT LIKE '%dummy%'

@@ -69,7 +69,7 @@ export class DivisiPeoEntity {
   ttd: string;
 
   @Column({ nullable: true }) // Allow group to be nullable
-  group: string;
+  grup: string;
 
   @Column({ nullable: true }) // Allow pengolah to be nullable
   pengolah: string;

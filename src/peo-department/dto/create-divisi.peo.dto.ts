@@ -66,7 +66,7 @@ export class CreateDivisiPeoDto {
   ttd: string;
 
   @ApiProperty()
-  group: string;
+  grup: string;
 
   @ApiProperty()
   pengolah: string;

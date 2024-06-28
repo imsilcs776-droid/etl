@@ -117,12 +117,7 @@ export class DepartmentsService {
           i_endda: endda,
           i_version: version,
           i_parent: peoDiv.parent,
-          instansi:
-            peoDiv.instansi === 'PLTP'
-              ? 'SPTP'
-              : peoDiv.instansi === 'PLND'
-              ? 'PELINDO'
-              : peoDiv.instansi,
+          instansi: peoDiv.grup,
           code: peoDiv.kd_div_arsip,
           i_kd_wil: peoDiv.kd_wil_arsip,
         };
@@ -146,12 +141,7 @@ export class DepartmentsService {
         body.i_version = version;
         body.i_kd_wil = peoDiv.kd_wil_arsip;
         body.i_parent = peoDiv.parent;
-        body.instansi =
-          peoDiv.instansi === 'PLTP'
-            ? 'SPTP'
-            : peoDiv.instansi === 'PLND'
-            ? 'PELINDO'
-            : peoDiv.instansi;
+        body.instansi = peoDiv.grup;
         await this.repositoryDepartmentMv.insert(body);
       }
     }

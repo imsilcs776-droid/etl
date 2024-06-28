@@ -82,7 +82,7 @@ export class DivisiService {
         KELOMPOK,
         AKSES_SURAT,
         TTD,
-        GROUP,
+        GRUP,
         PENGOLAH,
         KD_SUBSI,
         INSTANSI,
@@ -118,7 +118,7 @@ export class DivisiService {
       dto.kelompok = KELOMPOK;
       dto.akses_surat = AKSES_SURAT;
       dto.ttd = TTD;
-      dto.group = GROUP;
+      dto.grup = GRUP;
       dto.pengolah = PENGOLAH;
       dto.kd_subsi = KD_SUBSI;
       dto.instansi = INSTANSI;
