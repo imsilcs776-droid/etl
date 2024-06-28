@@ -131,7 +131,7 @@ export class RolePeoEntity {
   cabang_name: string;
 
   @Column({ nullable: true })
-  group: string;
+  grup: string;
 
   @Column({ nullable: true })
   pengolah: string;

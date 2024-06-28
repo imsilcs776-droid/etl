@@ -10,11 +10,7 @@ export class PegawaiPeoService {
 
   async getPegawai({ page = 1, limit = 50, objid = '' }) {
     return await this.connection.query(`      
-    SELECT a.*,
-      CASE 
-        WHEN a.INSTANSI = 'PLND' THEN 'PELINDO'
-        ELSE 'SPTP'
-      END AS PEGAWAI
+    SELECT a.*
     FROM PSO_ROLE_PEGAWAI a
     WHERE WERKS_NEW IN (
       '1000', '1310', '1320', '1330', '1340',
@@ -24,8 +20,13 @@ export class PegawaiPeoService {
       '859', '860', '2001'
     )
     AND a.NAMA_JABATAN <> 'Alih Daya' 
+    AND a.INSTANSI <> '9999'
     AND lower(a.NAMA) NOT LIKE '%dummy%'
+    AND lower(a.NAMA) NOT LIKE '%user%'
+    AND lower(a.NAMA) NOT LIKE '%test%'
+    AND lower(a.NAMA) NOT LIKE '%sit -%'
     AND a.KD_DIV_ARSIP IS NOT NULL
+    AND a.JENIS IS NOT NULL
     ORDER BY
       a.NIPP ASC
     OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY

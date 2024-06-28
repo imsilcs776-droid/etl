@@ -128,7 +128,7 @@ export class EmployeeDTO {
   cabang_name: string;
 
   @ApiProperty()
-  group: string;
+  grup: string;
 
   @ApiProperty()
   pengolah: string;

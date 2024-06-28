@@ -105,7 +105,7 @@ export class PegawaiService {
         NIPP_BARU,
         TTD,
         CABANG_NAME,
-        GROUP,
+        GRUP,
         PENGOLAH,
         BISA_HAPUS,
         COMPANY_CODE,
@@ -130,7 +130,6 @@ export class PegawaiService {
         SUBPERSATEXT_STO,
         PAYSCALETYPE,
         PAYSCALETYPETEXT,
-        PEGAWAI,
       } = pegawais[count];
 
       const dto = new EmployeeDTO();
@@ -175,7 +174,7 @@ export class PegawaiService {
       dto.nipp_baru = NIPP_BARU;
       dto.ttd = TTD;
       dto.cabang_name = CABANG_NAME;
-      dto.group = GROUP;
+      dto.grup = GRUP;
       dto.pengolah = PENGOLAH;
       dto.bisa_hapus = BISA_HAPUS;
       dto.company_code = COMPANY_CODE;
@@ -200,7 +199,7 @@ export class PegawaiService {
       dto.subpersatext_sto = SUBPERSATEXT_STO;
       dto.payscaletype = PAYSCALETYPE;
       dto.payscaletypetext = PAYSCALETYPETEXT;
-      dto.pegawai = PEGAWAI;
+      dto.pegawai = GRUP;
 
       await this.create(dto);
       count++;

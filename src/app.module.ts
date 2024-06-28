@@ -50,7 +50,8 @@ dotenv.config();
     SinkDivisiModule,
     SinkPegawaiModule,
   ],
-  controllers: [AppController],
+  controllers: [],
+  // controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
