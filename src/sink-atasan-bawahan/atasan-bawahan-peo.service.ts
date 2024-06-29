@@ -12,9 +12,7 @@ export class AtasanBawahanPeoService {
     return await this.connection.query(`
       SELECT ab.*,
           CASE 
-            WHEN ab.INSTANSI = 'PLND' THEN 'PELINDO'
-            ELSE 'SPTP'
-          END AS PEGAWAI
+            WHEN ab.INSTANSI AS PEGAWAI
         FROM ATASAN_BAWAHAN ab 
         WHERE NIPP IN (
           SELECT DISTINCT NIPP
