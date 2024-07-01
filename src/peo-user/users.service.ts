@@ -93,7 +93,7 @@ export class UsersService {
       body.last_name =
         nameLegth > 1 ? full_names[nameLegth - 1] : full_names[0];
       body.nip = nipp;
-      body.i_com_code = kd_cabang_sap;
+      body.i_com_code = werks_new;
       body.pegawai = pegawai;
       //   body.i_department_code = SUBDI;
       body.password = DEF_PW || 'L4n1usLab!';

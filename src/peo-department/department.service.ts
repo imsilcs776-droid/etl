@@ -111,7 +111,7 @@ export class DepartmentsService {
           name: peoDiv.nama_dir,
           updated_at: now,
           source: 'PEO',
-          // i_com_code: peoDiv.kd_wil_arsip,
+          i_com_code: peoDiv.werks_new,
           i_level_organisasi: Number(peoDiv.jenis || null),
           i_updated_at: now,
           i_endda: endda,
@@ -120,6 +120,7 @@ export class DepartmentsService {
           instansi: peoDiv.grup,
           code: peoDiv.kd_div_arsip,
           i_kd_wil: peoDiv.kd_wil_arsip,
+          i_nama_cabang: peoDiv.nama_cabang,
         };
 
         // console.log(body);
@@ -134,7 +135,7 @@ export class DepartmentsService {
         body.name = peoDiv.nama_dir;
         body.updated_at = now;
         body.source = 'PEO';
-        // body.i_com_code = peoDiv.kd_wil_arsip;
+        body.i_com_code = peoDiv.werks_new;
         body.i_level_organisasi = Number(peoDiv.jenis || null);
         body.i_updated_at = now;
         body.i_endda = endda;
@@ -142,6 +143,8 @@ export class DepartmentsService {
         body.i_kd_wil = peoDiv.kd_wil_arsip;
         body.i_parent = peoDiv.parent;
         body.instansi = peoDiv.grup;
+        body.is_active = true;
+        body.i_nama_cabang = peoDiv.nama_cabang;
         await this.repositoryDepartmentMv.insert(body);
       }
     }

@@ -96,6 +96,7 @@ export class DivisiService {
         CREATED_NAME,
         UPDATED_BY,
         UPDATED_NAME,
+        WERKS_NEW,
       } = divisions[count];
 
       const dto = new CreateDivisiPeoDto();
@@ -133,6 +134,7 @@ export class DivisiService {
       dto.updated_by = UPDATED_BY;
       dto.updated_name = UPDATED_NAME;
       dto.div_wil = `${KD_DIV_ARSIP};${KD_WIL_ARSIP}`;
+      dto.werks_new = WERKS_NEW;
 
       await this.create(dto);
       count++;

@@ -112,4 +112,7 @@ export class DivisiPeoEntity {
 
   @Column({ nullable: true }) // Allow updated_name to be nullable
   div_wil: string;
+
+  @Column({ nullable: true }) // Allow updated_name to be nullable
+  werks_new: string;
 }

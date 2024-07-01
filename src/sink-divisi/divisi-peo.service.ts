@@ -10,15 +10,61 @@ export class DivisiPeoService {
 
   async getDivisi({ page = 1, limit = 50, objid = '' }) {
     return await this.connection.query(`
-    SELECT *
-      FROM PSO_DIVISI
-      WHERE GRUP IN ('PLND', 'PLTP')
-    ORDER BY
-      KD_DIV_ARSIP,
-      GRUP ASC
+    SELECT c.*, a.WERKS_NEW
+    FROM PSO_DIVISI c
+    JOIN (
+      SELECT DISTINCT KD_DIV_ARSIP, KD_WIL_ARSIP, WERKS_NEW
+      FROM PSO_ROLE_PEGAWAI
+      WHERE GRUP IN ('PLTP', 'PLND')
+        AND NAMA_JABATAN <> 'Alih Daya'
+        AND INSTANSI <> '9999'
+        AND COMPANY_CODE <> '9999'
+        AND WERKS_NEW IS NOT NULL
+        AND lower(NAMA) NOT LIKE '%dummy%'
+        AND lower(NAMA) NOT LIKE '%user%'
+        AND lower(NAMA) NOT LIKE '%test%'
+        AND lower(NAMA) NOT LIKE '%sit -%'
+        AND KD_DIV_ARSIP IS NOT NULL
+        AND JENIS IS NOT NULL
+    ) a ON c.KD_DIV_ARSIP = a.KD_DIV_ARSIP 
+      AND c.KD_WIL_ARSIP = a.KD_WIL_ARSIP
+    WHERE c.KD_DIV_ARSIP IS NOT NULL
+    ORDER BY c.KD_DIV_ARSIP, c.GRUP ASC    
     OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY
     `);
   }
+
+  // async getDivisi({ page = 1, limit = 50, objid = '' }) {
+  //   return await this.connection.query(`
+  //   SELECT c.*, a.WERKS_NEW
+  //   FROM PSO_DIVISI c
+  //   JOIN (
+  //     SELECT DISTINCT KD_DIV_ARSIP, KD_WIL_ARSIP, WERKS_NEW
+  //     FROM PSO_ROLE_PEGAWAI x
+  //     WHERE x.GRUP IN ('PLTP', 'PLND')
+  //   ) a ON c.KD_DIV_ARSIP = a.KD_DIV_ARSIP AND a.KD_WIL_ARSIP = c.KD_WIL_ARSIP
+  //   WHERE
+  //     c.KD_DIV_ARSIP IN (
+  //       SELECT DISTINCT a.KD_DIV_ARSIP
+  //       FROM PSO_ROLE_PEGAWAI a
+  //       WHERE a.GRUP IN ('PLTP', 'PLND')
+  //         AND a.NAMA_JABATAN <> 'Alih Daya'
+  //         AND a.INSTANSI <> '9999'
+  //         AND a.COMPANY_CODE <> '9999'
+  //         AND a.WERKS_NEW IS NOT NULL
+  //         AND lower(a.NAMA) NOT LIKE '%dummy%'
+  //         AND lower(a.NAMA) NOT LIKE '%user%'
+  //         AND lower(a.NAMA) NOT LIKE '%test%'
+  //         AND lower(a.NAMA) NOT LIKE '%sit -%'
+  //         AND a.KD_DIV_ARSIP IS NOT NULL
+  //         AND a.JENIS IS NOT NULL
+  //     )
+  //   ORDER BY
+  //     c.KD_DIV_ARSIP,
+  //     c.GRUP ASC
+  //   OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY
+  //   `);
+  // }
 
   // async getDivisi({ page = 1, limit = 50, objid = '' }) {
   //   const query = this.connection

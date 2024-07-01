@@ -15,6 +15,8 @@ export class PegawaiPeoService {
     WHERE a.GRUP IN ('PLTP', 'PLND')
     AND a.NAMA_JABATAN <> 'Alih Daya' 
     AND a.INSTANSI <> '9999'
+    AND a.COMPANY_CODE <> '9999'
+    AND a.WERKS_NEW IS NOT NULL
     AND lower(a.NAMA) NOT LIKE '%dummy%'
     AND lower(a.NAMA) NOT LIKE '%user%'
     AND lower(a.NAMA) NOT LIKE '%test%'

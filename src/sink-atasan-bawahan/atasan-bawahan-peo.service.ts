@@ -10,20 +10,22 @@ export class AtasanBawahanPeoService {
 
   async getAtasanBawahan({ page = 1, limit = 50, objid = '' }) {
     return await this.connection.query(`
-      SELECT ab.*,
-          CASE 
-            WHEN ab.INSTANSI AS PEGAWAI
+      SELECT ab.*,ab.INSTANSI AS PEGAWAI
         FROM ATASAN_BAWAHAN ab 
         WHERE NIPP IN (
           SELECT DISTINCT NIPP
           FROM PSO_ROLE_PEGAWAI a
-          WHERE WERKS_NEW IN (
-            '1000','1310','1320','1330','1340',
-            '778', '878', '857', '617', '777', '797', '577',
-            '1221', '1461', '1241', '1201', '879', '1981',
-            '457', '637', '858', '877', '2002', '657', '779',
-            '859', '860', '2001'
-          )
+          WHERE a.GRUP IN ('PLTP', 'PLND')
+            AND a.NAMA_JABATAN <> 'Alih Daya' 
+            AND a.INSTANSI <> '9999'
+            AND a.COMPANY_CODE <> '9999'
+            AND a.WERKS_NEW IS NOT NULL
+            AND lower(a.NAMA) NOT LIKE '%dummy%'
+            AND lower(a.NAMA) NOT LIKE '%user%'
+            AND lower(a.NAMA) NOT LIKE '%test%'
+            AND lower(a.NAMA) NOT LIKE '%sit -%'
+            AND a.KD_DIV_ARSIP IS NOT NULL
+            AND a.JENIS IS NOT NULL
         )
         AND ab.NIPP_BARU IS NOT NULL
         AND ab.NIPP_ATS_BARU IS NOT NULL

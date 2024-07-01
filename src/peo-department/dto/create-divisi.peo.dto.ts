@@ -109,4 +109,7 @@ export class CreateDivisiPeoDto {
 
   @ApiProperty()
   div_wil: string;
+
+  @ApiProperty()
+  werks_new: string;
 }
