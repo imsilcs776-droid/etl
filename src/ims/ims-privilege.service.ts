@@ -6,15 +6,15 @@ import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { Privilege } from 'src/privilage/entities/privilage.entity';
 import { CreatePrivilegeDto } from 'src/privilage/dto/privilage.dto';
 import { Role } from 'src/role/entities/role.entity';
-import { User } from 'src/users/entities/user.entity';
+import { UserMvEntity } from 'src/peo-user/entities/user.mv.entity';
 
 @Injectable()
 export class ImsPrivilegeService {
   constructor(
     @InjectRepository(Privilege)
     private prefilegerepository: Repository<Privilege>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserMvEntity)
+    private userRepository: Repository<UserMvEntity>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
     private syncLogService: SyncLogsService,

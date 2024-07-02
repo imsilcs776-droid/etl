@@ -210,4 +210,7 @@ export class RolePeoEntity {
 
   @Column({ nullable: true })
   pegawai: string;
+
+  @Column({ nullable: true })
+  updated_at: Date;
 }

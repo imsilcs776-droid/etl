@@ -112,4 +112,7 @@ export class CreateDivisiPeoDto {
 
   @ApiProperty()
   werks_new: string;
+
+  @ApiProperty()
+  updated_at: Date;
 }

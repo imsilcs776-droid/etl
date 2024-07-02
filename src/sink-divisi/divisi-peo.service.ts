@@ -25,7 +25,6 @@ export class DivisiPeoService {
         AND lower(NAMA) NOT LIKE '%test%'
         AND lower(NAMA) NOT LIKE '%sit -%'
         AND KD_DIV_ARSIP IS NOT NULL
-        AND JENIS IS NOT NULL
     ) a ON c.KD_DIV_ARSIP = a.KD_DIV_ARSIP 
       AND c.KD_WIL_ARSIP = a.KD_WIL_ARSIP
     WHERE c.KD_DIV_ARSIP IS NOT NULL

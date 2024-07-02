@@ -101,4 +101,7 @@ export class CreateAtasanBawahanPeoDto {
 
   @ApiProperty()
   nipp_baru_bwh_ats: string;
+
+  @ApiProperty()
+  updated_at: Date;
 }

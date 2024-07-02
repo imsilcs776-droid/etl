@@ -6,17 +6,17 @@ import { Privilege } from './entities/privilage.entity';
 import { delay } from 'src/utils/delay';
 import { CreatePrivilegeDto } from './dto/privilage.dto';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
-import { User } from 'src/users/entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { PrivilegesPortalsiService } from './privilage-peo.service';
+import { UserMvEntity } from 'src/peo-user/entities/user.mv.entity';
 
 @Injectable()
 export class PrivilegesService {
   constructor(
     @InjectRepository(Privilege)
     private privilegeRepository: Repository<Privilege>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserMvEntity)
+    private userRepository: Repository<UserMvEntity>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
     private syncLogService: SyncLogsService,

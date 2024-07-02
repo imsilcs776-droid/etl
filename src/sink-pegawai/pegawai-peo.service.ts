@@ -22,7 +22,6 @@ export class PegawaiPeoService {
     AND lower(a.NAMA) NOT LIKE '%test%'
     AND lower(a.NAMA) NOT LIKE '%sit -%'
     AND a.KD_DIV_ARSIP IS NOT NULL
-    AND a.JENIS IS NOT NULL
     ORDER BY
       a.NIPP ASC
     OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY

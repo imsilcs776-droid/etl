@@ -103,4 +103,7 @@ export class AtasanBawahanPeoEntity {
 
   @Column({ nullable: true })
   nipp_baru_bwh_ats: string;
+
+  @Column({ nullable: true })
+  updated_at: Date;
 }

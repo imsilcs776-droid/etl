@@ -8,6 +8,7 @@ import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { RolePeoEntity } from 'src/peo-role/entity/role.peo.entity';
 import { EmployeeDTO } from 'src/peo-role/dto/create-role.peo.dto';
 import { PegawaiPeoService } from './pegawai-peo.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class PegawaiService {
@@ -19,6 +20,7 @@ export class PegawaiService {
   ) {}
 
   public async processPegawai() {
+    const now = moment().toDate();
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -40,7 +42,7 @@ export class PegawaiService {
     const processedPegawai = await this.repository.count({});
     const syncData = await this.syncLogService.addLog({
       code: await this.repository.metadata.tableName.toString(),
-      updated_at: new Date(),
+      updated_at: now,
     });
     return { syncData, total: processedPegawai };
   }
@@ -49,17 +51,19 @@ export class PegawaiService {
     try {
       return await this.repository.upsert(createPegawaiDto, ['nipp']);
     } catch (e) {
+      const now = moment().toDate();
       const { detail, code } = e || {};
       return await this.syncLogService.addFailedLog({
         entity: await this.repository.metadata.tableName.toString(),
         reason: detail || code,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: now,
+        updated_at: now,
       });
     }
   }
 
   private async bulkInsert(pegawais = []) {
+    const now = moment().toDate();
     let count = 0;
 
     while (count < pegawais.length) {
@@ -200,6 +204,7 @@ export class PegawaiService {
       dto.payscaletype = PAYSCALETYPE;
       dto.payscaletypetext = PAYSCALETYPETEXT;
       dto.pegawai = GRUP;
+      dto.updated_at = now;
 
       await this.create(dto);
       count++;

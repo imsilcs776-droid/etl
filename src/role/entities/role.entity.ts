@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+import { UserMvEntity } from 'src/peo-user/entities/user.mv.entity';
 import {
   Column,
   CreateDateColumn,
@@ -48,6 +48,6 @@ export class Role {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToMany(() => User, user => user.roles)
-  users: User[];
+  // @ManyToMany(() => User, (user) => user.roles)
+  // users: UserMvEntity[];
 }

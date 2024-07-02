@@ -7,6 +7,7 @@ import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { DivisiPeoService } from './divisi-peo.service';
 import { DivisiPeoEntity } from 'src/peo-department/entities/divisi.peo.entity';
 import { CreateDivisiPeoDto } from 'src/peo-department/dto/create-divisi.peo.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class DivisiService {
@@ -18,6 +19,7 @@ export class DivisiService {
   ) {}
 
   public async processDivisi() {
+    const now = moment().utcOffset('+0700').toDate();
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -39,7 +41,7 @@ export class DivisiService {
     const processedDivisi = await this.repository.count({});
     const syncData = await this.syncLogService.addLog({
       code: await this.repository.metadata.tableName.toString(),
-      updated_at: new Date(),
+      updated_at: now,
     });
     return { syncData, total: processedDivisi };
   }
@@ -48,17 +50,19 @@ export class DivisiService {
     try {
       return await this.repository.upsert(createDivisiDto, ['div_wil']);
     } catch (e) {
+      const now = moment().toDate();
       const { detail, code } = e || {};
       return await this.syncLogService.addFailedLog({
         entity: await this.repository.metadata.tableName.toString(),
         reason: detail || code,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: now,
+        updated_at: now,
       });
     }
   }
 
   private async bulkInsert(divisions = []) {
+    const now = moment().toDate();
     let count = 0;
 
     while (count < divisions.length) {
@@ -135,6 +139,7 @@ export class DivisiService {
       dto.updated_name = UPDATED_NAME;
       dto.div_wil = `${KD_DIV_ARSIP};${KD_WIL_ARSIP}`;
       dto.werks_new = WERKS_NEW;
+      dto.updated_at = now;
 
       await this.create(dto);
       count++;

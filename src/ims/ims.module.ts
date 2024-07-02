@@ -6,12 +6,12 @@ import { Privilege } from 'src/privilage/entities/privilage.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { ImsPrivilegeService } from './ims-privilege.service';
 import { ImsController } from './ims.controller';
-import { User } from 'src/users/entities/user.entity';
+import { UserMvEntity } from 'src/peo-user/entities/user.mv.entity';
 
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([User, Privilege, Role]),
+    TypeOrmModule.forFeature([UserMvEntity, Privilege, Role]),
     SyncLogsModule,
   ],
   controllers: [ImsController],

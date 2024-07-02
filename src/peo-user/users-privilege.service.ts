@@ -7,6 +7,7 @@ import { CreatePrivilegeDto } from 'src/privilage/dto/privilage.dto';
 import { PrivilegeMvEntity } from './entities/privilage.mv.entity';
 import { UserMvEntity } from './entities/user.mv.entity';
 import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
+import * as moment from 'moment';
 
 @Injectable()
 export class UserPrivilegeService {
@@ -21,6 +22,7 @@ export class UserPrivilegeService {
   ) {}
 
   public async processAccountRole() {
+    const now = moment().toDate();
     const defPrivCount = await this.prefilegerepository.count({
       where: { source: 'MES-IMS' },
     });
@@ -39,8 +41,8 @@ export class UserPrivilegeService {
         name: 'User',
         description: 'User',
         is_active: true,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: now,
+        updated_at: now,
         source: 'MES-IMS',
       });
 
@@ -69,12 +71,13 @@ export class UserPrivilegeService {
     });
     // const syncData = await this.syncLogService.addLog({
     //   code: await this.prefilegerepository.metadata.tableName.toString(),
-    //   updated_at: new Date(),
+    //   updated_at: now,
     // });
     return { total: processedAccount };
   }
 
   private async updateUser({ page, limit: take, role }) {
+    const now = moment().toDate();
     const skip = (page - 1) * take;
     const account = await this.userRepository.find({
       take,
@@ -90,8 +93,8 @@ export class UserPrivilegeService {
         user: acc.id,
         role: role.id,
         product: 1,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: now,
+        updated_at: now,
         source: 'MES-IMS',
         i_nip: acc.nip,
         i_id: null,

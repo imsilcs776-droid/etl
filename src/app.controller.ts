@@ -1,12 +1,12 @@
 import { Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UserDepartmentService } from './users/users-department.service';
 import { DivisiService } from './sink-divisi/divisi.service';
 import { PegawaiService } from './sink-pegawai/pegawai.service';
 import { AtasanBawahanService } from './sink-atasan-bawahan/atasan-bawahan.service';
 import { DepartmentsService } from './peo-department/department.service';
 import { UsersService } from './peo-user/users.service';
 import { ImsPrivilegeService } from './ims/ims-privilege.service';
+import { UserDepartmentService } from './peo-user/users-department.service';
 
 @ApiTags('Sink Sequence')
 @Controller({
@@ -57,7 +57,7 @@ export class AppController {
      * user
      */
     await this.usersService.processUser();
-    await this.userDepartmentService.processAccountdepartment();
+    await this.userDepartmentService.processUserDepartment({});
 
     /**
      * privilege

@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { Department } from 'src/department/entities/department.entity';
-import { Job } from 'src/job/entities/job.entity';
 import { DepartmentMvEntity } from 'src/peo-department/entities/department.mv.entity';
 import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
 import { RolePeoEntity } from 'src/peo-role/entity/role.peo.entity';
@@ -13,7 +11,6 @@ import { RoleSystem } from 'src/role/entities/role-system.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { SyncFailedLog } from 'src/sync-log/entities/sync-failed-log.entity';
 import { SyncLog } from 'src/sync-log/entities/sync-log.entity';
-import { User } from 'src/users/entities/user.entity';
 import { DivisiPeoEntity } from '../peo-department/entities/divisi.peo.entity';
 import { DivisiMvEntity } from '../peo-upload/entities/divisi.mv.entity';
 import { AtasanBawahanMvEntity } from '../peo-upload/entities/atasan-bawahan.mv.entity';
@@ -39,9 +36,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       logging: this.configService.get('app.nodeEnv') !== 'production',
       entities: [
         Role,
-        User,
-        Department,
-        Job,
         SyncFailedLog,
         SyncLog,
         Privilege,

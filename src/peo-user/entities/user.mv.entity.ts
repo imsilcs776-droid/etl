@@ -16,8 +16,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Department } from 'src/department/entities/department.entity';
-import { Job } from 'src/job/entities/job.entity';
 import { Role } from 'src/role/entities/role.entity';
 
 @Entity('directus_users', {
@@ -106,6 +104,12 @@ export class UserMvEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Column({ nullable: true })
+  is_active: boolean;
+
+  @Column({ nullable: true })
+  i_kd_div: string | null;
+
   @BeforeInsert()
   beforeInsertActions() {
     this.id = uuidv4();
@@ -127,14 +131,6 @@ export class UserMvEntity {
       this.password = await argon.hash(this.password);
     }
   }
-
-  @ManyToOne(() => Department, { nullable: true }) // Many users belong to one department
-  @JoinColumn({ name: 'department' }) // Name of the column that holds the department ID in the User table
-  department_details: Department;
-
-  @ManyToOne(() => Job, { nullable: true }) // Many users belong to one department
-  @JoinColumn({ name: 'job' }) // Name of the column that holds the department ID in the User table
-  job_details: Job;
 
   @ManyToMany(() => Role, { cascade: true })
   @JoinTable({

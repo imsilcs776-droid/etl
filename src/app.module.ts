@@ -10,8 +10,6 @@ import {
   // pelindoPortalsi,
 } from './configs/typeorm-oracle-config';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
-import { DepartmentsModule } from './department/department.module';
-import { JobsModule } from './job/job.module';
 // import { PrivilegesModule } from './privilage/privilage.module';
 import { RolesModule } from './role/role.module';
 import { ImsModule } from './ims/ims.module';

@@ -25,7 +25,6 @@ export class AtasanBawahanPeoService {
             AND lower(a.NAMA) NOT LIKE '%test%'
             AND lower(a.NAMA) NOT LIKE '%sit -%'
             AND a.KD_DIV_ARSIP IS NOT NULL
-            AND a.JENIS IS NOT NULL
         )
         AND ab.NIPP_BARU IS NOT NULL
         AND ab.NIPP_ATS_BARU IS NOT NULL

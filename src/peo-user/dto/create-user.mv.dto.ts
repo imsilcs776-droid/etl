@@ -66,4 +66,10 @@ export class CreateAccountDto {
 
   @ApiProperty()
   i_kd_wil: string | null;
+
+  @ApiProperty()
+  is_active: boolean;
+
+  @ApiProperty()
+  i_kd_div: string | null;
 }

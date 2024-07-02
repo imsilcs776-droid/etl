@@ -207,4 +207,7 @@ export class EmployeeDTO {
 
   @ApiProperty()
   pegawai: string;
+
+  @ApiProperty()
+  updated_at: Date;
 }

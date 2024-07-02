@@ -26,7 +26,7 @@ export class UserDepartmentService {
 
     while (!stop) {
       await delay(500);
-      const { data } = await this.getPeoPegawai({
+      const { data } = await this.getUserMv({
         nippNew,
         page,
         limit,
@@ -45,26 +45,30 @@ export class UserDepartmentService {
     return { total: processedUser };
   }
 
-  private async bulkInsert(users: RolePeoEntity[] = []) {
+  private async bulkInsert(users: UserMvEntity[] = []) {
     let count = 0;
 
     while (count < users.length) {
-      const { nipp_baru, kd_div_arsip, kd_wil_arsip } = users[count];
+      const { nip_new, i_kd_div, i_kd_wil } = users[count];
+
+      console.log('dept', { nip_new, i_kd_div, i_kd_wil });
 
       const dept = await this.repositoryDepartmentMv.findOne({
         select: ['id'],
         where: {
-          code: kd_div_arsip,
-          i_kd_wil: kd_wil_arsip,
+          code: i_kd_div,
+          i_kd_wil: i_kd_wil,
         },
         order: {
           i_endda: 'DESC',
         },
       });
 
-      if (dept) {
+      console.log('dept', dept);
+
+      if (dept?.id) {
         await this.repositoryUserMv.update(
-          { nip_new: nipp_baru },
+          { nip_new: nip_new },
           { department: dept.id },
         );
       }
@@ -82,31 +86,33 @@ export class UserDepartmentService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
-  private async getPeoPegawai({ page, limit, nippNew = '' }): Promise<any> {
+  private async getUserMv({ page, limit, nippNew = '' }): Promise<any> {
     if (nippNew) {
-      const [data, total] = await this.repositoryRolePegawaiPeo.findAndCount({
+      const [data, total] = await this.repositoryUserMv.findAndCount({
         skip: (page - 1) * limit,
         take: limit,
         where: {
-          nipp: Not(IsNull()),
-          nipp_baru: nippNew,
+          nip: Not(IsNull()),
+          nip_new: nippNew,
+          is_active: true,
         },
         order: {
-          nipp_baru: 'ASC',
+          nip_new: 'ASC',
         },
       });
       return { data, total };
     }
 
-    const [data, total] = await this.repositoryRolePegawaiPeo.findAndCount({
+    const [data, total] = await this.repositoryUserMv.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       where: {
-        nipp: Not(IsNull()),
-        nipp_baru: Not(IsNull()),
+        nip: Not(IsNull()),
+        nip_new: Not(IsNull()),
+        is_active: true,
       },
       order: {
-        nipp_baru: 'ASC',
+        nip_new: 'ASC',
       },
     });
     return { data, total };

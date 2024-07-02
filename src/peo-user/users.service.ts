@@ -9,6 +9,7 @@ import { DEF_PW } from 'src/configs/datacore.config';
 import { RoleSystem } from 'src/role/entities/role-system.entity';
 import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class UsersService {
@@ -19,17 +20,12 @@ export class UsersService {
     private repositoryUserMv: Repository<UserMvEntity>,
     @InjectRepository(RolePeoEntity)
     private repositoryRolePegawaiPeo: Repository<RolePeoEntity>,
+    private syncLogService: SyncLogsService,
     @InjectRepository(RoleSystem)
     private roleSystemRepository: Repository<RoleSystem>,
-    @InjectRepository(RoleMvEntity)
-    private roleMvRepository: Repository<RoleMvEntity>,
-    private syncLogService: SyncLogsService,
   ) {}
 
   public async processUser() {
-    this.role = await this.roleMvRepository.findOne({
-      where: { code: 'USER' },
-    });
     /**
      * get system role
      */
@@ -44,7 +40,7 @@ export class UsersService {
 
     while (!stop) {
       await delay(500);
-      const { data } = await this.getPeoPegawai({
+      const data = await this.getPeoPegawai({
         page,
         limit,
       });
@@ -56,13 +52,20 @@ export class UsersService {
       page++;
     }
 
+    const totalDeleted = await this.setDeletedUsers();
+
     const processedUser = await this.repositoryUserMv.count({
       where: { source: 'PEO' },
     });
-    return { total: processedUser };
+
+    const totalInactive = await this.repositoryUserMv.count({
+      where: { is_active: false },
+    });
+    return { total: processedUser, totalInactive, totalDeleted };
   }
 
   private async bulkInsert(users: RolePeoEntity[] = []) {
+    const now = moment().toDate();
     let count = 0;
 
     while (count < users.length) {
@@ -79,6 +82,7 @@ export class UsersService {
         nama_cabang,
         kd_sub,
         kd_wil_arsip,
+        kd_div_arsip,
       } = users[count];
 
       const full_names: string[] = String(nama).split(' ');
@@ -97,7 +101,7 @@ export class UsersService {
       body.pegawai = pegawai;
       //   body.i_department_code = SUBDI;
       body.password = DEF_PW || 'L4n1usLab!';
-      body.updated_at = new Date();
+      body.updated_at = now;
       //   body.i_job_code = SHORT;
       //   body.i_job_name = String(PLANS).split('#')[0];
       body.i_werk = werks_new;
@@ -110,6 +114,8 @@ export class UsersService {
       body.instansi = pegawai;
       body.i_kd_sub = kd_sub;
       body.i_kd_wil = kd_wil_arsip;
+      body.is_active = true;
+      body.i_kd_div = kd_div_arsip;
       await this.create(body);
       count++;
     }
@@ -125,34 +131,48 @@ export class UsersService {
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
   private async getPeoPegawai({ page, limit }): Promise<any> {
-    const [data, total] = await this.repositoryRolePegawaiPeo.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
-      where: {
-        nipp: Not(IsNull()),
-        nipp_baru: Not(IsNull()),
-        nama: And(
-          Not(ILike('%test%')),
-          Not(ILike('%pekerja%')),
-          Not(ILike('%travel%')),
-          Not(ILike('sit %')),
-          Not(ILike('user%')),
-          Not(ILike('dummy%')),
-          Not(ILike('bios%')),
-        ),
-        email: And(
-          Not(IsNull()),
-          Not(ILike('ABC%')),
-          Not(ILike('ALIFPRASETYOAJI97%')),
-        ),
-        kd_div_arsip: Not(IsNull()),
-        kd_wil_arsip: Not(IsNull()),
-      },
-      order: {
-        nipp: 'ASC',
-      },
-    });
-    return { data, total };
+    return await this.repositoryRolePegawaiPeo
+      .createQueryBuilder()
+      .where(
+        `updated_at > COALESCE((SELECT MAX(updated_at) FROM directus_users), '1970-01-01')`,
+      )
+      .andWhere(`nipp IS NOT NULL`)
+      .andWhere(`kd_div_arsip IS NOT NULL`)
+      .andWhere(`kd_wil_arsip IS NOT NULL`)
+      .andWhere(`email IS NOT NULL`)
+      .andWhere('updated_at IS NOT NULL')
+      .orderBy('nipp', 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+  }
+
+  /**
+   * set deleted departments
+   * ketikan ada mv_department yang updated_at nya kurang dari updated_at terakhir di peo_divisi
+   * @returns true
+   */
+  private async setDeletedUsers(): Promise<number> {
+    try {
+      const result = await this.repositoryUserMv
+        .createQueryBuilder()
+        .update('directus_users')
+        .set({ is_active: false })
+        .where(
+          'directus_users.updated_at < (SELECT MAX(updated_at) FROM peo_role)',
+        )
+        .orWhere('directus_users.updated_at IS NULL')
+        .execute();
+
+      const affectedRows = result.affected || 0; // Get the count of affected rows
+
+      console.log(`Number of rows updated to is_active false: ${affectedRows}`);
+
+      return affectedRows;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   private async create(createAccountDto: CreateAccountDto) {
@@ -176,11 +196,12 @@ export class UsersService {
       // return await this.repositoryUserMv.upsert(entity, ['nip']);
     } catch (e) {
       const { detail, code } = e || {};
+      const now = moment().toDate();
       return await this.syncLogService.addFailedLog({
         entity: await this.repositoryUserMv.metadata.tableName.toString(),
         reason: detail || code,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: now,
+        updated_at: now,
       });
     }
   }

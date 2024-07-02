@@ -8,6 +8,7 @@ import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { AtasanBawahanPeoService } from './atasan-bawahan-peo.service';
 import { AtasanBawahanPeoEntity } from 'src/peo-user/entities/atasan-bawahan.peo.entity';
 import { CreateAtasanBawahanPeoDto } from 'src/peo-user/dto/create-atasan-bawahan.peo.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class AtasanBawahanService {
@@ -19,6 +20,7 @@ export class AtasanBawahanService {
   ) {}
 
   public async processAtasanBawahan() {
+    const now = moment().toDate();
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -40,7 +42,7 @@ export class AtasanBawahanService {
     const processedAtasanBawahan = await this.repository.count({});
     const syncData = await this.syncLogService.addLog({
       code: await this.repository.metadata.tableName.toString(),
-      updated_at: new Date(),
+      updated_at: now,
     });
     return { syncData, total: processedAtasanBawahan };
   }
@@ -51,17 +53,19 @@ export class AtasanBawahanService {
         'nipp_baru_bwh_ats',
       ]);
     } catch (e) {
+      const now = moment().toDate();
       const { detail, code } = e || {};
       return await this.syncLogService.addFailedLog({
         entity: await this.repository.metadata.tableName.toString(),
         reason: detail || code,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: now,
+        updated_at: now,
       });
     }
   }
 
   private async bulkInsert(atasanBawahans = []) {
+    const now = moment().toDate();
     let count = 0;
 
     while (count < atasanBawahans.length) {
@@ -132,6 +136,8 @@ export class AtasanBawahanService {
       dto.instansi_ats = INSTANSI_ATS;
       dto.pegawai = PEGAWAI;
       dto.nipp_baru_bwh_ats = `${NIPP_BARU};${NIPP_ATS_BARU}`;
+      dto.updated_at = now;
+
       await this.create(dto);
       count++;
     }

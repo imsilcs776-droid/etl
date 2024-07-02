@@ -1,4 +1,3 @@
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -48,6 +47,6 @@ export class RoleMvEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToMany(() => User, (user) => user.roles)
-  users: User[];
+  // @ManyToMany(() => User, (user) => user.roles)
+  // users: User[];
 }

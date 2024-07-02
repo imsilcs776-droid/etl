@@ -38,12 +38,16 @@ export class DepartmentsService {
       page++;
     }
 
-    // await this.processedUpdateParent();
+    const totalDeleted = await this.setDeletedDepartments();
 
     const processedDepartment = await this.repositoryDepartmentMv.count({
       where: { source: 'PEO', is_active: true },
     });
-    return { total: processedDepartment };
+
+    const totalInactive = await this.repositoryDepartmentMv.count({
+      where: { is_active: false },
+    });
+    return { totalActive: processedDepartment, totalInactive, totalDeleted };
   }
 
   public async processedUpdateParent() {
@@ -143,7 +147,6 @@ export class DepartmentsService {
         body.i_kd_wil = peoDiv.kd_wil_arsip;
         body.i_parent = peoDiv.parent;
         body.instansi = peoDiv.grup;
-        body.is_active = true;
         body.i_nama_cabang = peoDiv.nama_cabang;
         await this.repositoryDepartmentMv.insert(body);
       }
@@ -155,11 +158,18 @@ export class DepartmentsService {
   private async getDivisions({ page, limit }): Promise<DivisiPeoEntity[]> {
     try {
       const offset = limit * (page - 1);
-      return await this.repositoryDivisiPeo.find({
-        skip: offset,
-        take: limit,
-        order: { id: 'ASC' },
-      });
+      const departments = await this.repositoryDivisiPeo
+        .createQueryBuilder('peo_divisi')
+        .where(
+          'peo_divisi.updated_at > (SELECT MAX(updated_at) FROM mt_departments)',
+        )
+        .andWhere('peo_divisi.updated_at IS NOT NULL')
+        .orderBy('peo_divisi.id', 'ASC')
+        .skip(offset)
+        .take(limit)
+        .getMany();
+
+      return departments;
     } catch (err) {
       console.log(err);
     }
@@ -172,9 +182,40 @@ export class DepartmentsService {
         skip: offset,
         take: limit,
         order: { id: 'ASC' },
+        where: {
+          is_active: true,
+        },
       });
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  /**
+   * set deleted departments
+   * ketikan ada mv_department yang updated_at nya kurang dari updated_at terakhir di peo_divisi
+   * @returns true
+   */
+  private async setDeletedDepartments(): Promise<number> {
+    try {
+      const result = await this.repositoryDepartmentMv
+        .createQueryBuilder()
+        .update('mt_departments')
+        .set({ is_active: false })
+        .where(
+          'mt_departments.updated_at < (SELECT MAX(updated_at) FROM peo_divisi)',
+        )
+        .orWhere('mt_departments.updated_at IS NULL')
+        .execute();
+
+      const affectedRows = result.affected || 0; // Get the count of affected rows
+
+      console.log(`Number of rows updated to is_active false: ${affectedRows}`);
+
+      return affectedRows;
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
   }
 }
