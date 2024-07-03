@@ -6,6 +6,7 @@ import { DepartmentMvEntity } from './entities/department.mv.entity';
 import { DivisiPeoEntity } from './entities/divisi.peo.entity';
 import * as moment from 'moment';
 import { CreateDepartmentDto } from './dto/create-department.dto';
+import { SyncLogsService } from 'src/sync-log/sync-log.service';
 
 @Injectable()
 export class DepartmentsService {
@@ -14,10 +15,11 @@ export class DepartmentsService {
     private repositoryDepartmentMv: Repository<DepartmentMvEntity>,
     @InjectRepository(DivisiPeoEntity)
     private repositoryDivisiPeo: Repository<DivisiPeoEntity>,
-    private readonly connection: Connection,
+    private syncLogService: SyncLogsService,
   ) {}
 
   public async processDepartment() {
+    const now = moment().toDate();
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -38,6 +40,14 @@ export class DepartmentsService {
       page++;
     }
 
+    /**
+     * add new last log
+     */
+    this.syncLogService.addLog({
+      updated_at: now,
+      code: 'mt_departments',
+    });
+
     const totalDeleted = await this.setDeletedDepartments();
 
     const processedDepartment = await this.repositoryDepartmentMv.count({
@@ -47,7 +57,11 @@ export class DepartmentsService {
     const totalInactive = await this.repositoryDepartmentMv.count({
       where: { is_active: false },
     });
-    return { totalActive: processedDepartment, totalInactive, totalDeleted };
+    return {
+      totalActive: processedDepartment,
+      totalInactive,
+      lastInactive: totalDeleted,
+    };
   }
 
   public async processedUpdateParent() {
@@ -161,12 +175,11 @@ export class DepartmentsService {
       const departments = await this.repositoryDivisiPeo
         .createQueryBuilder('peo_divisi')
         .where(
-          'peo_divisi.updated_at > (SELECT MAX(updated_at) FROM mt_departments)',
+          `peo_divisi.updated_at > (SELECT MAX(updated_at) FROM ims_sync_logs WHERE code = 'mt_departments')`,
         )
-        .andWhere('peo_divisi.updated_at IS NOT NULL')
         .orderBy('peo_divisi.id', 'ASC')
-        .skip(offset)
-        .take(limit)
+        .offset(offset)
+        .limit(limit)
         .getMany();
 
       return departments;
@@ -203,9 +216,8 @@ export class DepartmentsService {
         .update('mt_departments')
         .set({ is_active: false })
         .where(
-          'mt_departments.updated_at < (SELECT MAX(updated_at) FROM peo_divisi)',
+          `COALESCE(mt_departments.updated_at, '1970-01-01') < (SELECT MAX(updated_at) FROM peo_divisi)`,
         )
-        .orWhere('mt_departments.updated_at IS NULL')
         .execute();
 
       const affectedRows = result.affected || 0; // Get the count of affected rows

@@ -26,6 +26,7 @@ export class UsersService {
   ) {}
 
   public async processUser() {
+    const now = moment().toDate();
     /**
      * get system role
      */
@@ -52,16 +53,31 @@ export class UsersService {
       page++;
     }
 
+    /**
+     * add new last log
+     */
+    this.syncLogService.addLog({
+      updated_at: now,
+      code: 'directus_users',
+    });
+
+    /**
+     * setInactive old users
+     */
     const totalDeleted = await this.setDeletedUsers();
 
     const processedUser = await this.repositoryUserMv.count({
-      where: { source: 'PEO' },
+      where: { source: 'PEO', is_active: true },
     });
 
     const totalInactive = await this.repositoryUserMv.count({
       where: { is_active: false },
     });
-    return { total: processedUser, totalInactive, totalDeleted };
+    return {
+      totalActive: processedUser,
+      totalInactive,
+      lastInactive: totalDeleted,
+    };
   }
 
   private async bulkInsert(users: RolePeoEntity[] = []) {
@@ -125,6 +141,7 @@ export class UsersService {
 
   /**
    * get User
+   * get lebih dari last log
    * @param {
    *  page, limit, objid
    * }
@@ -134,7 +151,7 @@ export class UsersService {
     return await this.repositoryRolePegawaiPeo
       .createQueryBuilder()
       .where(
-        `updated_at > COALESCE((SELECT MAX(updated_at) FROM directus_users), '1970-01-01')`,
+        `updated_at > (SELECT MAX(updated_at) FROM ims_sync_logs WHERE code = 'directus_users')`,
       )
       .andWhere(`nipp IS NOT NULL`)
       .andWhere(`kd_div_arsip IS NOT NULL`)
@@ -159,9 +176,8 @@ export class UsersService {
         .update('directus_users')
         .set({ is_active: false })
         .where(
-          'directus_users.updated_at < (SELECT MAX(updated_at) FROM peo_role)',
+          `COALESCE(directus_users.updated_at, '1970-01-01') < (SELECT MAX(updated_at) FROM peo_role)`,
         )
-        .orWhere('directus_users.updated_at IS NULL')
         .execute();
 
       const affectedRows = result.affected || 0; // Get the count of affected rows
