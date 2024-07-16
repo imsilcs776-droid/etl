@@ -3,126 +3,129 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
 export class CreatePlhPeoDto {
-  @ApiHideProperty()
-  ID: number;
+  @ApiProperty()
+  id: number;
 
   @ApiProperty()
-  NIPP_PEJABAT: string;
+  i_id: number;
 
   @ApiProperty()
-  NAMA_PEJABAT: string;
+  nipp_pejabat: string;
 
   @ApiProperty()
-  JABATAN_PEJABAT: string;
+  nama_pejabat: string;
 
   @ApiProperty()
-  NIPP_PLH: string;
+  jabatan_pejabat: string;
 
   @ApiProperty()
-  NAMA_PLH: string;
+  nipp_plh: string;
 
   @ApiProperty()
-  JABATAN_PLH: string;
+  nama_plh: string;
 
   @ApiProperty()
-  LAMPIRAN: string;
+  jabatan_plh: string;
 
   @ApiProperty()
-  STATUS: number;
+  lampiran: string;
 
   @ApiProperty()
-  CREATED_BY: string;
+  status: number;
 
   @ApiProperty()
-  CREATED_AT: Date;
-
-  @ApiProperty({ required: false })
-  UPDATED_BY: string;
-
-  @ApiProperty({ required: false })
-  UPDATED_AT: Date;
+  created_by: string;
 
   @ApiProperty()
-  CREATED_NAME: string;
+  created_at: Date;
 
   @ApiProperty({ required: false })
-  UPDATED_NAME: string;
+  updated_by: string;
+
+  @ApiProperty({ required: false })
+  updated_at: Date;
 
   @ApiProperty()
-  MULAI: Date;
+  created_name: string;
+
+  @ApiProperty({ required: false })
+  updated_name: string;
 
   @ApiProperty()
-  AKHIR: Date;
+  mulai: Date;
 
   @ApiProperty()
-  TIPE: string;
+  akhir: Date;
 
   @ApiProperty()
-  KD_PEL_PEJABAT: string;
+  tipe: string;
 
   @ApiProperty()
-  KD_PEL_PLH: string;
-
-  @ApiProperty({ required: false })
-  KD_DIV: string;
-
-  @ApiProperty({ required: false })
-  KD_WIL: string;
-
-  @ApiProperty({ required: false })
-  KD_DIV_PLH: string;
-
-  @ApiProperty({ required: false })
-  KD_WIL_PLH: string;
-
-  @ApiProperty({ required: false })
-  NAJAB_BA: string;
-
-  @ApiProperty({ required: false })
-  PERSG: string;
-
-  @ApiProperty({ required: false })
-  JENIS: string;
-
-  @ApiProperty({ required: false })
-  IP: string;
-
-  @ApiProperty({ required: false })
-  KODE_NOMOR: string;
-
-  @ApiProperty({ required: false })
-  KODE_DIREKTORAT: string;
-
-  @ApiProperty({ required: false })
-  NAMA_DIREKTORAT: string;
-
-  @ApiProperty({ required: false })
-  KELOMPOK: string;
-
-  @ApiProperty({ required: false })
-  NIPP_PLH_BARU: string;
-
-  @ApiProperty({ required: false })
-  NIPP_PEJABAT_BARU: string;
-
-  @ApiProperty({ required: false })
-  NAMA_SUB_AREA: string;
-
-  @ApiProperty({ required: false })
-  CABANG_NAME: string;
-
-  @ApiProperty({ required: false })
-  NAJAB_SUBAREA: string;
-
-  @ApiProperty({ required: false })
-  INSTANSI: string;
+  kd_pel_pejabat: string;
 
   @ApiProperty()
-  KD_JABATAN: string;
+  kd_pel_plh: string;
 
   @ApiProperty({ required: false })
-  JENIS_SK: string;
+  kd_div: string;
 
   @ApiProperty({ required: false })
-  DOC_NO: string;
+  kd_wil: string;
+
+  @ApiProperty({ required: false })
+  kd_div_plh: string;
+
+  @ApiProperty({ required: false })
+  kd_wil_plh: string;
+
+  @ApiProperty({ required: false })
+  najab_ba: string;
+
+  @ApiProperty({ required: false })
+  persg: string;
+
+  @ApiProperty({ required: false })
+  jenis: string;
+
+  @ApiProperty({ required: false })
+  ip: string;
+
+  @ApiProperty({ required: false })
+  kode_nomor: string;
+
+  @ApiProperty({ required: false })
+  kode_direktorat: string;
+
+  @ApiProperty({ required: false })
+  nama_direktorat: string;
+
+  @ApiProperty({ required: false })
+  kelompok: string;
+
+  @ApiProperty({ required: false })
+  nipp_plh_baru: string;
+
+  @ApiProperty({ required: false })
+  nipp_pejabat_baru: string;
+
+  @ApiProperty({ required: false })
+  nama_sub_area: string;
+
+  @ApiProperty({ required: false })
+  cabang_name: string;
+
+  @ApiProperty({ required: false })
+  najab_subarea: string;
+
+  @ApiProperty({ required: false })
+  instansi: string;
+
+  @ApiProperty()
+  kd_jabatan: string;
+
+  @ApiProperty({ required: false })
+  jenis_sk: string;
+
+  @ApiProperty({ required: false })
+  doc_no: string;
 }

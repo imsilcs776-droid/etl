@@ -6,125 +6,128 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 })
 export class PlhPeoEntity {
   @PrimaryGeneratedColumn()
-  ID: number;
+  id: number;
 
   @Column()
-  NIPP_PEJABAT: string;
+  i_id: number;
 
   @Column()
-  NAMA_PEJABAT: string;
+  nipp_pejabat: string;
 
   @Column()
-  JABATAN_PEJABAT: string;
+  nama_pejabat: string;
 
   @Column()
-  NIPP_PLH: string;
+  jabatan_pejabat: string;
 
   @Column()
-  NAMA_PLH: string;
+  nipp_plh: string;
 
   @Column()
-  JABATAN_PLH: string;
+  nama_plh: string;
 
   @Column()
-  LAMPIRAN: string;
+  jabatan_plh: string;
 
   @Column()
-  STATUS: number;
+  lampiran: string;
 
   @Column()
-  CREATED_BY: string;
-
-  @Column({ type: 'timestamp' })
-  CREATED_AT: Date;
-
-  @Column({ nullable: true })
-  UPDATED_BY: string;
-
-  @Column({ type: 'timestamp', nullable: true })
-  UPDATED_AT: Date;
+  status: number;
 
   @Column()
-  CREATED_NAME: string;
-
-  @Column({ nullable: true })
-  UPDATED_NAME: string;
-
-  @Column({ type: 'timestamp' })
-  MULAI: Date;
-
-  @Column({ type: 'timestamp' })
-  AKHIR: Date;
+  created_by: string;
 
   @Column()
-  TIPE: string;
+  created_at: Date;
+
+  @Column({ nullable: true })
+  updated_by: string;
 
   @Column()
-  KD_PEL_PEJABAT: string;
+  updated_at: Date;
 
   @Column()
-  KD_PEL_PLH: string;
+  created_name: string;
 
   @Column({ nullable: true })
-  KD_DIV: string;
-
-  @Column({ nullable: true })
-  KD_WIL: string;
-
-  @Column({ nullable: true })
-  KD_DIV_PLH: string;
-
-  @Column({ nullable: true })
-  KD_WIL_PLH: string;
-
-  @Column({ nullable: true })
-  NAJAB_BA: string;
-
-  @Column({ nullable: true })
-  PERSG: string;
-
-  @Column({ nullable: true })
-  JENIS: string;
-
-  @Column({ nullable: true })
-  IP: string;
-
-  @Column({ nullable: true })
-  KODE_NOMOR: string;
-
-  @Column({ nullable: true })
-  KODE_DIREKTORAT: string;
-
-  @Column({ nullable: true })
-  NAMA_DIREKTORAT: string;
-
-  @Column({ nullable: true })
-  KELOMPOK: string;
-
-  @Column({ nullable: true })
-  NIPP_PLH_BARU: string;
-
-  @Column({ nullable: true })
-  NIPP_PEJABAT_BARU: string;
-
-  @Column({ nullable: true })
-  NAMA_SUB_AREA: string;
-
-  @Column({ nullable: true })
-  CABANG_NAME: string;
-
-  @Column({ nullable: true })
-  NAJAB_SUBAREA: string;
-
-  @Column({ nullable: true })
-  INSTANSI: string;
+  updated_name: string;
 
   @Column()
-  KD_JABATAN: string;
+  mulai: Date;
+
+  @Column()
+  akhir: Date;
+
+  @Column()
+  tipe: string;
+
+  @Column()
+  kd_pel_pejabat: string;
+
+  @Column()
+  kd_pel_plh: string;
 
   @Column({ nullable: true })
-  JENIS_SK: string;
+  kd_div: string;
 
   @Column({ nullable: true })
-  DOC_NO: string;
+  kd_wil: string;
+
+  @Column({ nullable: true })
+  kd_div_plh: string;
+
+  @Column({ nullable: true })
+  kd_wil_plh: string;
+
+  @Column({ nullable: true })
+  najab_ba: string;
+
+  @Column({ nullable: true })
+  persg: string;
+
+  @Column({ nullable: true })
+  jenis: string;
+
+  @Column({ nullable: true })
+  ip: string;
+
+  @Column({ nullable: true })
+  kode_nomor: string;
+
+  @Column({ nullable: true })
+  kode_direktorat: string;
+
+  @Column({ nullable: true })
+  nama_direktorat: string;
+
+  @Column({ nullable: true })
+  kelompok: string;
+
+  @Column({ nullable: true })
+  nipp_plh_baru: string;
+
+  @Column({ nullable: true })
+  nipp_pejabat_baru: string;
+
+  @Column({ nullable: true })
+  nama_sub_area: string;
+
+  @Column({ nullable: true })
+  cabang_name: string;
+
+  @Column({ nullable: true })
+  najab_subarea: string;
+
+  @Column({ nullable: true })
+  instansi: string;
+
+  @Column()
+  kd_jabatan: string;
+
+  @Column({ nullable: true })
+  jenis_sk: string;
+
+  @Column({ nullable: true })
+  doc_no: string;
 }
