@@ -20,6 +20,7 @@ import { SinkDivisiModule } from './sink-divisi/divisi.module';
 import { SinkPegawaiModule } from './sink-pegawai/pegawai.module';
 import { PeoTestService } from './peo-test/peo-test.service';
 import { PeoTestController } from './peo-test/peo-test.controller';
+import { SinkPlhModule } from './sink-plh/plh.module';
 dotenv.config();
 @Module({
   imports: [
@@ -48,6 +49,7 @@ dotenv.config();
     SinkAtasanBawahanModule,
     SinkDivisiModule,
     SinkPegawaiModule,
+    SinkPlhModule,
   ],
   // controllers: [],
   controllers: [AppController, PeoTestController],

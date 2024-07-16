@@ -57,10 +57,13 @@ export class DepartmentsService {
     const totalInactive = await this.repositoryDepartmentMv.count({
       where: { is_active: false },
     });
+
+    const totalPlhActive = await this.setPlhActiveDepartments();
     return {
       totalActive: processedDepartment,
       totalInactive,
       lastInactive: totalDeleted,
+      totalPlhActive,
     };
   }
 
@@ -217,6 +220,46 @@ export class DepartmentsService {
         .set({ is_active: false })
         .where(
           `COALESCE(mt_departments.updated_at, '1970-01-01') < (SELECT MAX(updated_at) FROM peo_divisi)`,
+        )
+        .execute();
+
+      const affectedRows = result.affected || 0; // Get the count of affected rows
+
+      console.log(`Number of rows updated to is_active false: ${affectedRows}`);
+
+      return affectedRows;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  /**
+   * set deleted departments
+   * ketikan ada mv_department yang updated_at nya kurang dari updated_at terakhir di peo_divisi
+   * @returns true
+   */
+  private async setPlhActiveDepartments(): Promise<number> {
+    try {
+      const result = await this.repositoryDepartmentMv
+        .createQueryBuilder()
+        .update('mt_departments')
+        .set({ is_active: true })
+        .where('mt_departments.is_active = false')
+        // .whereInIds(
+        //   `SELECT l.id
+        //   FROM mt_departments l
+        //   INNER JOIN peo_plh r ON l.kd_div = r.kd_div AND l.kd_will = r.kd_will
+        //   GROUP BY l.id
+        //   HAVING COUNT(r.id) > 0`,
+        // )
+        .andWhere(
+          'mt_departments.id IN ' +
+            '(SELECT l.id ' +
+            ' FROM mt_departments l ' +
+            ' INNER JOIN peo_plh r ON l.kd_div = r.kd_div AND l.kd_will = r.kd_will ' +
+            ' GROUP BY l.id ' +
+            ' HAVING COUNT(r.id) > 0)',
         )
         .execute();
 
