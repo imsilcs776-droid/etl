@@ -7,7 +7,7 @@ import { delay } from 'src/utils/delay';
 import { CreatePrivilegeDto } from './dto/privilage.dto';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { Role } from 'src/role/entities/role.entity';
-import { PrivilegesPortalsiService } from './privilage-peo.service';
+import { PrivilegesPortalsiService } from './privilage-portalsi.service';
 import { UserMvEntity } from 'src/peo-user/entities/user.mv.entity';
 
 @Injectable()
@@ -50,12 +50,12 @@ export class PrivilegesService {
     }
 
     const processedPrivilege = await this.privilegeRepository.count({
-      where: { source: In(['PEO', 'IMS_INTEGRATION']) },
+      where: { source: In(['PORTALSI']) },
     });
-    // const syncData = await this.syncLogService.addLog({
-    //   code: await this.privilegeRepository.metadata.tableName.toString(),
-    //   updated_at: new Date(),
-    // });
+    const syncData = await this.syncLogService.addLog({
+      code: await this.privilegeRepository.metadata.tableName.toString(),
+      updated_at: new Date(),
+    });
     return { total: processedPrivilege };
   }
 

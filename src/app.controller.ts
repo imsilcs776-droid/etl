@@ -7,6 +7,7 @@ import { DepartmentsService } from './peo-department/department.service';
 import { UsersService } from './peo-user/users.service';
 import { ImsPrivilegeService } from './ims/ims-privilege.service';
 import { UserDepartmentService } from './peo-user/users-department.service';
+import { PrivilegesService } from './privilage/privilage.service';
 
 @ApiTags('Sink Sequence')
 @Controller({
@@ -31,8 +32,41 @@ export class AppController {
     /**
      * default Privilege
      */
+    private readonly PrivilegesServiceFromPortalsi: PrivilegesService,
     private readonly ImsPrivilegeService: ImsPrivilegeService,
   ) {}
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async sinkAll() {
+    await this.divisiService.processDivisi();
+    await this.pegawaiService.processPegawai();
+    await this.atasanBawahanService.processAtasanBawahan();
+
+    /**
+     * MV
+     */
+
+    /**
+     * department master
+     */
+    await this.departmentsService.processDepartment();
+    await this.departmentsService.processedUpdateParent();
+
+    /**
+     * user
+     */
+    await this.usersService.processUser();
+    await this.userDepartmentService.processUserDepartment({});
+
+    /**
+     * privilege
+     */
+    await this.PrivilegesServiceFromPortalsi.processPrivilege();
+    await this.ImsPrivilegeService.processAccountRole();
+
+    return;
+  }
 
   @Post('peo')
   @HttpCode(HttpStatus.CREATED)
@@ -62,6 +96,7 @@ export class AppController {
     /**
      * privilege
      */
+    await this.PrivilegesServiceFromPortalsi.processPrivilege();
     await this.ImsPrivilegeService.processAccountRole();
 
     return;

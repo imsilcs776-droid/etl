@@ -16,6 +16,7 @@ import { DivisiMvEntity } from '../peo-upload/entities/divisi.mv.entity';
 import { AtasanBawahanMvEntity } from '../peo-upload/entities/atasan-bawahan.mv.entity';
 import { RolePegawaiMvEntity } from '../peo-upload/entities/role-pegawai.mv.entity';
 import { AtasanBawahanPeoEntity } from 'src/peo-user/entities/atasan-bawahan.peo.entity';
+import { PlhPeoEntity } from 'src/sink-plh/entities/plh.peo.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -50,6 +51,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         AtasanBawahanMvEntity,
         AtasanBawahanPeoEntity,
         RolePegawaiMvEntity,
+        PlhPeoEntity,
       ],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {

@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const connectStringMDM = process.env.CONNECT_STRING_MDM;
 const connectStringPeo = process.env.CONNECT_STRING_PEO;
+const connectStringPortalsi = process.env.CONNECT_STRING_PORTALSI;
 const username = process.env.IMS_DB_USERNAME;
 const password = process.env.IMS_DB_PASSWORD;
 
@@ -17,6 +18,16 @@ export const pelindoMDMOption: TypeOrmModuleOptions = {
   password,
   extra: {
     connectString: connectStringMDM,
+  },
+} as TypeOrmModuleOptions;
+
+export const pelindoPortalsiOption: TypeOrmModuleOptions = {
+  name: 'pelindo_portalsi',
+  type: 'oracle',
+  username,
+  password,
+  extra: {
+    connectString: connectStringPortalsi,
   },
 } as TypeOrmModuleOptions;
 
