@@ -8,6 +8,8 @@ import { UsersService } from './peo-user/users.service';
 import { ImsPrivilegeService } from './ims/ims-privilege.service';
 import { UserDepartmentService } from './peo-user/users-department.service';
 import { PrivilegesService } from './privilage/privilage.service';
+import { PlhPeoService } from './sink-plh/plh-peo.service';
+import { PlhService } from './sink-plh/plh.service';
 
 @ApiTags('Sink Sequence')
 @Controller({
@@ -21,6 +23,7 @@ export class AppController {
     private readonly divisiService: DivisiService,
     private readonly pegawaiService: PegawaiService,
     private readonly atasanBawahanService: AtasanBawahanService,
+    private readonly plhService: PlhService,
 
     /**
      * sink mv
@@ -42,6 +45,7 @@ export class AppController {
     await this.divisiService.processDivisi();
     await this.pegawaiService.processPegawai();
     await this.atasanBawahanService.processAtasanBawahan();
+    await this.plhService.processPlh();
 
     /**
      * MV
@@ -74,6 +78,7 @@ export class AppController {
     await this.divisiService.processDivisi();
     await this.pegawaiService.processPegawai();
     await this.atasanBawahanService.processAtasanBawahan();
+    await this.plhService.processPlh();
 
     return;
   }
