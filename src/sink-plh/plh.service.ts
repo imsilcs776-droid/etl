@@ -67,91 +67,92 @@ export class PlhService {
 
     while (count < pejabatArray.length) {
       const {
-        id,
-        nipp_pejabat,
-        nama_pejabat,
-        jabatan_pejabat,
-        nipp_plh,
-        nama_plh,
-        jabatan_plh,
-        lampiran,
-        status,
-        created_by,
-        created_at,
-        updated_by,
-        updated_at,
-        created_name,
-        updated_name,
-        mulai,
-        akhir,
-        tipe,
-        kd_pel_pejabat,
-        kd_pel_plh,
-        kd_div,
-        kd_wil,
-        kd_div_plh,
-        kd_wil_plh,
-        najab_ba,
-        persg,
-        jenis,
-        ip,
-        kode_nomor,
-        kode_direktorat,
-        nama_direktorat,
-        kelompok,
-        nipp_plh_baru,
-        nipp_pejabat_baru,
-        nama_sub_area,
-        cabang_name,
-        najab_subarea,
-        instansi,
-        kd_jabatan,
-        jenis_sk,
-        doc_no,
+        ID,
+        NIPP_PEJABAT,
+        NAMA_PEJABAT,
+        JABATAN_PEJABAT,
+        NIPP_PLH,
+        NAMA_PLH,
+        JABATAN_PLH,
+        LAMPIRAN,
+        STATUS,
+        CREATED_BY,
+        CREATED_AT,
+        UPDATED_BY,
+        UPDATED_AT,
+        CREATED_NAME,
+        UPDATED_NAME,
+        MULAI,
+        AKHIR,
+        TIPE,
+        KD_PEL_PEJABAT,
+        KD_PEL_PLH,
+        KD_DIV,
+        KD_WIL,
+        KD_DIV_PLH,
+        KD_WIL_PLH,
+        NAJAB_BA,
+        PERSG,
+        JENIS,
+        IP,
+        KODE_NOMOR,
+        KODE_DIREKTORAT,
+        NAMA_DIREKTORAT,
+        KELOMPOK,
+        NIPP_PLH_BARU,
+        NIPP_PEJABAT_BARU,
+        NAMA_SUB_AREA,
+        CABANG_NAME,
+        NAJAB_SUBAREA,
+        INSTANSI,
+        KD_JABATAN,
+        JENIS_SK,
+        DOC_NO,
       } = pejabatArray[count];
 
       const dto = new CreatePlhPeoDto();
-      dto.id = id;
-      dto.nipp_pejabat = nipp_pejabat;
-      dto.nama_pejabat = nama_pejabat;
-      dto.jabatan_pejabat = jabatan_pejabat;
-      dto.nipp_plh = nipp_plh;
-      dto.nama_plh = nama_plh;
-      dto.jabatan_plh = jabatan_plh;
-      dto.lampiran = lampiran;
-      dto.status = status;
-      dto.created_by = created_by;
-      dto.created_at = created_at;
-      dto.updated_by = updated_by;
-      dto.updated_at = updated_at;
-      dto.created_name = created_name;
-      dto.updated_name = updated_name;
-      dto.mulai = mulai;
-      dto.akhir = akhir;
-      dto.tipe = tipe;
-      dto.kd_pel_pejabat = kd_pel_pejabat;
-      dto.kd_pel_plh = kd_pel_plh;
-      dto.kd_div = kd_div;
-      dto.kd_wil = kd_wil;
-      dto.kd_div_plh = kd_div_plh;
-      dto.kd_wil_plh = kd_wil_plh;
-      dto.najab_ba = najab_ba;
-      dto.persg = persg;
-      dto.jenis = jenis;
-      dto.ip = ip;
-      dto.kode_nomor = kode_nomor;
-      dto.kode_direktorat = kode_direktorat;
-      dto.nama_direktorat = nama_direktorat;
-      dto.kelompok = kelompok;
-      dto.nipp_plh_baru = nipp_plh_baru;
-      dto.nipp_pejabat_baru = nipp_pejabat_baru;
-      dto.nama_sub_area = nama_sub_area;
-      dto.cabang_name = cabang_name;
-      dto.najab_subarea = najab_subarea;
-      dto.instansi = instansi;
-      dto.kd_jabatan = kd_jabatan;
-      dto.jenis_sk = jenis_sk;
-      dto.doc_no = doc_no;
+      dto.id = ID;
+      dto.i_id = ID;
+      dto.nipp_pejabat = NIPP_PEJABAT;
+      dto.nama_pejabat = NAMA_PEJABAT;
+      dto.jabatan_pejabat = JABATAN_PEJABAT;
+      dto.nipp_plh = NIPP_PLH;
+      dto.nama_plh = NAMA_PLH;
+      dto.jabatan_plh = JABATAN_PLH;
+      dto.lampiran = LAMPIRAN;
+      dto.status = STATUS;
+      dto.created_by = CREATED_BY;
+      dto.created_at = CREATED_AT;
+      dto.updated_by = UPDATED_BY;
+      dto.updated_at = UPDATED_AT;
+      dto.created_name = CREATED_NAME;
+      dto.updated_name = UPDATED_NAME;
+      dto.mulai = MULAI;
+      dto.akhir = AKHIR;
+      dto.tipe = TIPE;
+      dto.kd_pel_pejabat = KD_PEL_PEJABAT;
+      dto.kd_pel_plh = KD_PEL_PLH;
+      dto.kd_div = KD_DIV;
+      dto.kd_wil = KD_WIL;
+      dto.kd_div_plh = KD_DIV_PLH;
+      dto.kd_wil_plh = KD_WIL_PLH;
+      dto.najab_ba = NAJAB_BA;
+      dto.persg = PERSG;
+      dto.jenis = JENIS;
+      dto.ip = IP;
+      dto.kode_nomor = KODE_NOMOR;
+      dto.kode_direktorat = KODE_DIREKTORAT;
+      dto.nama_direktorat = NAMA_DIREKTORAT;
+      dto.kelompok = KELOMPOK;
+      dto.nipp_plh_baru = NIPP_PLH_BARU;
+      dto.nipp_pejabat_baru = NIPP_PEJABAT_BARU;
+      dto.nama_sub_area = NAMA_SUB_AREA;
+      dto.cabang_name = CABANG_NAME;
+      dto.najab_subarea = NAJAB_SUBAREA;
+      dto.instansi = INSTANSI;
+      dto.kd_jabatan = KD_JABATAN;
+      dto.jenis_sk = JENIS_SK;
+      dto.doc_no = DOC_NO;
 
       await this.create(dto);
       count++;

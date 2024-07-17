@@ -1,7 +1,7 @@
 // your-entity.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('master_plh', {
+@Entity('peo_plh', {
   synchronize: true,
 })
 export class PlhPeoEntity {

@@ -12,7 +12,7 @@ export class PlhPeoService {
     return await this.connection.query(`
     SELECT a.*
     FROM MASTER_PLH a
-    ORDER BY c.ID ASC    
+    ORDER BY a.ID ASC    
     OFFSET ${limit * (page - 1)} ROWS FETCH NEXT ${limit} ROWS ONLY
     `);
   }

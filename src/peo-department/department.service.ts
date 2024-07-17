@@ -40,14 +40,6 @@ export class DepartmentsService {
       page++;
     }
 
-    /**
-     * add new last log
-     */
-    this.syncLogService.addLog({
-      updated_at: now,
-      code: 'mt_departments',
-    });
-
     const totalDeleted = await this.setDeletedDepartments();
 
     const processedDepartment = await this.repositoryDepartmentMv.count({
@@ -59,6 +51,14 @@ export class DepartmentsService {
     });
 
     const totalPlhActive = await this.setPlhActiveDepartments();
+
+    /**
+     * add new last log
+     */
+    this.syncLogService.addLog({
+      updated_at: now,
+      code: 'mt_departments',
+    });
     return {
       totalActive: processedDepartment,
       totalInactive,
@@ -246,20 +246,19 @@ export class DepartmentsService {
         .update('mt_departments')
         .set({ is_active: true })
         .where('mt_departments.is_active = false')
-        // .whereInIds(
-        //   `SELECT l.id
-        //   FROM mt_departments l
-        //   INNER JOIN peo_plh r ON l.kd_div = r.kd_div AND l.kd_will = r.kd_will
-        //   GROUP BY l.id
-        //   HAVING COUNT(r.id) > 0`,
-        // )
         .andWhere(
-          'mt_departments.id IN ' +
-            '(SELECT l.id ' +
-            ' FROM mt_departments l ' +
-            ' INNER JOIN peo_plh r ON l.kd_div = r.kd_div AND l.kd_will = r.kd_will ' +
-            ' GROUP BY l.id ' +
-            ' HAVING COUNT(r.id) > 0)',
+          `mt_departments.id IN(
+            SELECT
+              l.id
+            FROM
+              mt_departments l
+              INNER JOIN peo_plh r ON l.code = r.kd_div
+              AND l.i_kd_wil = r.kd_wil
+            GROUP BY
+              l.id
+            HAVING
+              COUNT(r.id) > 0
+          )`,
         )
         .execute();
 
