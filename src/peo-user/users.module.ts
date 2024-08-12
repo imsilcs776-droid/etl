@@ -12,6 +12,7 @@ import { UserPrivilegeService } from './users-privilege.service';
 import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
 import { UserDepartmentService } from './users-department.service';
 import { DepartmentMvEntity } from 'src/peo-department/entities/department.mv.entity';
+import { UsersMutationService } from './users-mutation.service';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { DepartmentMvEntity } from 'src/peo-department/entities/department.mv.en
     // UserPEOService,
     UserPrivilegeService,
     // UserPEOSourceService,
-    // UsersMutationService,
+    UsersMutationService,
     // DepartmentMDMService,
     // JobMDMService,
     // PrivilegesPEOService,
