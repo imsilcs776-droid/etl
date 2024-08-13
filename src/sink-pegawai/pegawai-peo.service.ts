@@ -31,14 +31,14 @@ export class PegawaiPeoService {
     `);
   }
 
-  async getPegawaiByNippNew({ nipp }) {
+  async getPegawaiByNippNew({ nipp_baru }) {
     return await this.connection.query(`      
     SELECT a.*
     FROM PSO_ROLE_PEGAWAI a
     WHERE 
       (
         a.GRUP IN ('PLTP', 'PLND')
-        AND a.NIPP = '${nipp}'
+        AND a.NIPP = '${nipp_baru}'
         AND a.NAMA_JABATAN <> 'Alih Daya' 
         AND a.INSTANSI <> '9999'
         AND a.COMPANY_CODE <> '9999'

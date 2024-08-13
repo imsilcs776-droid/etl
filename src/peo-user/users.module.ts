@@ -13,6 +13,10 @@ import { RoleMvEntity } from 'src/peo-role/entity/role.mv.entity';
 import { UserDepartmentService } from './users-department.service';
 import { DepartmentMvEntity } from 'src/peo-department/entities/department.mv.entity';
 import { UsersMutationService } from './users-mutation.service';
+import { PrivilegesPortalsiService } from 'src/privilage/privilage-portalsi.service';
+import { PegawaiPeoService } from 'src/sink-pegawai/pegawai-peo.service';
+import { SyncLogsService } from 'src/sync-log/sync-log.service';
+import { Role } from 'src/role/entities/role.entity';
 
 @Module({
   imports: [
@@ -24,7 +28,7 @@ import { UsersMutationService } from './users-mutation.service';
       // Job,
       RoleSystem,
       // Privilege,
-      // Role,
+      Role,
       RoleMvEntity,
       PrivilegeMvEntity,
       UserMvEntity,
@@ -46,7 +50,11 @@ import { UsersMutationService } from './users-mutation.service';
     // JobMDMService,
     // PrivilegesPEOService,
     UserDepartmentService,
+
+    PegawaiPeoService,
+    PrivilegesPortalsiService,
+    SyncLogsService
   ],
-  exports: [UsersService, UserPrivilegeService, UserDepartmentService],
+  exports: [UsersService, UserPrivilegeService, UserDepartmentService, UsersMutationService],
 })
 export class UsersModule {}

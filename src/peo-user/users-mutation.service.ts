@@ -1,287 +1,261 @@
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { UserMDMService } from './users-mdm.service';
-// import { DepartmentMDMService } from 'src/department/department-mdm.service';
-// import { JobMDMService } from 'src/job/job-mdm.service';
-// import { PrivilegesPEOService } from 'src/privilage/privilage-peo.service';
-// import { Department } from 'src/department/entities/department.entity';
-// import { CreateAccountDto } from './dto/create-user.dto';
-// import { SyncLogsService } from 'src/sync-log/sync-log.service';
-// import { CreatePrivilegeDto } from 'src/privilage/dto/privilage.dto';
-// import { Privilege } from 'src/privilage/entities/privilage.entity';
-// import { Job } from 'src/job/entities/job.entity';
-// import { Role } from 'src/role/entities/role.entity';
-// import { UserMvEntity } from './entities/user.mv.entity';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SyncLogsService } from 'src/sync-log/sync-log.service';
+import { CreatePrivilegeDto } from 'src/privilage/dto/privilage.dto';
+import { Role } from 'src/role/entities/role.entity';
+import { UserMvEntity } from './entities/user.mv.entity';
+import { RolePeoEntity } from 'src/peo-role/entity/role.peo.entity';
+import { PegawaiPeoService } from 'src/sink-pegawai/pegawai-peo.service';
+import { PrivilegesPortalsiService } from 'src/privilage/privilage-portalsi.service';
+import { DepartmentMvEntity } from 'src/peo-department/entities/department.mv.entity';
+import { CreateAccountDto } from './dto/create-user.mv.dto';
+import { DEF_PW } from 'src/configs/datacore.config';
+import * as moment from 'moment';
+import { RoleSystem } from 'src/role/entities/role-system.entity';
+import { PrivilegeMvEntity } from './entities/privilage.mv.entity';
 
-// @Injectable()
-// export class UsersMutationService {
-//   constructor(
-//     @InjectRepository(UserMvEntity)
-//     private accountRepository: Repository<UserMvEntity>,
-//     @InjectRepository(Department)
-//     private departmentRepository: Repository<Department>,
-//     @InjectRepository(Privilege)
-//     private privilegeRepository: Repository<Privilege>,
-//     @InjectRepository(Job)
-//     private jobRepository: Repository<Job>,
-//     @InjectRepository(Role)
-//     private roleRepository: Repository<Role>,
-//     private readonly userMDMservice: UserMDMService,
-//     private readonly departmentMDMService: DepartmentMDMService,
-//     private readonly jobMDMService: JobMDMService,
-//     private readonly privilegesPEOService: PrivilegesPEOService,
-//     private readonly syncLogsService: SyncLogsService,
-//   ) {}
+@Injectable()
+export class UsersMutationService {
+  constructor(
+    @InjectRepository(RolePeoEntity)
+    private accountRepository: Repository<RolePeoEntity>,
+    @InjectRepository(DepartmentMvEntity)
+    private departmentRepository: Repository<DepartmentMvEntity>,
+    @InjectRepository(PrivilegeMvEntity)
+    private privilegeRepository: Repository<PrivilegeMvEntity>,
+    @InjectRepository(UserMvEntity)
+    private userMvRepository: Repository<UserMvEntity>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
+    private readonly pegawaiPeoService: PegawaiPeoService,
+    private readonly privilegesPortalsiService: PrivilegesPortalsiService,
+    private readonly syncLogsService: SyncLogsService,
+    @InjectRepository(RoleSystem)
+    private roleSystemRepository: Repository<RoleSystem>,
+  ) {}
 
-//   async currentAccount(nip_new: string) {
-//     const user = await this.accountRepository.findOne({
-//       where: {
-//         nip_new,
-//       },
-//       relations: ['department_details', 'job_details', 'roles'],
-//     });
+  private convertKeysToLowerSnakeCase(obj): any {
+    const newObj = {};
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const newKey = key.toLowerCase();
+            newObj[newKey] = obj[key];
+        }
+    }
+    return newObj;
+}
 
-//     const new_user = await this.userMDMservice.getAccByNippNew({
-//       nipp_new: nip_new,
-//     });
-//     if (!new_user) {
-//       throw new Error('user not exist, call help desk');
-//     }
+  async currentAccount(nipp_baru: string) {
+    const user = await this.accountRepository.findOne({
+      where: {
+        nipp_baru,
+      },
+    });
 
-//     let existing = {
-//       department: null,
-//       job: null,
-//     };
-//     let depNew = {};
-//     let jobNew = {};
-//     let privsNew = [];
-//     if (new_user) {
-//       depNew = await this.departmentMDMService.getDepartment({
-//         limit: 1,
-//         objid: new_user.SUBDI,
-//       });
-//       jobNew = await this.jobMDMService.getOneJob({ objId: new_user.SHORT });
-//       privsNew = await this.privilegesPEOService.getPrivilegeByNipp({
-//         nipp: new_user.PNALT_NEW,
-//       });
+    const [new_user] = await this.pegawaiPeoService.getPegawaiByNippNew({
+      nipp_baru,
+    });
+    if (!new_user) {
+      throw new Error('user not exist, call help desk');
+    }
 
-//       const { id } =
-//         (await this.departmentRepository.findOne({
-//           where: { i_objid: new_user.SUBDI },
-//         })) || {};
-//       const { id: jobId } =
-//         (await this.jobRepository.findOne({
-//           where: { i_objid: new_user.SHORT },
-//         })) || {};
+    const convertedNewUserObject = this.convertKeysToLowerSnakeCase(new_user);
 
-//       if (id) {
-//         existing.department = id;
-//       }
 
-//       if (jobId) {
-//         existing.job = jobId;
-//       }
-//     }
+    let privsNew = [];
+    if (convertedNewUserObject) {
+      privsNew = await this.privilegesPortalsiService.getPrivilegeByNipp({
+        nipp: convertedNewUserObject?.nipp_baru,
+      });
+    }
 
-//     return {
-//       data: {
-//         existing,
-//         old_user: user,
-//         new_user: {
-//           ...new_user,
-//           depNew,
-//           jobNew,
-//           privsNew,
-//         },
-//       },
-//     };
-//   }
+    const convertedPrivNew = privsNew.map(e=> this.convertKeysToLowerSnakeCase(e))
 
-//   async create(createAccountDto: CreateAccountDto) {
-//     try {
-//       const entity = this.accountRepository.create(createAccountDto);
-//       // return await this.accountRepository.update({ nip: entity.nip }, entity);
-//       return await this.accountRepository.upsert(entity, ['nip']);
-//     } catch (e) {
-//       const { detail, code } = e || {};
-//       return await this.syncLogsService.addFailedLog({
-//         entity: await this.accountRepository.metadata.tableName.toString(),
-//         reason: detail || code,
-//         created_at: new Date(),
-//         updated_at: new Date(),
-//       });
-//     }
-//   }
+    return {
+      data: {
+        old_user: user,
+        new_user: {
+          ...convertedNewUserObject,
+          privsNew: convertedPrivNew,
+        },
+      },
+    };
+  }
 
-//   async createPrivilage(createPrivilegeDto: CreatePrivilegeDto) {
-//     try {
-//       const entity = this.privilegeRepository.create(createPrivilegeDto);
-//       return await this.privilegeRepository.upsert(entity, ['i_id']);
-//     } catch (e) {}
-//   }
+  async create(createAccountDto: CreateAccountDto) {
+    try {
+      const entity = this.accountRepository.create(createAccountDto);
+      // return await this.accountRepository.update({ nip: entity.nip }, entity);
+      return await this.accountRepository.upsert(entity, ['nip']);
+    } catch (e) {
+      const { detail, code } = e || {};
+      return await this.syncLogsService.addFailedLog({
+        entity: await this.accountRepository.metadata.tableName.toString(),
+        reason: detail || code,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+    }
+  }
 
-//   async syncCurrentAccount(nip_new: string) {
-//     const currentUser = await this.accountRepository.findOne({
-//       where: {
-//         nip_new,
-//       },
-//     });
-//     const new_user = await this.userMDMservice.getAccByNippNew({
-//       nipp_new: nip_new,
-//     });
-//     if (!new_user || !currentUser) {
-//       throw new Error('user not exist, call help desk');
-//     }
+  async createPrivilage(createPrivilegeDto: CreatePrivilegeDto) {
+    try {
+      const entity = this.privilegeRepository.create(createPrivilegeDto);
+      return await this.privilegeRepository.upsert(entity, ['i_id']);
+    } catch (e) {}
+  }
 
-//     const { id: departmentId } =
-//       (await this.departmentRepository.findOne({
-//         where: { i_objid: new_user.SUBDI },
-//       })) || {};
-//     const { id: job } =
-//       (await this.jobRepository.findOne({
-//         where: { i_objid: new_user.SHORT },
-//       })) || {};
-//     let jobId = job;
+  async syncCurrentAccount(nipp_new: string) {
+    const now = moment().toDate();
 
-//     if (!departmentId) {
-//       throw new Error('department and job not exist, call help desk');
-//     }
+    /**
+     * get system role
+     */
+    const roleSystem = await this.roleSystemRepository.findOne({
+      where: {
+        name: 'Administrator',
+      },
+    });
 
-//     if (!jobId) {
-//       const jobNew = await this.jobMDMService.getOneJob({
-//         objId: new_user.SHORT,
-//       });
-//       const { SHORT, PLANS, WERKS_NEW, LAST_UPDATED_DATE, CREATED_DATE } =
-//         jobNew;
+    const currentUser = await this.userMvRepository.findOne({
+      where: {
+        nip_new:nipp_new,
+      },
+    });
 
-//       const bodyJob = new Job();
-//       bodyJob.code = SHORT;
-//       bodyJob.name = PLANS;
-//       bodyJob.description = PLANS;
-//       bodyJob.is_active = true;
-//       bodyJob.updated_at = new Date(LAST_UPDATED_DATE);
-//       bodyJob.created_at = new Date(CREATED_DATE);
-//       bodyJob.source = 'IMS_INTEGRATION';
-//       bodyJob.i_com_code = WERKS_NEW;
-//       bodyJob.i_objid = SHORT;
+    const [new_user] = await this.pegawaiPeoService.getPegawaiByNippNew({
+      nipp_baru: nipp_new,
+    });
+    if (!new_user || !currentUser) {
+      throw new Error('user not exist, call help desk');
+    }
 
-//       await this.jobRepository.upsert(bodyJob, ['i_objid']);
-//       const { id: job } =
-//         (await this.jobRepository.findOne({
-//           where: { i_objid: new_user.SHORT },
-//         })) || {};
-//       jobId = job;
-//     }
+    const convertedNewUserObject = this.convertKeysToLowerSnakeCase(new_user);
 
-//     const {
-//       CNAME,
-//       PNALT,
-//       PNALT_NEW,
-//       COMPANY_CODE,
-//       ANSVH,
-//       SHORT,
-//       PGTXT,
-//       PKTXT,
-//       PLANS,
-//       PBTXT,
-//       BTRTX,
-//       LAST_UPDATED_DATE,
-//       WERKS_NEW,
-//       SUBDI,
-//       OFFICMAIL,
-//       ENDA,
-//     } = new_user;
+    const { id: departmentId } =
+      (await this.departmentRepository.findOne({
+        where: { code: convertedNewUserObject.kd_div_arsip, i_kd_wil: convertedNewUserObject.kd_wil_arsip },
+      })) || {};
 
-//     const full_names: string[] = String(CNAME).split(' ');
-//     const nameLegth = full_names.length;
+    if (!departmentId) {
+      throw new Error('department not exist, call help desk');
+    }
 
-//     const body = new User();
-//     body.email = OFFICMAIL || `${PNALT}@mail.com`;
-//     body.full_name = CNAME + ' # ' + String(PLANS).split('#')[0];
-//     body.first_name = String(CNAME).split(' ')[0];
-//     body.last_name = nameLegth > 1 ? full_names[nameLegth - 1] : full_names[0];
-//     body.nip = PNALT;
-//     body.i_com_code = WERKS_NEW;
-//     body.i_department_code = SUBDI;
-//     body.updated_at = new Date(LAST_UPDATED_DATE);
-//     body.i_job_code = SHORT;
-//     body.i_job_name = String(PLANS).split('#')[0];
-//     body.i_werk = WERKS_NEW;
-//     body.company = 1;
-//     body.nip_new = PNALT_NEW;
-//     body.i_endda = ENDA;
-//     body.department = departmentId;
-//     body.job = jobId;
-//     await this.create(body);
+    const {
+      email,
+      nipp_baru,
+      nama,
+      nama_jabatan,
+      nipp,
+      pegawai,
+      last_updated_date,
+      werks_new,
+      kd_cabang_sap,
+      nama_cabang,
+      kd_sub,
+      kd_wil_arsip,
+      kd_div_arsip,
+    } = convertedNewUserObject;
 
-//     const privsNew = await this.privilegesPEOService.getPrivilegeByNipp({
-//       nipp: new_user.PNALT_NEW,
-//     });
-//     const [{ IDROLE }] = privsNew || [{}];
+    const full_names: string[] = String(nama).split(' ');
+    const nameLegth = full_names.length;
 
-//     if (IDROLE) {
-//       const userRole = await this.roleRepository.findOne({
-//         where: {
-//           code: 'USER',
-//         },
-//       });
-//       let role = await this.privilegeRepository.findOne({
-//         where: { user: currentUser.id, role: userRole?.id },
-//       });
+    const body = new UserMvEntity();
+    body.email = email?.includes('@')
+      ? email.toUpperCase()
+      : `${nipp_baru}@MAIL.COM`;
+    body.full_name = nama + ' # ' + String(nama_jabatan);
+    body.first_name = String(nama).split(' ')[0];
+    body.last_name =
+      nameLegth > 1 ? full_names[nameLegth - 1] : full_names[0];
+    body.nip = nipp;
+    body.i_com_code = werks_new;
+    body.pegawai = pegawai;
+    //   body.i_department_code = SUBDI;
+    body.password = DEF_PW || 'L4n1usLab!';
+    body.updated_at = now;
+    //   body.i_job_code = SHORT;
+    //   body.i_job_name = String(PLANS).split('#')[0];
+    body.i_werk = werks_new;
+    body.role = roleSystem.id;
+    body.company = 1;
+    body.nip_new = nipp_baru;
+    body.i_endda = '9999-12-31';
+    body.source = 'PEO';
+    body.i_nama_cabang = nama_cabang;
+    body.instansi = pegawai;
+    body.i_kd_sub = kd_sub;
+    body.i_kd_wil = kd_wil_arsip;
+    body.is_active = true;
+    body.i_kd_div = kd_div_arsip;
+    await this.create(body);
 
-//       /**
-//        * membuat role jika tidak ada
-//        */
-//       if (!role) {
-//         const body = new Privilege();
-//         body.updated_at = new Date();
-//         body.created_at = new Date(LAST_UPDATED_DATE);
-//         body.source = 'IMS_INTEGRATION';
-//         body.role = userRole.id;
-//         body.user = currentUser.id;
-//         body.i_nip = PNALT;
-//         body.product = 1;
+    const privsNew = await this.privilegesPortalsiService.getPrivilegeByNipp({
+      nipp: nipp_new,
+    });
+    const [{ IDROLE }] = privsNew || [{}];
 
-//         const entity = this.privilegeRepository.create(body);
-//         await this.privilegeRepository.save(entity);
-//       }
+    if (IDROLE) {
+      const userRole = await this.roleRepository.findOne({
+        where: {
+          code: 'USER',
+        },
+      });
+      let role = await this.privilegeRepository.findOne({
+        where: { user: currentUser.id, role: userRole?.id },
+      });
 
-//       const roleCurrent = await this.roleRepository.findOne({
-//         where: {
-//           i_id: IDROLE,
-//         },
-//       });
+      /**
+       * membuat role jika tidak ada
+       */
+      if (!role) {
+        const body = new PrivilegeMvEntity();
+        body.updated_at = now;
+        body.created_at = now;
+        body.source = 'PORTALSI';
+        body.role = userRole.id;
+        body.user = currentUser.id;
+        body.i_nip = convertedNewUserObject.nipp_new;
+        body.product = 1;
 
-//       if (roleCurrent) {
-//         const body = new Privilege();
-//         body.updated_at = new Date();
-//         body.created_at = new Date(LAST_UPDATED_DATE);
-//         body.source = 'IMS_INTEGRATION';
-//         body.role = roleCurrent.id;
-//         body.user = currentUser.id;
-//         body.i_id = String(IDROLE);
-//         body.i_nip = PNALT;
-//         body.i_role = IDROLE;
-//         body.product = 1;
+        const entity = this.privilegeRepository.create(body);
+        await this.privilegeRepository.save(entity);
+      }
 
-//         console.log(body);
+      const roleCurrent = await this.roleRepository.findOne({
+        where: {
+          i_id: IDROLE,
+        },
+      });
 
-//         await this.createPrivilage(body);
-//       }
-//     }
+      if (roleCurrent) {
+        const body = new PrivilegeMvEntity();
+        body.updated_at = now;
+        body.created_at = now;
+        body.source = 'PORTALSI';
+        body.role = roleCurrent.id;
+        body.user = currentUser.id;
+        body.i_id = String(IDROLE);
+        body.i_nip = convertedNewUserObject.nipp_new;
+        body.i_role = IDROLE;
+        body.product = 1;
 
-//     const user = await this.accountRepository.findOne({
-//       where: {
-//         nip_new,
-//       },
-//       relations: ['department_details', 'job_details', 'roles'],
-//     });
+        console.log(body);
 
-//     return {
-//       data: {
-//         user,
-//       },
-//     };
-//   }
-// }
+        await this.createPrivilage(body);
+      }
+    }
+
+    const convertedPrivNew = privsNew.map(e=> this.convertKeysToLowerSnakeCase(e))
+
+    return {
+      data: {
+        new_user: {
+          ...convertedNewUserObject,
+          privsNew:convertedPrivNew,
+        },
+      },
+    };
+  }
+}

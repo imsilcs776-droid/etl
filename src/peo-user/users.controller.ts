@@ -51,15 +51,15 @@ export class UsersController {
     return await this.userDepService.processUserDepartment({ nippNew });
   }
 
-  // @Get('users/:nipp_new/current')
-  // @HttpCode(HttpStatus.OK)
-  // async getUserCurrent(@Param('nipp_new') nipp_new: string) {
-  //   return await this.usersMutationService.currentAccount(nipp_new);
-  // }
+  @Get('users/:nipp_new/current')
+  @HttpCode(HttpStatus.OK)
+  async getUserCurrent(@Param('nipp_new') nipp_new: string) {
+    return await this.usersMutationService.currentAccount(nipp_new);
+  }
 
-  // @Put('users/:nipp_new/sync')
-  // @HttpCode(HttpStatus.CREATED)
-  // async getUserUpdate(@Param('nipp_new') nipp_new: string) {
-  //   return await this.usersMutationService.syncCurrentAccount(nipp_new);
-  // }
+  @Put('users/:nipp_new/sync')
+  @HttpCode(HttpStatus.CREATED)
+  async getUserUpdate(@Param('nipp_new') nipp_new: string) {
+    return await this.usersMutationService.syncCurrentAccount(nipp_new);
+  }
 }
