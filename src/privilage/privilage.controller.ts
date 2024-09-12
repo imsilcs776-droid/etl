@@ -7,6 +7,7 @@ import {
   HttpCode,
   Query,
   Delete,
+  Param,
 } from '@nestjs/common';
 import { PrivilegesService } from './privilage.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -25,7 +26,13 @@ export class PrivilegesController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async findAll() {
-    return await this.PrivilegesService.processPrivilege();
+    return await this.PrivilegesService.processPrivilege({});
+  }
+
+  @Post(':nipp_new')
+  @HttpCode(HttpStatus.CREATED)
+  async byNipp(@Param('nipp_new') nipp_new: string) {
+    return await this.PrivilegesService.processPrivilege({nipp_new});
   }
 
   @Delete('detached')

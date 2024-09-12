@@ -98,7 +98,7 @@ export class UsersService {
         nama_cabang,
         kd_sub,
         kd_wil_arsip,
-        kd_div_arsip,
+        kd_div_arsip
       } = users[count];
 
       const full_names: string[] = String(nama).split(' ');
@@ -132,6 +132,7 @@ export class UsersService {
       body.i_kd_wil = kd_wil_arsip;
       body.is_active = true;
       body.i_kd_div = kd_div_arsip;
+      body.i_job_name = nama_jabatan;
       await this.create(body);
       count++;
     }

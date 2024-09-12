@@ -189,6 +189,7 @@ export class UsersMutationService {
     body.i_kd_wil = kd_wil_arsip;
     body.is_active = true;
     body.i_kd_div = kd_div_arsip;
+    body.i_job_name = nama_jabatan;
     await this.create(body);
 
     const privsNew = await this.privilegesPortalsiService.getPrivilegeByNipp({

@@ -12,7 +12,7 @@ import { RolesPEOService } from './role-peo.service';
 export class RolesService {
   constructor(
     @InjectRepository(Role)
-    private accountRepository: Repository<Role>,
+    private roleMvRepository: Repository<Role>,
     private readonly syncLogsService: SyncLogsService,
     private readonly rolePEOService: RolesPEOService,
   ) {}
@@ -33,11 +33,11 @@ export class RolesService {
       page++;
     }
 
-    const processedAccount = await this.accountRepository.count({
-      where: { source: 'IMS_INTEGRATION' },
+    const processedAccount = await this.roleMvRepository.count({
+      where: { source: 'PORTALSI' },
     });
     const syncData = await this.syncLogsService.addLog({
-      code: await this.accountRepository.metadata.tableName.toString(),
+      code: await this.roleMvRepository.metadata.tableName.toString(),
       updated_at: new Date(),
     });
     return { syncData, total: processedAccount };
@@ -45,13 +45,13 @@ export class RolesService {
 
   async create(createAccountDto: CreateRoleDto) {
     try {
-      const entity = this.accountRepository.create(createAccountDto);
-      // return await this.accountRepository.update({ i_id: entity.i_id }, entity);
-      return await this.accountRepository.upsert(entity, ['i_id']);
+      const entity = this.roleMvRepository.create(createAccountDto);
+      // return await this.roleMvRepository.update({ i_id: entity.i_id }, entity);
+      return await this.roleMvRepository.upsert(entity, ['i_id']);
     } catch (e) {
       const { detail, code } = e || {};
       return await this.syncLogsService.addFailedLog({
-        entity: await this.accountRepository.metadata.tableName.toString(),
+        entity: await this.roleMvRepository.metadata.tableName.toString(),
         reason: detail || code,
         created_at: new Date(),
         updated_at: new Date(),
@@ -71,7 +71,7 @@ export class RolesService {
       body.code = KETERANGAN;
       body.i_status = STATUS;
       body.i_parent = PARENTID;
-      body.source = 'IMS_INTEGRATION';
+      body.source = 'PORTALSI';
       // body.role = 'ce30a329-1956-4336-b23c-bbbeba4442d4';
       await this.create(body);
       count++;

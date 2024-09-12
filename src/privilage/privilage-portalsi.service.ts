@@ -9,7 +9,22 @@ export class PrivilegesPortalsiService {
     private readonly connection: Connection,
   ) {}
 
-  async getPrivileges({ page = 1, limit = 50 }) {
+  async getPrivileges({ page = 1, limit = 50, nipp_new = null }) {
+    if(nipp_new){
+      return await this.connection
+        .createQueryBuilder()
+        .select('A.*')
+        .addSelect('L.NIPP')
+        .addSelect('L.NAMA')
+        .from('AKSES', 'A')
+        .innerJoin('USERLOGIN', 'L', 'A.IDUSER = L.ID')
+        .innerJoin('ROLES', 'R', `R.ID = A.IDROLE AND R.IDAPLIKASI = '4162'`)
+        .orderBy('A.ID')
+        .where('L.NIPP = :nipp_new', {nipp_new})
+        .limit(limit)
+        .offset(limit * (page - 1))
+        .getRawMany();
+    }
     return await this.connection
       .createQueryBuilder()
       .select('A.*')

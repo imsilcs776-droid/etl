@@ -11,7 +11,7 @@ import { RolesService } from './role.service';
 import { ApiTags } from '@nestjs/swagger';
 import { RolesPEOService } from './role-peo.service';
 
-@ApiTags('Sync Role')
+@ApiTags('Sink MV Portalsi')
 @Controller({
   path: 'sync-role',
 })
@@ -27,7 +27,7 @@ export class RolesController {
     return await this.RolesService.processRoles();
   }
 
-  @Get('peo/roles')
+  @Get('portalsi/roles')
   @HttpCode(HttpStatus.OK)
   async getUser(@Query('page') page: number, @Query('limit') limit: number) {
     return await this.rolesPEOService.getRoles({ page, limit });

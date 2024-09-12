@@ -37,7 +37,7 @@ dotenv.config();
     UsersModule,
     // DepartmentsModule,
     // JobsModule,
-    // RolesModule,
+    RolesModule,
     PrivilegesModule,
     ImsModule,
     PeoDepartmentsModule,

@@ -33,14 +33,14 @@ export class PrivilegesService {
       .execute();
   }
 
-  async processPrivilege() {
+  async processPrivilege({nipp_new = null}) {
     const limit = 100;
     let stop = false;
     let page = 1;
 
     while (!stop) {
       await delay(500);
-      const privileges = await this.getPrivileges({ page, limit });
+      const privileges = await this.getPrivileges({ page, limit, nipp_new });
       if (privileges && privileges.length) {
         await this.bulkInsert(privileges);
       } else {
@@ -69,11 +69,13 @@ export class PrivilegesService {
       const { ID, IDROLE, LAST_UPDATED_DATE, IDUSER, NIPP, NAMA } =
         privileges[count];
 
+      console.log({ ID, IDROLE, LAST_UPDATED_DATE, IDUSER, NIPP, NAMA })
+
       const { id: roleId } = roles.find((role) => role.i_id == IDROLE) || {
         id: null,
       };
 
-      const { id: userId } = users.find((user) => user.nip == NIPP) || {
+      const { id: userId } = users.find((user) => user.nip_new == NIPP) || {
         id: null,
       };
 
@@ -145,8 +147,8 @@ export class PrivilegesService {
       "NAMA": "string"
   },
    */
-  async getPrivileges({ page, limit }): Promise<any> {
+  async getPrivileges({ page, limit,nipp_new }): Promise<any> {
     console.log('pageLimit=>', page, limit);
-    return await this.privilegesPortasiService.getPrivileges({ page, limit });
+    return await this.privilegesPortasiService.getPrivileges({ page, limit,nipp_new });
   }
 }

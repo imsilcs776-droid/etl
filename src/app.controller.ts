@@ -10,6 +10,7 @@ import { UserDepartmentService } from './peo-user/users-department.service';
 import { PrivilegesService } from './privilage/privilage.service';
 import { PlhPeoService } from './sink-plh/plh-peo.service';
 import { PlhService } from './sink-plh/plh.service';
+import { RolesService } from './role/role.service';
 
 @ApiTags('Sink Sequence')
 @Controller({
@@ -31,6 +32,11 @@ export class AppController {
     private readonly departmentsService: DepartmentsService,
     private readonly usersService: UsersService,
     private readonly userDepartmentService: UserDepartmentService,
+
+    /**
+     * sink mv role portalsi
+     */
+    private readonly rolesService: RolesService,
 
     /**
      * default Privilege
@@ -64,9 +70,14 @@ export class AppController {
     await this.userDepartmentService.processUserDepartment({});
 
     /**
+     * role
+     */
+    await this.rolesService.processRoles();
+
+    /**
      * privilege
      */
-    await this.PrivilegesServiceFromPortalsi.processPrivilege();
+    await this.PrivilegesServiceFromPortalsi.processPrivilege({});
     await this.ImsPrivilegeService.processAccountRole();
 
     return;
@@ -99,9 +110,14 @@ export class AppController {
     await this.userDepartmentService.processUserDepartment({});
 
     /**
+     * role
+     */
+    await this.rolesService.processRoles();
+
+    /**
      * privilege
      */
-    await this.PrivilegesServiceFromPortalsi.processPrivilege();
+    await this.PrivilegesServiceFromPortalsi.processPrivilege({});
     await this.ImsPrivilegeService.processAccountRole();
 
     return;
