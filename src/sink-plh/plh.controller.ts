@@ -26,7 +26,7 @@ export class PlhController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async findAll() {
-    return await this.plhService.processPlh();
+    return await this.plhService.processPlh({});
   }
 
   @Get('peo/plh')

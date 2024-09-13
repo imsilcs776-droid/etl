@@ -28,7 +28,7 @@ export class DivisiController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async findAll() {
-    return await this.divisiService.processDivisi();
+    return await this.divisiService.processDivisi({});
   }
 
   @Get('peo/divisi')

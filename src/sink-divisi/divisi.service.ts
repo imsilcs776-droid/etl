@@ -16,9 +16,9 @@ export class DivisiService {
     private repository: Repository<DivisiPeoEntity>,
     private syncLogService: SyncLogsService,
     private divisiPeoService: DivisiPeoService,
-  ) {}
+  ) { }
 
-  public async processDivisi() {
+  public async processDivisi({ nipp_new = '' }) {
     const now = moment().utcOffset('+0700').toDate();
     const limit = 100;
     let stop = false;
@@ -29,6 +29,7 @@ export class DivisiService {
       const divisions = await this.getDivisi({
         page,
         limit,
+        nipp_new
       });
       if (divisions && divisions.length) {
         await this.bulkInsert(divisions);
@@ -155,22 +156,7 @@ export class DivisiService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
-  private async getDivisi({ page, limit }): Promise<any> {
-    return await this.divisiPeoService.getDivisi({ page, limit });
+  private async getDivisi({ page, limit, nipp_new }): Promise<any> {
+    return await this.divisiPeoService.getDivisi({ page, limit, nipp_new });
   }
-
-  // public async setDivisi({ objid }): Promise<any> {
-  //   const divisions: any[] = await this.divisiPeoService.getDivisi({
-  //     objid,
-  //   });
-  //   await this.bulkInsert(divisions);
-  //   const [department] = divisions;
-  //   const local = await this.repository.findOneBy({
-  //     i_objid: department.OBJID,
-  //   });
-  //   return {
-  //     local,
-  //     department,
-  //   };
-  // }
 }

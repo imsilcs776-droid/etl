@@ -28,7 +28,7 @@ export class AtasanBawahanController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async findAll() {
-    return await this.atasanBawahanService.processAtasanBawahan();
+    return await this.atasanBawahanService.processAtasanBawahan({});
   }
 
   @Get('peo/atasanBawahan')

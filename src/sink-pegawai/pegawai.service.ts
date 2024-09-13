@@ -19,7 +19,7 @@ export class PegawaiService {
     private pegawaiPeoService: PegawaiPeoService,
   ) {}
 
-  public async processPegawai() {
+  public async processPegawai({nipp_new = ''}) {
     const now = moment().toDate();
     const limit = 100;
     let stop = false;
@@ -30,6 +30,7 @@ export class PegawaiService {
       const pegawais = await this.getPegawai({
         page,
         limit,
+        nipp_new
       });
       if (pegawais && pegawais.length) {
         await this.bulkInsert(pegawais);
@@ -220,22 +221,7 @@ export class PegawaiService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
-  private async getPegawai({ page, limit }): Promise<any> {
-    return await this.pegawaiPeoService.getPegawai({ page, limit });
+  private async getPegawai({ page, limit, nipp_new }): Promise<any> {
+    return await this.pegawaiPeoService.getPegawai({ page, limit, nipp_new });
   }
-
-  // public async setPegawai({ objid }): Promise<any> {
-  //   const pegawais: any[] = await this.pegawaiPeoService.getPegawai({
-  //     objid,
-  //   });
-  //   await this.bulkInsert(pegawais);
-  //   const [department] = pegawais;
-  //   const local = await this.repository.findOneBy({
-  //     i_objid: department.OBJID,
-  //   });
-  //   return {
-  //     local,
-  //     department,
-  //   };
-  // }
 }

@@ -28,7 +28,7 @@ export class PegawaiController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async findAll() {
-    return await this.pegawaiService.processPegawai();
+    return await this.pegawaiService.processPegawai({});
   }
 
   @Get('peo/pegawai')

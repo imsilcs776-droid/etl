@@ -19,7 +19,7 @@ export class AtasanBawahanService {
     private atasanBawahanPeoService: AtasanBawahanPeoService,
   ) {}
 
-  public async processAtasanBawahan() {
+  public async processAtasanBawahan({nipp_new = ''}) {
     const now = moment().toDate();
     const limit = 100;
     let stop = false;
@@ -30,6 +30,7 @@ export class AtasanBawahanService {
       const atasanBawahans = await this.getAtasanBawahan({
         page,
         limit,
+        nipp_new
       });
       if (atasanBawahans && atasanBawahans.length) {
         await this.bulkInsert(atasanBawahans);
@@ -152,22 +153,7 @@ export class AtasanBawahanService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
-  private async getAtasanBawahan({ page, limit }): Promise<any> {
-    return await this.atasanBawahanPeoService.getAtasanBawahan({ page, limit });
+  private async getAtasanBawahan({ page, limit, nipp_new }): Promise<any> {
+    return await this.atasanBawahanPeoService.getAtasanBawahan({ page, limit, nipp_new });
   }
-
-  // public async setAtasanBawahan({ objid }): Promise<any> {
-  //   const atasanBawahans: any[] = await this.atasanBawahanPeoService.getAtasanBawahan({
-  //     objid,
-  //   });
-  //   await this.bulkInsert(atasanBawahans);
-  //   const [department] = atasanBawahans;
-  //   const local = await this.repository.findOneBy({
-  //     i_objid: department.OBJID,
-  //   });
-  //   return {
-  //     local,
-  //     department,
-  //   };
-  // }
 }

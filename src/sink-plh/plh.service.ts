@@ -16,9 +16,9 @@ export class PlhService {
     private repository: Repository<PlhPeoEntity>,
     private syncLogService: SyncLogsService,
     private divisiPeoService: PlhPeoService,
-  ) {}
+  ) { }
 
-  public async processPlh() {
+  public async processPlh({ nipp_new = '' }) {
     const now = moment().utcOffset('+0700').toDate();
     const limit = 100;
     let stop = false;
@@ -29,6 +29,7 @@ export class PlhService {
       const divisions = await this.getPlh({
         page,
         limit,
+        nipp_new
       });
       if (divisions && divisions.length) {
         await this.bulkInsert(divisions);
@@ -168,22 +169,7 @@ export class PlhService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
-  private async getPlh({ page, limit }): Promise<any> {
-    return await this.divisiPeoService.getPlh({ page, limit });
+  private async getPlh({ page, limit, nipp_new }): Promise<any> {
+    return await this.divisiPeoService.getPlh({ page, limit, nipp_new });
   }
-
-  // public async setPlh({ objid }): Promise<any> {
-  //   const divisions: any[] = await this.divisiPeoService.getPlh({
-  //     objid,
-  //   });
-  //   await this.bulkInsert(divisions);
-  //   const [department] = divisions;
-  //   const local = await this.repository.findOneBy({
-  //     i_objid: department.OBJID,
-  //   });
-  //   return {
-  //     local,
-  //     department,
-  //   };
-  // }
 }
