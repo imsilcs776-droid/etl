@@ -21,6 +21,7 @@ import { SinkPegawaiModule } from './sink-pegawai/pegawai.module';
 import { PeoTestService } from './peo-test/peo-test.service';
 import { PeoTestController } from './peo-test/peo-test.controller';
 import { SinkPlhModule } from './sink-plh/plh.module';
+import { CompanyMvModule } from './mv-company/mv-company.module';
 dotenv.config();
 @Module({
   imports: [
@@ -37,6 +38,7 @@ dotenv.config();
     UsersModule,
     // DepartmentsModule,
     // JobsModule,
+    CompanyMvModule,
     RolesModule,
     PrivilegesModule,
     ImsModule,
@@ -55,4 +57,4 @@ dotenv.config();
   controllers: [AppController, PeoTestController],
   providers: [PeoTestService],
 })
-export class AppModule {}
+export class AppModule { }
