@@ -16,7 +16,7 @@ export class DepartmentsService {
     @InjectRepository(DivisiPeoEntity)
     private repositoryDivisiPeo: Repository<DivisiPeoEntity>,
     private syncLogService: SyncLogsService,
-  ) {}
+  ) { }
 
   public async processDepartment() {
     const now = moment().toDate();
@@ -96,7 +96,11 @@ export class DepartmentsService {
         const [myParent] = parList || [];
         if (myParent) {
           const parent = await this.repositoryDepartmentMv.findOne({
-            where: { code: myParent },
+            where: {
+              code: myParent,
+              is_active: true,
+              i_kd_wil: department.i_kd_wil
+            },
           });
 
           if (parent) {

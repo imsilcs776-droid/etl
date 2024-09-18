@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+// import { CompanyMvService } from 'src/mv-company/mv-company.service';
 import { Connection } from 'typeorm';
 
 @Injectable()
 export class PegawaiPeoService {
   constructor(
     @InjectConnection('pelindo_peo') private readonly connection: Connection,
-  ) {}
+    // private companyMvService: CompanyMvService,
+  ) { }
 
   async getPegawai({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
+    // const comps = await this.companyMvService.getMvCompany()
+    // const grups = comps.map((comp) => comp.grup)
+
     if (nipp_new) {
       return await this.connection.query(`      
         SELECT a.*
