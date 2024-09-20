@@ -18,7 +18,7 @@ export class ImsPrivilegeService {
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
     private syncLogService: SyncLogsService,
-  ) {}
+  ) { }
 
   public async processAccountRole() {
     let role = await this.roleRepository.findOne({

@@ -23,9 +23,9 @@ export class UsersService {
     private syncLogService: SyncLogsService,
     @InjectRepository(RoleSystem)
     private roleSystemRepository: Repository<RoleSystem>,
-  ) {}
+  ) { }
 
-  public async processUser() {
+  public async processUser({ nipp_new = '' }) {
     const now = moment().toDate();
     /**
      * get system role
@@ -44,6 +44,7 @@ export class UsersService {
       const data = await this.getPeoPegawai({
         page,
         limit,
+        nipp_new
       });
       if (data && data.length) {
         await this.bulkInsert(data);
@@ -148,7 +149,24 @@ export class UsersService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
-  private async getPeoPegawai({ page, limit }): Promise<any> {
+  private async getPeoPegawai({ page, limit, nipp_new = '' }): Promise<any> {
+    if (nipp_new) {
+      return await this.repositoryRolePegawaiPeo
+        .createQueryBuilder()
+        .where(
+          `updated_at > (SELECT MAX(updated_at) FROM ims_sync_logs WHERE code = 'directus_users')`,
+        )
+        .andWhere('nipp = :nipp_new', { nipp_new })
+        .andWhere(`nipp IS NOT NULL`)
+        .andWhere(`kd_div_arsip IS NOT NULL`)
+        .andWhere(`kd_wil_arsip IS NOT NULL`)
+        .andWhere(`email IS NOT NULL`)
+        .andWhere('updated_at IS NOT NULL')
+        .orderBy('nipp', 'ASC')
+        .skip((page - 1) * limit)
+        .take(limit)
+        .getMany();
+    }
     return await this.repositoryRolePegawaiPeo
       .createQueryBuilder()
       .where(

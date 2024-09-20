@@ -43,7 +43,7 @@ export class AppController {
      */
     private readonly PrivilegesServiceFromPortalsi: PrivilegesService,
     private readonly ImsPrivilegeService: ImsPrivilegeService,
-  ) {}
+  ) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -66,7 +66,7 @@ export class AppController {
     /**
      * user
      */
-    await this.usersService.processUser();
+    await this.usersService.processUser({});
     await this.userDepartmentService.processUserDepartment({});
 
     /**
@@ -86,10 +86,10 @@ export class AppController {
   @Post(':nipp_new')
   @HttpCode(HttpStatus.CREATED)
   async sinkById(@Param('nipp_new') nipp_new: string) {
-    await this.divisiService.processDivisi({nipp_new});
-    await this.pegawaiService.processPegawai({nipp_new});
-    await this.atasanBawahanService.processAtasanBawahan({nipp_new});
-    await this.plhService.processPlh({nipp_new});
+    await this.divisiService.processDivisi({ nipp_new });
+    await this.pegawaiService.processPegawai({ nipp_new });
+    await this.atasanBawahanService.processAtasanBawahan({ nipp_new });
+    await this.plhService.processPlh({ nipp_new });
 
     /**
      * MV
@@ -99,13 +99,13 @@ export class AppController {
      * department master
      */
     await this.departmentsService.processDepartment();
-    await this.departmentsService.processedUpdateParent();
+    // await this.departmentsService.processedUpdateParent();
 
     /**
      * user
      */
-    await this.usersService.processUser();
-    await this.userDepartmentService.processUserDepartment({});
+    await this.usersService.processUser({ nipp_new });
+    await this.userDepartmentService.processUserDepartment({ nippNew: nipp_new });
 
     /**
      * role
@@ -115,7 +115,7 @@ export class AppController {
     /**
      * privilege
      */
-    await this.PrivilegesServiceFromPortalsi.processPrivilege({});
+    await this.PrivilegesServiceFromPortalsi.processPrivilege({ nipp_new });
     await this.ImsPrivilegeService.processAccountRole();
 
     return;
@@ -144,7 +144,7 @@ export class AppController {
     /**
      * user
      */
-    await this.usersService.processUser();
+    await this.usersService.processUser({});
     await this.userDepartmentService.processUserDepartment({});
 
     /**
