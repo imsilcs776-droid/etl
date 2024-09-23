@@ -12,6 +12,6 @@ import { CompanyMvController } from './mv-company.controller';
     ],
     controllers: [CompanyMvController],
     providers: [CompanyMvService],
-    exports: [CompanyMvService],
+    exports: [CompanyMvService, TypeOrmModule.forFeature([CompaniesMvEntity])],
 })
 export class CompanyMvModule { }

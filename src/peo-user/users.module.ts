@@ -17,6 +17,7 @@ import { PrivilegesPortalsiService } from 'src/privilage/privilage-portalsi.serv
 import { PegawaiPeoService } from 'src/sink-pegawai/pegawai-peo.service';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { Role } from 'src/role/entities/role.entity';
+import { CompanyMvModule } from 'src/mv-company/mv-company.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { Role } from 'src/role/entities/role.entity';
       DepartmentMvEntity,
     ]),
     SyncLogsModule,
+    CompanyMvModule
   ],
   controllers: [UsersController],
   providers: [
@@ -57,4 +59,4 @@ import { Role } from 'src/role/entities/role.entity';
   ],
   exports: [UsersService, UserPrivilegeService, UserDepartmentService, UsersMutationService],
 })
-export class UsersModule {}
+export class UsersModule { }

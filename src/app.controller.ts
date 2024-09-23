@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DivisiService } from './sink-divisi/divisi.service';
 import { PegawaiService } from './sink-pegawai/pegawai.service';
@@ -8,9 +8,9 @@ import { UsersService } from './peo-user/users.service';
 import { ImsPrivilegeService } from './ims/ims-privilege.service';
 import { UserDepartmentService } from './peo-user/users-department.service';
 import { PrivilegesService } from './privilage/privilage.service';
-import { PlhPeoService } from './sink-plh/plh-peo.service';
 import { PlhService } from './sink-plh/plh.service';
 import { RolesService } from './role/role.service';
+import { SyncLogsService } from './sync-log/sync-log.service';
 
 @ApiTags('Sink Sequence')
 @Controller({
@@ -18,6 +18,7 @@ import { RolesService } from './role/role.service';
 })
 export class AppController {
   constructor(
+    private readonly syncLogService: SyncLogsService,
     /**
      * sink peo
      */
@@ -48,77 +49,115 @@ export class AppController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async sinkAll() {
-    await this.divisiService.processDivisi({});
-    await this.pegawaiService.processPegawai({});
-    await this.atasanBawahanService.processAtasanBawahan({});
-    await this.plhService.processPlh({});
+    try {
 
-    /**
-     * MV
-     */
+      /**
+       * End log
+       */
+      await this.syncLogService.startLog();
 
-    /**
-     * department master
-     */
-    await this.departmentsService.processDepartment();
-    await this.departmentsService.processedUpdateParent();
+      /**
+       * Peo
+       */
+      await this.divisiService.processDivisi({});
+      await this.pegawaiService.processPegawai({});
+      await this.atasanBawahanService.processAtasanBawahan({});
+      await this.plhService.processPlh({});
 
-    /**
-     * user
-     */
-    await this.usersService.processUser({});
-    await this.userDepartmentService.processUserDepartment({});
+      /**
+       * MV
+       */
 
-    /**
-     * role
-     */
-    await this.rolesService.processRoles();
+      /**
+       * department master
+       */
+      await this.departmentsService.processDepartment();
+      await this.departmentsService.processedUpdateParent();
 
-    /**
-     * privilege
-     */
-    await this.PrivilegesServiceFromPortalsi.processPrivilege({});
-    await this.ImsPrivilegeService.processAccountRole();
+      /**
+       * user
+       */
+      await this.usersService.processUser({});
+      await this.userDepartmentService.processUserDepartment({});
 
-    return;
+      /**
+       * role
+       */
+      await this.rolesService.processRoles();
+
+      /**
+       * privilege
+       */
+      await this.PrivilegesServiceFromPortalsi.processPrivilege({});
+      await this.ImsPrivilegeService.processAccountRole();
+
+      /**
+       * End log
+       */
+      await this.syncLogService.endLog();
+
+      return;
+    } catch(e) {
+      await this.syncLogService.endLog();
+      throw new Error(e);
+    }
+
   }
 
   @Post(':nipp_new')
   @HttpCode(HttpStatus.CREATED)
   async sinkById(@Param('nipp_new') nipp_new: string) {
-    await this.divisiService.processDivisi({ nipp_new });
-    await this.pegawaiService.processPegawai({ nipp_new });
-    await this.atasanBawahanService.processAtasanBawahan({ nipp_new });
-    await this.plhService.processPlh({ nipp_new });
+    try {
+      /**
+    * End log
+    */
+      await this.syncLogService.startLog();
 
-    /**
-     * MV
-     */
+      /**
+       * Peo
+       */
+      await this.divisiService.processDivisi({ nipp_new });
+      await this.pegawaiService.processPegawai({ nipp_new });
+      await this.atasanBawahanService.processAtasanBawahan({ nipp_new });
+      await this.plhService.processPlh({ nipp_new });
 
-    /**
-     * department master
-     */
-    await this.departmentsService.processDepartment();
-    // await this.departmentsService.processedUpdateParent();
+      /**
+       * MV
+       */
 
-    /**
-     * user
-     */
-    await this.usersService.processUser({ nipp_new });
-    await this.userDepartmentService.processUserDepartment({ nippNew: nipp_new });
+      /**
+       * department master
+       */
+      await this.departmentsService.processDepartment();
+      // await this.departmentsService.processedUpdateParent();
 
-    /**
-     * role
-     */
-    await this.rolesService.processRoles();
+      /**
+       * user
+       */
+      await this.usersService.processUser({ nipp_new });
+      await this.userDepartmentService.processUserDepartment({ nippNew: nipp_new });
 
-    /**
-     * privilege
-     */
-    await this.PrivilegesServiceFromPortalsi.processPrivilege({ nipp_new });
-    await this.ImsPrivilegeService.processAccountRole();
+      /**
+       * role
+       */
+      await this.rolesService.processRoles();
 
-    return;
+      /**
+       * privilege
+       */
+      await this.PrivilegesServiceFromPortalsi.processPrivilege({ nipp_new });
+      await this.ImsPrivilegeService.processAccountRole();
+
+      /**
+       * End log
+       */
+      await this.syncLogService.endLog();
+
+      return;
+    } catch (e){
+      await this.syncLogService.endLog();
+      throw new Error(e);
+    }
   }
 
   @Post('peo')
@@ -159,5 +198,11 @@ export class AppController {
     await this.ImsPrivilegeService.processAccountRole();
 
     return;
+  }
+
+  @Get('status')
+  @HttpCode(HttpStatus.OK)
+  async status() {
+    return this.syncLogService.isProcessing();
   }
 }

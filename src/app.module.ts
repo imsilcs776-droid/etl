@@ -22,6 +22,7 @@ import { PeoTestService } from './peo-test/peo-test.service';
 import { PeoTestController } from './peo-test/peo-test.controller';
 import { SinkPlhModule } from './sink-plh/plh.module';
 import { CompanyMvModule } from './mv-company/mv-company.module';
+import { SyncLogsModule } from './sync-log/sync-log.module';
 dotenv.config();
 @Module({
   imports: [
@@ -36,6 +37,7 @@ dotenv.config();
     TypeOrmModule.forRoot(pelindoPEOOption),
     TypeOrmModule.forRoot(pelindoPortalsiOption),
     UsersModule,
+    SyncLogsModule,
     // DepartmentsModule,
     // JobsModule,
     CompanyMvModule,
