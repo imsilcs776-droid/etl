@@ -52,7 +52,7 @@ export class AppController {
     try {
 
       /**
-       * End log
+       * start log
        */
       await this.syncLogService.startLog();
 
@@ -97,7 +97,7 @@ export class AppController {
       await this.syncLogService.endLog();
 
       return;
-    } catch(e) {
+    } catch (e) {
       await this.syncLogService.endLog();
       throw new Error(e);
     }
@@ -109,8 +109,8 @@ export class AppController {
   async sinkById(@Param('nipp_new') nipp_new: string) {
     try {
       /**
-    * End log
-    */
+        * start log
+        */
       await this.syncLogService.startLog();
 
       /**
@@ -154,7 +154,7 @@ export class AppController {
       await this.syncLogService.endLog();
 
       return;
-    } catch (e){
+    } catch (e) {
       await this.syncLogService.endLog();
       throw new Error(e);
     }
