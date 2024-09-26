@@ -23,7 +23,7 @@ export class DivisiController {
   constructor(
     private readonly divisiService: DivisiService,
     private readonly divisiPeoService: DivisiPeoService,
-  ) {}
+  ) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -42,6 +42,16 @@ export class DivisiController {
       page,
       limit,
       objid,
+    });
+  }
+
+  @Get('peo/divisi/:nipp_new')
+  @HttpCode(HttpStatus.OK)
+  async getDivByNippNew(
+    @Param('nipp_new') nipp_new?: string,
+  ) {
+    return await this.divisiPeoService.getDivisi({
+      nipp_new,
     });
   }
 }

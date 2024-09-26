@@ -23,7 +23,7 @@ export class AtasanBawahanController {
   constructor(
     private readonly atasanBawahanService: AtasanBawahanService,
     private readonly atasanBawahanPeoService: AtasanBawahanPeoService,
-  ) {}
+  ) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -42,6 +42,16 @@ export class AtasanBawahanController {
       page,
       limit,
       objid,
+    });
+  }
+
+  @Get('peo/atasanBawahan/:nipp_new')
+  @HttpCode(HttpStatus.OK)
+  async getUserByNippNew(
+    @Param('nipp_new') nipp_new?: string,
+  ) {
+    return await this.atasanBawahanPeoService.getAtasanBawahan({
+      nipp_new
     });
   }
 }

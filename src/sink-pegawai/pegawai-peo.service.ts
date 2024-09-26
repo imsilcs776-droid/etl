@@ -22,6 +22,7 @@ export class PegawaiPeoService {
       .andWhere('PSO_ROLE_PEGAWAI.GRUP IN ( :...grups )', { grups: ['PLTP', 'PLND', ...grups] })
       .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', { company_code: '9999' })
       .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
+      .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')
       .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :dummy', { dummy: '%dummy%' })
       .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :user', { user: '%user%' })
       .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', { test: '%test%' })
@@ -41,7 +42,7 @@ export class PegawaiPeoService {
 
     // return queryBuilder.getQuery()
 
-    return await queryBuilder.execute()
+    return await queryBuilder.getRawMany()
   }
 
   async getPegawaiByNippNew({ nipp_baru }) {

@@ -23,7 +23,7 @@ export class PegawaiController {
   constructor(
     private readonly pegawaiService: PegawaiService,
     private readonly pegawaiPeoService: PegawaiPeoService,
-  ) {}
+  ) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -42,6 +42,16 @@ export class PegawaiController {
       page,
       limit,
       objid,
+    });
+  }
+
+  @Get('peo/pegawai/:nipp_new')
+  @HttpCode(HttpStatus.OK)
+  async getUserByNippNew(
+    @Param('nipp_new') nipp_new?: string,
+  ) {
+    return await this.pegawaiPeoService.getPegawai({
+      nipp_new,
     });
   }
 }

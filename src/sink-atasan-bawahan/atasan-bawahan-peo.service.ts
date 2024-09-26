@@ -19,6 +19,9 @@ export class AtasanBawahanPeoService {
       .from('ATASAN_BAWAHAN', 'ATASAN_BAWAHAN')
       .where('ATASAN_BAWAHAN.NIPP_BARU IS NOT NULL')
       .andWhere('ATASAN_BAWAHAN.NIPP_ATS_BARU IS NOT NULL')
+      .andWhere('ATASAN_BAWAHAN.EMAIL IS NOT NULL')
+      .andWhere('ATASAN_BAWAHAN.EMAIL_ATS IS NOT NULL')
+      .andWhere('ATASAN_BAWAHAN.INSTANSI IN (:...grups)', { grups: ['PLTP', 'PLND', ...grups] })
       .andWhere(
         (qb) => {
           const subQuery = qb
@@ -28,6 +31,7 @@ export class AtasanBawahanPeoService {
             .where('PSO_ROLE_PEGAWAI.INSTANSI <> :instansi', { instansi: '9999' })
             .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', { company_code: '9999' })
             .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
+            .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :dummy', { dummy: '%dummy%' })
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :user', { user: '%user%' })
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', { test: '%test%' })
@@ -47,7 +51,7 @@ export class AtasanBawahanPeoService {
       .offset(limit * (page - 1))
       .limit(limit);
 
-    return await queryBuilder.execute();
+    return await queryBuilder.getRawMany();
   }
 
 
