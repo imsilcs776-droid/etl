@@ -17,14 +17,40 @@ export class PegawaiService {
     private repository: Repository<RolePeoEntity>,
     private syncLogService: SyncLogsService,
     private pegawaiPeoService: PegawaiPeoService,
-  ) {}
+  ) { }
 
-  public async processPegawai({nipp_new = ''}) {
+  public async processPegawai({ nipp_new = '' }) {
     const now = moment().toDate();
     const limit = 100;
     let stop = false;
     let page = 1;
 
+    /**
+     * single user
+     */
+    if (nipp_new) {
+      const pegawais = await this.getPegawai({
+        page,
+        limit,
+        nipp_new
+      });
+      if (pegawais && pegawais.length) {
+        await this.bulkInsert(pegawais);
+        const processedPegawai = await this.repository.count({});
+        const syncData = await this.syncLogService.addLog({
+          code: await this.repository.metadata.tableName.toString(),
+          updated_at: now,
+        });
+        return { syncData, total: processedPegawai, isExist: true };
+      }
+
+      const processedPegawai = await this.repository.count({});
+      return { total: processedPegawai, isExist: !!pegawais?.length };
+    }
+
+    /**
+     * get all user
+     */
     while (!stop) {
       await delay(500);
       const pegawais = await this.getPegawai({
@@ -45,7 +71,7 @@ export class PegawaiService {
       code: await this.repository.metadata.tableName.toString(),
       updated_at: now,
     });
-    return { syncData, total: processedPegawai };
+    return { syncData, total: processedPegawai, isExist: true };
   }
 
   private async create(createPegawaiDto: EmployeeDTO) {

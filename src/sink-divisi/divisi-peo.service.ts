@@ -41,7 +41,7 @@ export class DivisiPeoService {
           return sq
         },
         'PSO_ROLE_PEGAWAI_DT',
-        'PSO_DIVISI.KD_DIV_ARSIP = PSO_ROLE_PEGAWAI_DT.KD_DIV_ARSIP AND PSO_DIVISI.KD_WIL_ARSIP = PSO_DIVISI.KD_WIL_ARSIP'
+        'PSO_DIVISI.KD_DIV_ARSIP = PSO_ROLE_PEGAWAI_DT.KD_DIV_ARSIP AND PSO_DIVISI.KD_WIL_ARSIP = PSO_ROLE_PEGAWAI_DT.KD_WIL_ARSIP'
       )
       .where('PSO_DIVISI.KD_DIV_ARSIP IS NOT NULL')
       .andWhere('PSO_DIVISI.GRUP IN (:...grups)', { grups: ['PLTP', 'PLND', ...grups] })

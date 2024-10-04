@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DivisiService } from './sink-divisi/divisi.service';
 import { PegawaiService } from './sink-pegawai/pegawai.service';
@@ -11,6 +11,7 @@ import { PrivilegesService } from './privilage/privilage.service';
 import { PlhService } from './sink-plh/plh.service';
 import { RolesService } from './role/role.service';
 import { SyncLogsService } from './sync-log/sync-log.service';
+import { errorResponse, successResponse } from './utils/response';
 
 @ApiTags('Sink Sequence')
 @Controller({
@@ -96,7 +97,7 @@ export class AppController {
        */
       await this.syncLogService.endLog();
 
-      return;
+      return successResponse('sync sucessfully', {});
     } catch (e) {
       await this.syncLogService.endLog();
       throw new Error(e);
@@ -117,7 +118,12 @@ export class AppController {
        * Peo
        */
       await this.divisiService.processDivisi({ nipp_new });
-      await this.pegawaiService.processPegawai({ nipp_new });
+      const { isExist } = await this.pegawaiService.processPegawai({ nipp_new });
+
+      if (!isExist) {
+        throw new HttpException("Nipp new not found", HttpStatus.NOT_FOUND);
+      }
+
       await this.atasanBawahanService.processAtasanBawahan({ nipp_new });
       await this.plhService.processPlh({ nipp_new });
 
@@ -153,10 +159,17 @@ export class AppController {
        */
       await this.syncLogService.endLog();
 
-      return;
+      return successResponse('sync sucessfully', {});
     } catch (e) {
       await this.syncLogService.endLog();
-      throw new Error(e);
+
+      // If the error is already an HttpException, re-throw it
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      // Otherwise, throw a generic 500 Internal Server Error
+      throw new HttpException(e.message || 'Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -197,7 +210,7 @@ export class AppController {
     await this.PrivilegesServiceFromPortalsi.processPrivilege({});
     await this.ImsPrivilegeService.processAccountRole();
 
-    return;
+    return successResponse('sync sucessfully', {});
   }
 
   @Get('status')
