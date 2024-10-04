@@ -33,18 +33,18 @@ export class UsersMutationService {
     private readonly syncLogsService: SyncLogsService,
     @InjectRepository(RoleSystem)
     private roleSystemRepository: Repository<RoleSystem>,
-  ) {}
+  ) { }
 
   private convertKeysToLowerSnakeCase(obj): any {
     const newObj = {};
     for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            const newKey = key.toLowerCase();
-            newObj[newKey] = obj[key];
-        }
+      if (obj.hasOwnProperty(key)) {
+        const newKey = key.toLowerCase();
+        newObj[newKey] = obj[key];
+      }
     }
     return newObj;
-}
+  }
 
   async currentAccount(nipp_baru: string) {
     const user = await this.accountRepository.findOne({
@@ -53,8 +53,10 @@ export class UsersMutationService {
       },
     });
 
-    const [new_user] = await this.pegawaiPeoService.getPegawaiByNippNew({
-      nipp_baru,
+    const [new_user] = await this.pegawaiPeoService.getPegawai({
+      nipp_new: nipp_baru,
+      limit: 1,
+      page: 1
     });
     if (!new_user) {
       throw new Error('user not exist, call help desk');
@@ -70,7 +72,7 @@ export class UsersMutationService {
       });
     }
 
-    const convertedPrivNew = privsNew.map(e=> this.convertKeysToLowerSnakeCase(e))
+    const convertedPrivNew = privsNew.map(e => this.convertKeysToLowerSnakeCase(e))
 
     return {
       data: {
@@ -103,7 +105,7 @@ export class UsersMutationService {
     try {
       const entity = this.privilegeRepository.create(createPrivilegeDto);
       return await this.privilegeRepository.upsert(entity, ['i_id']);
-    } catch (e) {}
+    } catch (e) { }
   }
 
   async syncCurrentAccount(nipp_new: string) {
@@ -120,12 +122,14 @@ export class UsersMutationService {
 
     const currentUser = await this.userMvRepository.findOne({
       where: {
-        nip_new:nipp_new,
+        nip_new: nipp_new,
       },
     });
 
-    const [new_user] = await this.pegawaiPeoService.getPegawaiByNippNew({
-      nipp_baru: nipp_new,
+    const [new_user] = await this.pegawaiPeoService.getPegawai({
+      nipp_new,
+      limit: 1,
+      page: 1
     });
     if (!new_user || !currentUser) {
       throw new Error('user not exist, call help desk');
@@ -248,13 +252,13 @@ export class UsersMutationService {
       }
     }
 
-    const convertedPrivNew = privsNew.map(e=> this.convertKeysToLowerSnakeCase(e))
+    const convertedPrivNew = privsNew.map(e => this.convertKeysToLowerSnakeCase(e))
 
     return {
       data: {
         new_user: {
           ...convertedNewUserObject,
-          privsNew:convertedPrivNew,
+          privsNew: convertedPrivNew,
         },
       },
     };

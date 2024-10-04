@@ -19,7 +19,7 @@ export class PegawaiPeoService {
       .select('*')
       .from('PSO_ROLE_PEGAWAI', 'PSO_ROLE_PEGAWAI')
       .where('PSO_ROLE_PEGAWAI.INSTANSI <> :instansi', { instansi: '9999' })
-      .andWhere('PSO_ROLE_PEGAWAI.GRUP IN ( :...grups )', { grups: ['PLTP', 'PLND', ...grups] })
+      .andWhere('PSO_ROLE_PEGAWAI.GRUP IN ( :...grups )', { grups: [...grups] })
       .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', { company_code: '9999' })
       .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
       .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')
@@ -45,26 +45,26 @@ export class PegawaiPeoService {
     return await queryBuilder.getRawMany()
   }
 
-  async getPegawaiByNippNew({ nipp_baru }) {
-    return await this.connection.query(`      
-    SELECT a.*
-    FROM PSO_ROLE_PEGAWAI a
-    WHERE 
-      (
-        a.GRUP IN ('PLTP', 'PLND')
-        AND a.NIPP = '${nipp_baru}'
-        AND a.INSTANSI <> '9999'
-        AND a.COMPANY_CODE <> '9999'
-        AND a.WERKS_NEW IS NOT NULL
-        AND lower(a.NAMA) NOT LIKE '%dummy%'
-        AND lower(a.NAMA) NOT LIKE '%user%'
-        AND lower(a.NAMA) NOT LIKE '%test%'
-        AND lower(a.NAMA) NOT LIKE '%sit -%'
-        AND a.KD_DIV_ARSIP IS NOT NULL
-      )
-    ORDER BY
-      a.NIPP ASC
-    FETCH NEXT 1 ROWS ONLY
-    `);
-  }
+  // async getPegawaiByNippNew({ nipp_baru }) {
+  //   return await this.connection.query(`      
+  //   SELECT a.*
+  //   FROM PSO_ROLE_PEGAWAI a
+  //   WHERE 
+  //     (
+  //       a.GRUP IN ('PLTP', 'PLND')
+  //       AND a.NIPP = '${nipp_baru}'
+  //       AND a.INSTANSI <> '9999'
+  //       AND a.COMPANY_CODE <> '9999'
+  //       AND a.WERKS_NEW IS NOT NULL
+  //       AND lower(a.NAMA) NOT LIKE '%dummy%'
+  //       AND lower(a.NAMA) NOT LIKE '%user%'
+  //       AND lower(a.NAMA) NOT LIKE '%test%'
+  //       AND lower(a.NAMA) NOT LIKE '%sit -%'
+  //       AND a.KD_DIV_ARSIP IS NOT NULL
+  //     )
+  //   ORDER BY
+  //     a.NIPP ASC
+  //   FETCH NEXT 1 ROWS ONLY
+  //   `);
+  // }
 }

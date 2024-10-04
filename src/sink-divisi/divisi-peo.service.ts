@@ -32,7 +32,7 @@ export class DivisiPeoService {
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', { test: '%test%' })
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :sit', { sit: '%sit -%' })
             .andWhere('PSO_ROLE_PEGAWAI.KD_DIV_ARSIP IS NOT NULL')
-            .andWhere('PSO_ROLE_PEGAWAI.GRUP IN (:...grups)', { grups: ['PLTP', 'PLND', ...grups] });
+            .andWhere('PSO_ROLE_PEGAWAI.GRUP IN (:...grups)', { grups: [...grups] });
 
           if (nipp_new) {
             sq.andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU = :nipp_new', { nipp_new: String(nipp_new).trim() });
@@ -44,7 +44,7 @@ export class DivisiPeoService {
         'PSO_DIVISI.KD_DIV_ARSIP = PSO_ROLE_PEGAWAI_DT.KD_DIV_ARSIP AND PSO_DIVISI.KD_WIL_ARSIP = PSO_ROLE_PEGAWAI_DT.KD_WIL_ARSIP'
       )
       .where('PSO_DIVISI.KD_DIV_ARSIP IS NOT NULL')
-      .andWhere('PSO_DIVISI.GRUP IN (:...grups)', { grups: ['PLTP', 'PLND', ...grups] })
+      .andWhere('PSO_DIVISI.GRUP IN (:...grups)', { grups: [...grups] })
       .orderBy('PSO_DIVISI.KD_DIV_ARSIP', 'ASC')
       .addOrderBy('PSO_DIVISI.GRUP', 'ASC')
       .offset(limit * (page - 1))

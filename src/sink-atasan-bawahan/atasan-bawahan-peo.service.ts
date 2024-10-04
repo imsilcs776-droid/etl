@@ -21,7 +21,7 @@ export class AtasanBawahanPeoService {
       .andWhere('ATASAN_BAWAHAN.NIPP_ATS_BARU IS NOT NULL')
       .andWhere('ATASAN_BAWAHAN.EMAIL IS NOT NULL')
       .andWhere('ATASAN_BAWAHAN.EMAIL_ATS IS NOT NULL')
-      .andWhere('ATASAN_BAWAHAN.INSTANSI IN (:...grups)', { grups: ['PLTP', 'PLND', ...grups] })
+      .andWhere('ATASAN_BAWAHAN.INSTANSI IN (:...grups)', { grups: [...grups] })
       .andWhere(
         (qb) => {
           const subQuery = qb
@@ -37,7 +37,7 @@ export class AtasanBawahanPeoService {
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', { test: '%test%' })
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :sit', { sit: '%sit -%' })
             .andWhere('PSO_ROLE_PEGAWAI.KD_DIV_ARSIP IS NOT NULL')
-            .andWhere('PSO_ROLE_PEGAWAI.GRUP IN (:...grups)', { grups: ['PLTP', 'PLND', ...grups] });
+            .andWhere('PSO_ROLE_PEGAWAI.GRUP IN (:...grups)', { grups: [...grups] });
 
           if (nipp_new) {
             subQuery.andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU = :nipp_new', { nipp_new: String(nipp_new).trim() });
