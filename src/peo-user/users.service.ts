@@ -65,7 +65,10 @@ export class UsersService {
     /**
      * setInactive old users
      */
-    const totalDeleted = await this.setDeletedUsers();
+    let totalDeleted = 0
+    if (!nipp_new) {
+      totalDeleted = await this.setDeletedUsers();
+    }
 
     const processedUser = await this.repositoryUserMv.count({
       where: { source: 'PEO', is_active: true },

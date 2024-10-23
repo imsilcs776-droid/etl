@@ -40,7 +40,8 @@ export class DepartmentsService {
       page++;
     }
 
-    const totalDeleted = await this.setDeletedDepartments();
+    let totalDeleted = 0
+    totalDeleted = await this.setDeletedDepartments();
 
     const processedDepartment = await this.repositoryDepartmentMv.count({
       where: { source: 'PEO', is_active: true },
