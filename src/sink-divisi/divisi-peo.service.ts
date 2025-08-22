@@ -12,7 +12,7 @@ export class DivisiPeoService {
 
   async getDivisi({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
     const comps = await this.companyMvService.getMvCompany()
-    const grups = comps.map((comp) => comp.grup)
+    const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
 
     const queryBuilder = this.connection
       .createQueryBuilder()
@@ -24,6 +24,8 @@ export class DivisiPeoService {
             .select('DISTINCT KD_DIV_ARSIP, KD_WIL_ARSIP, WERKS_NEW')
             .from('PSO_ROLE_PEGAWAI', 'PSO_ROLE_PEGAWAI')
             .where('PSO_ROLE_PEGAWAI.INSTANSI <> :instansi', { instansi: '9999' })
+            .andWhere('PSO_ROLE_PEGAWAI.GRUP IS NOT NULL')
+            .andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU IS NOT NULL')
             .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', { company_code: '9999' })
             .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
             .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')

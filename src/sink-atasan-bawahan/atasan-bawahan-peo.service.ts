@@ -12,7 +12,8 @@ export class AtasanBawahanPeoService {
 
   async getAtasanBawahan({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
     const comps = await this.companyMvService.getMvCompany()
-    const grups = comps.map((comp) => comp.grup)
+    const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
+
     const queryBuilder = this.connection
       .createQueryBuilder()
       .select('ATASAN_BAWAHAN.*, ATASAN_BAWAHAN.INSTANSI AS PEGAWAI')
@@ -30,6 +31,8 @@ export class AtasanBawahanPeoService {
             .from('PSO_ROLE_PEGAWAI', 'PSO_ROLE_PEGAWAI')
             .where('PSO_ROLE_PEGAWAI.INSTANSI <> :instansi', { instansi: '9999' })
             .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', { company_code: '9999' })
+            .andWhere('PSO_ROLE_PEGAWAI.GRUP IS NOT NULL')
+            .andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU IS NOT NULL')
             .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
             .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')
             .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :dummy', { dummy: '%dummy%' })
