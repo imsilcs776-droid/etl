@@ -47,6 +47,7 @@ export class DivisiPeoService {
       )
       .where('PSO_DIVISI.KD_DIV_ARSIP IS NOT NULL')
       .andWhere('PSO_DIVISI.GRUP IN (:...grups)', { grups: [...grups] })
+      .andWhere('PSO_DIVISI.IS_DELETED IS NULL')
       .orderBy('PSO_DIVISI.KD_DIV_ARSIP', 'ASC')
       .addOrderBy('PSO_DIVISI.GRUP', 'ASC')
       .offset(limit * (page - 1))
