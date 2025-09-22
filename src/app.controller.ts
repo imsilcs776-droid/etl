@@ -135,7 +135,7 @@ export class AppController {
        * department master
        */
       await this.departmentsService.processDepartment();
-      // await this.departmentsService.processedUpdateParent();
+      await this.departmentsService.processedUpdateParent();
 
       /**
        * user
