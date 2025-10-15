@@ -21,7 +21,7 @@ export class PrivilegesService {
     private roleRepository: Repository<Role>,
     private syncLogService: SyncLogsService,
     private readonly privilegesPortasiService: PrivilegesPortalsiService,
-  ) {}
+  ) { }
 
   async deleteOldPrivilega() {
     return await this.privilegeRepository
@@ -33,7 +33,7 @@ export class PrivilegesService {
       .execute();
   }
 
-  async processPrivilege({nipp_new = null}) {
+  async processPrivilege({ nipp_new = null }) {
     const limit = 100;
     let stop = false;
     let page = 1;
@@ -147,8 +147,8 @@ export class PrivilegesService {
       "NAMA": "string"
   },
    */
-  async getPrivileges({ page, limit,nipp_new }): Promise<any> {
+  async getPrivileges({ page, limit, nipp_new }): Promise<any> {
     console.log('pageLimit=>', page, limit);
-    return await this.privilegesPortasiService.getPrivileges({ page, limit,nipp_new });
+    return await this.privilegesPortasiService.getPrivileges({ page, limit, nipp_new });
   }
 }
