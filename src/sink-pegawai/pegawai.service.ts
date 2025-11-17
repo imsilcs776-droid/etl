@@ -96,8 +96,8 @@ export class PegawaiService {
     while (count < pegawais.length) {
       const {
         KODE_SAP,
-        NAMA,
-        NIPP,
+        NAMA, // name user
+        NIPP, // untuk user key, user login
         KD_CABANG_SAP,
         NAMA_CABANG,
         KD_JABATAN,
