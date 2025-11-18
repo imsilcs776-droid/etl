@@ -182,13 +182,25 @@ export class DepartmentsService {
       const offset = limit * (page - 1);
       const departments = await this.repositoryDivisiPeo
         .createQueryBuilder('peo_divisi')
-        .where(
-          `peo_divisi.updated_at > (SELECT MAX(updated_at) FROM ims_sync_logs WHERE code = 'mt_departments')`,
+        .leftJoin(
+          qb => qb
+            .select('MAX(updated_at)', 'last')
+            .from('ims_sync_logs', 'logs')
+            .where('logs.code = :code', { code: 'mt_departments' }),
+          'sync',
+          '1=1'
         )
+        // updated_at MUST NOT be NULL
+        .where('peo_divisi.updated_at IS NOT NULL')
+        // if sync.last NULL → ambil semua (karena belum pernah sync)
+        // otherwise compare updated_at > sync.last
+        .andWhere('(sync.last IS NULL OR peo_divisi.updated_at > sync.last)')
         .orderBy('peo_divisi.id', 'ASC')
         .offset(offset)
         .limit(limit)
+        .setParameter('code', 'mt_departments')
         .getMany();
+
 
       return departments;
     } catch (err) {

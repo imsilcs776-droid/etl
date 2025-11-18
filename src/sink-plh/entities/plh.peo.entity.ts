@@ -130,4 +130,10 @@ export class PlhPeoEntity {
 
   @Column({ nullable: true })
   doc_no: string;
+
+  @Column({ nullable: true })
+  user_plh_id: string;
+
+  @Column({ nullable: true })
+  dept_pejabat_id: number;
 }

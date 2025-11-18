@@ -128,4 +128,10 @@ export class CreatePlhPeoDto {
 
   @ApiProperty({ required: false })
   doc_no: string;
+
+  @ApiProperty({ required: false })
+  user_plh_id: string;
+
+  @ApiProperty({ required: false })
+  dept_pejabat_id: number;
 }

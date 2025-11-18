@@ -57,4 +57,62 @@ export class DivisiPeoService {
 
     return await queryBuilder.getRawMany();
   }
+
+  async getDivisiWithPlh({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
+    const comps = await this.companyMvService.getMvCompany()
+    const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
+
+    const queryBuilder = this.connection
+      .createQueryBuilder()
+      .select('DIVISI')
+      .distinctOn(['DIVISI.KD_DIV_ARSIP', 'DIVISI.KD_WIL_ARSIP'])
+      .from('PSO_DIVISI', 'DIVISI')
+      .leftJoin(
+        (qb) =>
+          qb
+            .select(['KD_DIV', 'KD_WIL'])
+            .distinct(true)
+            .from('MASTER_PLH', 'MASTER_PLH'),
+        'MASTER_PLH',
+        'DIVISI.KD_DIV_ARSIP = MASTER_PLH.KD_DIV AND DIVISI.KD_WIL_ARSIP = MASTER_PLH.KD_WIL'
+      )
+
+      // ✅ Kembalikan kondisi Wajib Pertama
+      .where('MASTER_PLH.KD_DIV IS NOT NULL')
+
+      // ✅ OR EXISTS subquery
+      .orWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('1')
+          .from('PSO_ROLE_PEGAWAI', 'ROLE_PEGAWAI')
+          .where('ROLE_PEGAWAI.KD_DIV_ARSIP = DIVISI.KD_DIV_ARSIP')
+          .andWhere('ROLE_PEGAWAI.KD_WIL_ARSIP = DIVISI.KD_WIL_ARSIP');
+
+        if (nipp_new) {
+          subQuery.andWhere('ROLE_PEGAWAI.NIPP_BARU = :nipp_new', {
+            nipp_new: String(nipp_new).trim(),
+          });
+        }
+
+        return `EXISTS (${subQuery.getQuery()})`;
+      })
+
+      // FILTER LAIN
+      .andWhere('DIVISI.KD_DIV_ARSIP IS NOT NULL')
+      .andWhere('DIVISI.GRUP IN (:...grups)', { grups: [...grups] })
+      .andWhere('DIVISI.IS_DELETED IS NULL')
+
+      // ORDER
+      .orderBy('DIVISI.KD_DIV_ARSIP', 'ASC')
+      .addOrderBy('DIVISI.KD_WIL_ARSIP', 'ASC')
+      .addOrderBy('DIVISI.GRUP', 'ASC')
+
+      // PAGINATION
+      .offset(limit * (page - 1))
+      .limit(limit);
+
+
+    return await queryBuilder.getRawMany();
+  }
 }

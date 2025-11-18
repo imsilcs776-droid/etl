@@ -23,7 +23,7 @@ import { PeoTestController } from './peo-test/peo-test.controller';
 import { SinkPlhModule } from './sink-plh/plh.module';
 import { CompanyMvModule } from './mv-company/mv-company.module';
 import { SyncLogsModule } from './sync-log/sync-log.module';
-import { DivisiByPLHModule } from './sink-divisi-by-plh/divisi.module';
+import { PeoPlhUserDepartmentsModule } from './peo-plh/department.module';
 dotenv.config();
 @Module({
   imports: [
@@ -53,9 +53,9 @@ dotenv.config();
      */
     SinkAtasanBawahanModule,
     SinkDivisiModule,
-    DivisiByPLHModule,
     SinkPegawaiModule,
     SinkPlhModule,
+    PeoPlhUserDepartmentsModule,
   ],
   // controllers: [],
   controllers: [AppController, PeoTestController],

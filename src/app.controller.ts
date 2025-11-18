@@ -12,6 +12,7 @@ import { PlhService } from './sink-plh/plh.service';
 import { RolesService } from './role/role.service';
 import { SyncLogsService } from './sync-log/sync-log.service';
 import { errorResponse, successResponse } from './utils/response';
+import { PlhUserDepartmentsService } from './peo-plh/department.service';
 
 @ApiTags('Sink Sequence')
 @Controller({
@@ -45,6 +46,11 @@ export class AppController {
      */
     private readonly PrivilegesServiceFromPortalsi: PrivilegesService,
     private readonly ImsPrivilegeService: ImsPrivilegeService,
+
+    /**
+     * plh user department
+     */
+    private readonly plhUserDepartmentsService: PlhUserDepartmentsService,
   ) { }
 
   @Post()
@@ -91,6 +97,11 @@ export class AppController {
        */
       await this.PrivilegesServiceFromPortalsi.processPrivilege({});
       await this.ImsPrivilegeService.processAccountRole();
+
+      /**
+       * plh user department
+       */
+      await this.plhUserDepartmentsService.processPlhUserDepartment();
 
       /**
        * End log

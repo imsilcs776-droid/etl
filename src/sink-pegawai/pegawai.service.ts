@@ -148,8 +148,8 @@ export class PegawaiService {
         BANK_ACCOUNT,
         WERKS_NEW,
         PBTXT_NEW,
-        BTRL_NEW,
-        BTRX_NEW,
+        BTRTL_NEW,
+        BTRTX_NEW,
         CREATED_DATE,
         TRAVELCOSTCENTER,
         NAMA_SUB_TRAVEL,
@@ -217,8 +217,8 @@ export class PegawaiService {
       dto.bank_account = BANK_ACCOUNT;
       dto.werks_new = WERKS_NEW;
       dto.pbtxt_new = PBTXT_NEW;
-      dto.btrl_new = BTRL_NEW;
-      dto.btrx_new = BTRX_NEW;
+      dto.btrl_new = BTRTL_NEW;
+      dto.btrx_new = BTRTX_NEW;
       dto.created_date = CREATED_DATE;
       dto.travelcostcenter = TRAVELCOSTCENTER;
       dto.nama_sub_travel = NAMA_SUB_TRAVEL;
