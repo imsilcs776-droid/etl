@@ -47,26 +47,75 @@ export class PegawaiPeoService {
     return await queryBuilder.getRawMany()
   }
 
-  // async getPegawaiByNippNew({ nipp_baru }) {
-  //   return await this.connection.query(`      
-  //   SELECT a.*
-  //   FROM PSO_ROLE_PEGAWAI a
-  //   WHERE 
-  //     (
-  //       a.GRUP IN ('PLTP', 'PLND')
-  //       AND a.NIPP = '${nipp_baru}'
-  //       AND a.INSTANSI <> '9999'
-  //       AND a.COMPANY_CODE <> '9999'
-  //       AND a.WERKS_NEW IS NOT NULL
-  //       AND lower(a.NAMA) NOT LIKE '%dummy%'
-  //       AND lower(a.NAMA) NOT LIKE '%user%'
-  //       AND lower(a.NAMA) NOT LIKE '%test%'
-  //       AND lower(a.NAMA) NOT LIKE '%sit -%'
-  //       AND a.KD_DIV_ARSIP IS NOT NULL
-  //     )
-  //   ORDER BY
-  //     a.NIPP ASC
-  //   FETCH NEXT 1 ROWS ONLY
-  //   `);
-  // }
+  async getPegawaiV2({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
+    const comps = await this.companyMvService.getMvCompany()
+    const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
+
+    const qb = this.connection
+      .createQueryBuilder()
+      .select('*')
+      .from('PSO_ROLE_PEGAWAI', 'PSO_ROLE_PEGAWAI');
+
+    // ================================
+    // 🔥 Kelompokkan semua FILTER NORMAL
+    // ================================
+    qb.where((qb2) => {
+      const normal = qb2
+        .subQuery()
+        .select('1')
+        .from('PSO_ROLE_PEGAWAI', 'P2')
+        .where('P2.NIPP_BARU = PSO_ROLE_PEGAWAI.NIPP_BARU')
+        .andWhere('P2.INSTANSI <> :instansi', { instansi: '9999' })
+        .andWhere('P2.GRUP IS NOT NULL')
+        .andWhere('P2.NIPP_BARU IS NOT NULL')
+        .andWhere('P2.GRUP IN (:...grups)', { grups })
+        .andWhere('P2.COMPANY_CODE <> :company_code', { company_code: '9999' })
+        .andWhere('P2.WERKS_NEW IS NOT NULL')
+        .andWhere('P2.EMAIL IS NOT NULL')
+        .andWhere('lower(P2.NAMA) NOT LIKE :dummy', { dummy: '%dummy%' })
+        .andWhere('lower(P2.NAMA) NOT LIKE :user', { user: '%user%' })
+        .andWhere('lower(P2.NAMA) NOT LIKE :test', { test: '%test%' })
+        .andWhere('lower(P2.NAMA) NOT LIKE :sit', { sit: '%sit -%' })
+        .andWhere('P2.KD_DIV_ARSIP IS NOT NULL');
+
+      // Tambah filter nipp kalau ada
+      if (nipp_new) {
+        normal.andWhere('P2.NIPP_BARU = :nipp_new', {
+          nipp_new: String(nipp_new).trim(),
+        });
+      }
+
+      return `EXISTS (${normal.getQuery()})`;
+    });
+
+    // =================================
+    // 🔥 OR EXISTS MASTER_PLH
+    // =================================
+    qb.orWhere((qb2) => {
+      const sq = qb2
+        .subQuery()
+        .select('1')
+        .from('MASTER_PLH', 'MASTER_PLH')
+        .where('MASTER_PLH.NIPP_PLH_BARU = PSO_ROLE_PEGAWAI.NIPP_BARU')
+        .andWhere('MASTER_PLH.AKHIR > SYSDATE');   // ⬅️ untuk Oracle
+
+      if (nipp_new) {
+        sq.andWhere('MASTER_PLH.NIPP_PLH_BARU = :nipp_new', {
+          nipp_new: String(nipp_new).trim(),
+        });
+      }
+
+      return `EXISTS (${sq.getQuery()})`;
+    });
+
+    // ORDER + PAGINATION
+    qb.orderBy('PSO_ROLE_PEGAWAI.NIPP', 'ASC')
+      .offset(limit * (page - 1))
+      .limit(limit);
+
+    return await qb.getRawMany();
+  }
+
+
 }
+

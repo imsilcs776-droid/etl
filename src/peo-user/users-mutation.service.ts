@@ -53,7 +53,7 @@ export class UsersMutationService {
       },
     });
 
-    const [new_user] = await this.pegawaiPeoService.getPegawai({
+    const [new_user] = await this.pegawaiPeoService.getPegawaiV2({
       nipp_new: nipp_baru,
       limit: 1,
       page: 1
@@ -126,7 +126,7 @@ export class UsersMutationService {
       },
     });
 
-    const [new_user] = await this.pegawaiPeoService.getPegawai({
+    const [new_user] = await this.pegawaiPeoService.getPegawaiV2({
       nipp_new,
       limit: 1,
       page: 1

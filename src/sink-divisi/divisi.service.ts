@@ -157,6 +157,6 @@ export class DivisiService {
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
   private async getDivisi({ page, limit, nipp_new }): Promise<any> {
-    return await this.divisiPeoService.getDivisi({ page, limit, nipp_new });
+    return await this.divisiPeoService.getDivisiWithPlh({ page, limit, nipp_new });
   }
 }

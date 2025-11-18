@@ -248,6 +248,6 @@ export class PegawaiService {
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
   private async getPegawai({ page, limit, nipp_new }): Promise<any> {
-    return await this.pegawaiPeoService.getPegawai({ page, limit, nipp_new });
+    return await this.pegawaiPeoService.getPegawaiV2({ page, limit, nipp_new });
   }
 }

@@ -38,7 +38,7 @@ export class PegawaiController {
     @Query('limit') limit?: number,
     @Query('objid') objid?: string,
   ) {
-    return await this.pegawaiPeoService.getPegawai({
+    return await this.pegawaiPeoService.getPegawaiV2({
       page,
       limit,
       objid,
@@ -50,7 +50,7 @@ export class PegawaiController {
   async getUserByNippNew(
     @Param('nipp_new') nipp_new?: string,
   ) {
-    return await this.pegawaiPeoService.getPegawai({
+    return await this.pegawaiPeoService.getPegawaiV2({
       nipp_new,
     });
   }

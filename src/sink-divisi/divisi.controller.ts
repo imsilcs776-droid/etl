@@ -38,7 +38,7 @@ export class DivisiController {
     @Query('limit') limit?: number,
     @Query('objid') objid?: string,
   ) {
-    return await this.divisiPeoService.getDivisi({
+    return await this.divisiPeoService.getDivisiWithPlh({
       page,
       limit,
       objid,
@@ -50,7 +50,7 @@ export class DivisiController {
   async getDivByNippNew(
     @Param('nipp_new') nipp_new?: string,
   ) {
-    return await this.divisiPeoService.getDivisi({
+    return await this.divisiPeoService.getDivisiWithPlh({
       nipp_new,
     });
   }
