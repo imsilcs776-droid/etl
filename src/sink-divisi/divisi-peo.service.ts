@@ -64,9 +64,9 @@ export class DivisiPeoService {
 
     const queryBuilder = this.connection
       .createQueryBuilder()
-      .select('DIVISI')
-      .distinctOn(['DIVISI.KD_DIV_ARSIP', 'DIVISI.KD_WIL_ARSIP'])
-      .from('PSO_DIVISI', 'DIVISI')
+      .select('PSO_DIVISI.*')
+      .distinctOn(['PSO_DIVISI.KD_DIV_ARSIP', 'PSO_DIVISI.KD_WIL_ARSIP'])
+      .from('PSO_DIVISI', 'PSO_DIVISI')
       .leftJoin(
         (qb) =>
           qb
@@ -74,7 +74,7 @@ export class DivisiPeoService {
             .distinct(true)
             .from('MASTER_PLH', 'MASTER_PLH'),
         'MASTER_PLH',
-        'DIVISI.KD_DIV_ARSIP = MASTER_PLH.KD_DIV AND DIVISI.KD_WIL_ARSIP = MASTER_PLH.KD_WIL'
+        'PSO_DIVISI.KD_DIV_ARSIP = MASTER_PLH.KD_DIV AND PSO_DIVISI.KD_WIL_ARSIP = MASTER_PLH.KD_WIL'
       )
 
       // ✅ Kembalikan kondisi Wajib Pertama
@@ -86,8 +86,8 @@ export class DivisiPeoService {
           .subQuery()
           .select('1')
           .from('PSO_ROLE_PEGAWAI', 'ROLE_PEGAWAI')
-          .where('ROLE_PEGAWAI.KD_DIV_ARSIP = DIVISI.KD_DIV_ARSIP')
-          .andWhere('ROLE_PEGAWAI.KD_WIL_ARSIP = DIVISI.KD_WIL_ARSIP');
+          .where('ROLE_PEGAWAI.KD_DIV_ARSIP = PSO_DIVISI.KD_DIV_ARSIP')
+          .andWhere('ROLE_PEGAWAI.KD_WIL_ARSIP = PSO_DIVISI.KD_WIL_ARSIP');
 
         if (nipp_new) {
           subQuery.andWhere('ROLE_PEGAWAI.NIPP_BARU = :nipp_new', {
@@ -99,14 +99,14 @@ export class DivisiPeoService {
       })
 
       // FILTER LAIN
-      .andWhere('DIVISI.KD_DIV_ARSIP IS NOT NULL')
-      .andWhere('DIVISI.GRUP IN (:...grups)', { grups: [...grups] })
-      .andWhere('DIVISI.IS_DELETED IS NULL')
+      .andWhere('PSO_DIVISI.KD_DIV_ARSIP IS NOT NULL')
+      .andWhere('PSO_DIVISI.GRUP IN (:...grups)', { grups: [...grups] })
+      .andWhere('PSO_DIVISI.IS_DELETED IS NULL')
 
       // ORDER
-      .orderBy('DIVISI.KD_DIV_ARSIP', 'ASC')
-      .addOrderBy('DIVISI.KD_WIL_ARSIP', 'ASC')
-      .addOrderBy('DIVISI.GRUP', 'ASC')
+      .orderBy('PSO_DIVISI.KD_DIV_ARSIP', 'ASC')
+      .addOrderBy('PSO_DIVISI.KD_WIL_ARSIP', 'ASC')
+      .addOrderBy('PSO_DIVISI.GRUP', 'ASC')
 
       // PAGINATION
       .offset(limit * (page - 1))

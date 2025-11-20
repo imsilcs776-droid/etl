@@ -75,8 +75,8 @@ export class PlhUserDepartmentsService {
       });
 
       const body: Partial<PlhPeoEntity> = {
-        user_plh_id: userMap.get(peoPeoPlh.user_plh_id.trim()) || null,
-        dept_pejabat_id: dept.id || null,
+        user_plh_id: userMap.get(peoPeoPlh.nipp_plh.trim()) || null,
+        dept_pejabat_id: dept?.id || null,
         updated_at: now,
       };
 
