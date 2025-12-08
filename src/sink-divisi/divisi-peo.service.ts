@@ -62,14 +62,15 @@ export class DivisiPeoService {
     const comps = await this.companyMvService.getMvCompany()
     const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
 
-    const queryBuilder = this.connection
+    const qb = this.connection
       .createQueryBuilder()
       .select('PSO_DIVISI.*')
-      .distinctOn(['PSO_DIVISI.KD_DIV_ARSIP', 'PSO_DIVISI.KD_WIL_ARSIP'])
       .from('PSO_DIVISI', 'PSO_DIVISI')
+
+      // LEFT JOIN PLH
       .leftJoin(
-        (qb) =>
-          qb
+        (sub) =>
+          sub
             .select(['KD_DIV', 'KD_WIL'])
             .distinct(true)
             .from('MASTER_PLH', 'MASTER_PLH'),
@@ -77,31 +78,43 @@ export class DivisiPeoService {
         'PSO_DIVISI.KD_DIV_ARSIP = MASTER_PLH.KD_DIV AND PSO_DIVISI.KD_WIL_ARSIP = MASTER_PLH.KD_WIL'
       )
 
-      // ✅ Kembalikan kondisi Wajib Pertama
-      .where('MASTER_PLH.KD_DIV IS NOT NULL')
+      // LEFT JOIN ROLE
+      .leftJoin(
+        (sub) => {
+          const s = sub
+            .select(['KD_DIV_ARSIP', 'KD_WIL_ARSIP', 'NIPP_BARU'])
+            .from('PSO_ROLE_PEGAWAI', 'R')
+            .where('R.INSTANSI <> :instansi', { instansi: '9999' })
+            .andWhere('R.NIPP_BARU IS NOT NULL')
+            .andWhere('R.WERKS_NEW IS NOT NULL')
+            .andWhere('R.EMAIL IS NOT NULL');
 
-      // ✅ OR EXISTS subquery
-      .orWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select('1')
-          .from('PSO_ROLE_PEGAWAI', 'ROLE_PEGAWAI')
-          .where('ROLE_PEGAWAI.KD_DIV_ARSIP = PSO_DIVISI.KD_DIV_ARSIP')
-          .andWhere('ROLE_PEGAWAI.KD_WIL_ARSIP = PSO_DIVISI.KD_WIL_ARSIP');
+          if (nipp_new) {
+            s.andWhere('R.NIPP_BARU = :nipp_new', { nipp_new: String(nipp_new).trim() });
+          }
 
-        if (nipp_new) {
-          subQuery.andWhere('ROLE_PEGAWAI.NIPP_BARU = :nipp_new', {
-            nipp_new: String(nipp_new).trim(),
-          });
-        }
+          return s;
+        },
+        'ROLE_PEG',
+        'PSO_DIVISI.KD_DIV_ARSIP = ROLE_PEG.KD_DIV_ARSIP AND PSO_DIVISI.KD_WIL_ARSIP = ROLE_PEG.KD_WIL_ARSIP'
+      )
 
-        return `EXISTS (${subQuery.getQuery()})`;
-      })
-
-      // FILTER LAIN
-      .andWhere('PSO_DIVISI.KD_DIV_ARSIP IS NOT NULL')
-      .andWhere('PSO_DIVISI.GRUP IN (:...grups)', { grups: [...grups] })
+      // === MASTER FILTER ===
+      .where('PSO_DIVISI.KD_DIV_ARSIP IS NOT NULL')
       .andWhere('PSO_DIVISI.IS_DELETED IS NULL')
+      .andWhere('PSO_DIVISI.GRUP IN (:...grups)', { grups })
+      .andWhere('PSO_DIVISI.INSTANSI IN (:...grups)', { grups })
+
+      // === LOGIC UTAMA ===
+      // Ambil DIVISI jika:
+      //   1. Ada di PLH, atau
+      //   2. Ada ROLE, atau
+      //   3. Tidak punya ROLE = ROLE_PEG.KD_DIV_ARSIP IS NULL
+      .andWhere(`
+        MASTER_PLH.KD_DIV IS NOT NULL
+        OR ROLE_PEG.KD_DIV_ARSIP IS NOT NULL
+        OR ROLE_PEG.KD_DIV_ARSIP IS NULL
+      `)
 
       // ORDER
       .orderBy('PSO_DIVISI.KD_DIV_ARSIP', 'ASC')
@@ -112,7 +125,6 @@ export class DivisiPeoService {
       .offset(limit * (page - 1))
       .limit(limit);
 
-
-    return await queryBuilder.getRawMany();
+    return await qb.getRawMany();
   }
 }
