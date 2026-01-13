@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { DivisiPeoService } from './divisi-peo.service';
@@ -16,7 +16,7 @@ export class DivisiService {
     private repository: Repository<DivisiPeoEntity>,
     private syncLogService: SyncLogsService,
     private divisiPeoService: DivisiPeoService,
-  ) { }
+  ) {}
 
   public async processDivisi({ nipp_new = '' }) {
     const now = moment().utcOffset('+0700').toDate();
@@ -29,7 +29,7 @@ export class DivisiService {
       const divisions = await this.getDivisi({
         page,
         limit,
-        nipp_new
+        nipp_new,
       });
       if (divisions && divisions.length) {
         await this.bulkInsert(divisions);
@@ -157,6 +157,10 @@ export class DivisiService {
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
   private async getDivisi({ page, limit, nipp_new }): Promise<any> {
-    return await this.divisiPeoService.getDivisiWithPlh({ page, limit, nipp_new });
+    return await this.divisiPeoService.getDivisiWithPlh({
+      page,
+      limit,
+      nipp_new,
+    });
   }
 }

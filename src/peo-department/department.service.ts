@@ -1,6 +1,6 @@
-import { Injectable, Body } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { DepartmentMvEntity } from './entities/department.mv.entity';
 import { DivisiPeoEntity } from './entities/divisi.peo.entity';
@@ -16,7 +16,7 @@ export class DepartmentsService {
     @InjectRepository(DivisiPeoEntity)
     private repositoryDivisiPeo: Repository<DivisiPeoEntity>,
     private syncLogService: SyncLogsService,
-  ) { }
+  ) {}
 
   public async processDepartment() {
     const now = moment().toDate();
@@ -40,7 +40,7 @@ export class DepartmentsService {
       page++;
     }
 
-    let totalDeleted = 0
+    let totalDeleted = 0;
     totalDeleted = await this.setDeletedDepartments();
 
     const processedDepartment = await this.repositoryDepartmentMv.count({
@@ -100,7 +100,7 @@ export class DepartmentsService {
             where: {
               code: myParent,
               is_active: true,
-              i_kd_wil: department.i_kd_wil
+              i_kd_wil: department.i_kd_wil,
             },
           });
 
@@ -183,12 +183,13 @@ export class DepartmentsService {
       const departments = await this.repositoryDivisiPeo
         .createQueryBuilder('peo_divisi')
         .leftJoin(
-          qb => qb
-            .select('MAX(updated_at)', 'last')
-            .from('ims_sync_logs', 'logs')
-            .where('logs.code = :code', { code: 'mt_departments' }),
+          (qb) =>
+            qb
+              .select('MAX(updated_at)', 'last')
+              .from('ims_sync_logs', 'logs')
+              .where('logs.code = :code', { code: 'mt_departments' }),
           'sync',
-          '1=1'
+          '1=1',
         )
         // updated_at MUST NOT be NULL
         .where('peo_divisi.updated_at IS NOT NULL')
@@ -200,7 +201,6 @@ export class DepartmentsService {
         .limit(limit)
         .setParameter('code', 'mt_departments')
         .getMany();
-
 
       return departments;
     } catch (err) {

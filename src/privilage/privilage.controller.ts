@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   HttpStatus,
   HttpCode,
   Query,
@@ -32,7 +31,7 @@ export class PrivilegesController {
   @Post(':nipp_new')
   @HttpCode(HttpStatus.CREATED)
   async byNipp(@Param('nipp_new') nipp_new: string) {
-    return await this.PrivilegesService.processPrivilege({nipp_new});
+    return await this.PrivilegesService.processPrivilege({ nipp_new });
   }
 
   @Delete('detached')

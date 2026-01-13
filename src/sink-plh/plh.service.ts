@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { PlhPeoService } from './plh-peo.service';
@@ -16,7 +16,7 @@ export class PlhService {
     private repository: Repository<PlhPeoEntity>,
     private syncLogService: SyncLogsService,
     private divisiPeoService: PlhPeoService,
-  ) { }
+  ) {}
 
   public async processPlh({ nipp_new = '' }) {
     const now = moment().utcOffset('+0700').toDate();
@@ -29,7 +29,7 @@ export class PlhService {
       const divisions = await this.getPlh({
         page,
         limit,
-        nipp_new
+        nipp_new,
       });
       if (divisions && divisions.length) {
         await this.bulkInsert(divisions);

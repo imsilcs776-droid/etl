@@ -1,4 +1,12 @@
-import { Controller, Get, HttpCode, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DivisiService } from './sink-divisi/divisi.service';
 import { PegawaiService } from './sink-pegawai/pegawai.service';
@@ -11,7 +19,7 @@ import { PrivilegesService } from './privilage/privilage.service';
 import { PlhService } from './sink-plh/plh.service';
 import { RolesService } from './role/role.service';
 import { SyncLogsService } from './sync-log/sync-log.service';
-import { errorResponse, successResponse } from './utils/response';
+import { successResponse } from './utils/response';
 import { PlhUserDepartmentsService } from './peo-plh/department.service';
 
 @ApiTags('Sink Sequence')
@@ -51,13 +59,12 @@ export class AppController {
      * plh user department
      */
     private readonly plhUserDepartmentsService: PlhUserDepartmentsService,
-  ) { }
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async sinkAll() {
     try {
-
       /**
        * start log
        */
@@ -113,7 +120,6 @@ export class AppController {
       await this.syncLogService.endLog();
       throw new Error(e);
     }
-
   }
 
   @Post(':nipp_new')
@@ -121,18 +127,20 @@ export class AppController {
   async sinkById(@Param('nipp_new') nipp_new: string) {
     try {
       /**
-        * start log
-        */
+       * start log
+       */
       await this.syncLogService.startLog();
 
       /**
        * Peo
        */
       await this.divisiService.processDivisi({ nipp_new });
-      const { isExist } = await this.pegawaiService.processPegawai({ nipp_new });
+      const { isExist } = await this.pegawaiService.processPegawai({
+        nipp_new,
+      });
 
       if (!isExist) {
-        throw new HttpException("Nipp new not found", HttpStatus.NOT_FOUND);
+        throw new HttpException('Nipp new not found', HttpStatus.NOT_FOUND);
       }
 
       await this.atasanBawahanService.processAtasanBawahan({ nipp_new });
@@ -152,7 +160,9 @@ export class AppController {
        * user
        */
       await this.usersService.processUser({ nipp_new });
-      await this.userDepartmentService.processUserDepartment({ nippNew: nipp_new });
+      await this.userDepartmentService.processUserDepartment({
+        nippNew: nipp_new,
+      });
 
       /**
        * role
@@ -180,7 +190,10 @@ export class AppController {
       }
 
       // Otherwise, throw a generic 500 Internal Server Error
-      throw new HttpException(e.message || 'Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        e.message || 'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

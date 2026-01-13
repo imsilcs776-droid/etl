@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { AtasanBawahanPeoService } from './atasan-bawahan-peo.service';
@@ -19,7 +18,7 @@ export class AtasanBawahanService {
     private atasanBawahanPeoService: AtasanBawahanPeoService,
   ) {}
 
-  public async processAtasanBawahan({nipp_new = ''}) {
+  public async processAtasanBawahan({ nipp_new = '' }) {
     const now = moment().toDate();
     const limit = 100;
     let stop = false;
@@ -30,7 +29,7 @@ export class AtasanBawahanService {
       const atasanBawahans = await this.getAtasanBawahan({
         page,
         limit,
-        nipp_new
+        nipp_new,
       });
       if (atasanBawahans && atasanBawahans.length) {
         await this.bulkInsert(atasanBawahans);
@@ -154,6 +153,10 @@ export class AtasanBawahanService {
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
   private async getAtasanBawahan({ page, limit, nipp_new }): Promise<any> {
-    return await this.atasanBawahanPeoService.getAtasanBawahan({ page, limit, nipp_new });
+    return await this.atasanBawahanPeoService.getAtasanBawahan({
+      page,
+      limit,
+      nipp_new,
+    });
   }
 }

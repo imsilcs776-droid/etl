@@ -33,7 +33,7 @@ export class UsersMutationService {
     private readonly syncLogsService: SyncLogsService,
     @InjectRepository(RoleSystem)
     private roleSystemRepository: Repository<RoleSystem>,
-  ) { }
+  ) {}
 
   private convertKeysToLowerSnakeCase(obj): any {
     const newObj = {};
@@ -56,14 +56,13 @@ export class UsersMutationService {
     const [new_user] = await this.pegawaiPeoService.getPegawaiV2({
       nipp_new: nipp_baru,
       limit: 1,
-      page: 1
+      page: 1,
     });
     if (!new_user) {
       throw new Error('user not exist, call help desk');
     }
 
     const convertedNewUserObject = this.convertKeysToLowerSnakeCase(new_user);
-
 
     let privsNew = [];
     if (convertedNewUserObject) {
@@ -72,7 +71,9 @@ export class UsersMutationService {
       });
     }
 
-    const convertedPrivNew = privsNew.map(e => this.convertKeysToLowerSnakeCase(e))
+    const convertedPrivNew = privsNew.map((e) =>
+      this.convertKeysToLowerSnakeCase(e),
+    );
 
     return {
       data: {
@@ -105,7 +106,7 @@ export class UsersMutationService {
     try {
       const entity = this.privilegeRepository.create(createPrivilegeDto);
       return await this.privilegeRepository.upsert(entity, ['i_id']);
-    } catch (e) { }
+    } catch (e) {}
   }
 
   async syncCurrentAccount(nipp_new: string) {
@@ -129,7 +130,7 @@ export class UsersMutationService {
     const [new_user] = await this.pegawaiPeoService.getPegawaiV2({
       nipp_new,
       limit: 1,
-      page: 1
+      page: 1,
     });
     if (!new_user || !currentUser) {
       throw new Error('user not exist, call help desk');
@@ -139,7 +140,10 @@ export class UsersMutationService {
 
     const { id: departmentId } =
       (await this.departmentRepository.findOne({
-        where: { code: convertedNewUserObject.kd_div_arsip, i_kd_wil: convertedNewUserObject.kd_wil_arsip },
+        where: {
+          code: convertedNewUserObject.kd_div_arsip,
+          i_kd_wil: convertedNewUserObject.kd_wil_arsip,
+        },
       })) || {};
 
     if (!departmentId) {
@@ -171,8 +175,7 @@ export class UsersMutationService {
       : `${nipp_baru}@MAIL.COM`;
     body.full_name = nama + ' # ' + String(nama_jabatan);
     body.first_name = String(nama).split(' ')[0];
-    body.last_name =
-      nameLegth > 1 ? full_names[nameLegth - 1] : full_names[0];
+    body.last_name = nameLegth > 1 ? full_names[nameLegth - 1] : full_names[0];
     body.nip = nipp;
     body.i_com_code = werks_new;
     body.pegawai = pegawai;
@@ -207,7 +210,7 @@ export class UsersMutationService {
           code: 'USER',
         },
       });
-      let role = await this.privilegeRepository.findOne({
+      const role = await this.privilegeRepository.findOne({
         where: { user: currentUser.id, role: userRole?.id },
       });
 
@@ -252,7 +255,9 @@ export class UsersMutationService {
       }
     }
 
-    const convertedPrivNew = privsNew.map(e => this.convertKeysToLowerSnakeCase(e))
+    const convertedPrivNew = privsNew.map((e) =>
+      this.convertKeysToLowerSnakeCase(e),
+    );
 
     return {
       data: {

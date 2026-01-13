@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { InjectConnection } from '@nestjs/typeorm';
 import { CompanyMvService } from 'src/mv-company/mv-company.service';
 import { Connection } from 'typeorm';
 
@@ -8,10 +8,10 @@ export class PegawaiPeoService {
   constructor(
     @InjectConnection('pelindo_peo') private readonly connection: Connection,
     private companyMvService: CompanyMvService,
-  ) { }
+  ) {}
 
   async getPegawai({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
-    const comps = await this.companyMvService.getMvCompany()
+    const comps = await this.companyMvService.getMvCompany();
     const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
 
     const queryBuilder = this.connection
@@ -22,18 +22,30 @@ export class PegawaiPeoService {
       .andWhere('PSO_ROLE_PEGAWAI.GRUP IS NOT NULL')
       .andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU IS NOT NULL')
       .andWhere('PSO_ROLE_PEGAWAI.GRUP IN ( :...grups )', { grups: [...grups] })
-      .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', { company_code: '9999' })
+      .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', {
+        company_code: '9999',
+      })
       .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
       .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')
-      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :dummy', { dummy: '%dummy%' })
-      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :user', { user: '%user%' })
-      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', { test: '%test%' })
-      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :sit', { sit: '%sit -%' })
+      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :dummy', {
+        dummy: '%dummy%',
+      })
+      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :user', {
+        user: '%user%',
+      })
+      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', {
+        test: '%test%',
+      })
+      .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :sit', {
+        sit: '%sit -%',
+      })
       .andWhere('PSO_ROLE_PEGAWAI.KD_DIV_ARSIP IS NOT NULL');
 
     // Apply NIPP_NEW filter if provided
     if (nipp_new) {
-      queryBuilder.andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU = :nipp_new', { nipp_new: String(nipp_new).trim() });
+      queryBuilder.andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU = :nipp_new', {
+        nipp_new: String(nipp_new).trim(),
+      });
     }
 
     // Apply pagination
@@ -44,11 +56,11 @@ export class PegawaiPeoService {
 
     // return queryBuilder.getQuery()
 
-    return await queryBuilder.getRawMany()
+    return await queryBuilder.getRawMany();
   }
 
   async getPegawaiV2({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
-    const comps = await this.companyMvService.getMvCompany()
+    const comps = await this.companyMvService.getMvCompany();
     const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
 
     const qb = this.connection
@@ -97,7 +109,7 @@ export class PegawaiPeoService {
         .select('1')
         .from('MASTER_PLH', 'MASTER_PLH')
         .where('MASTER_PLH.NIPP_PLH_BARU = PSO_ROLE_PEGAWAI.NIPP_BARU')
-        .andWhere('MASTER_PLH.AKHIR > SYSDATE');   // ⬅️ untuk Oracle
+        .andWhere('MASTER_PLH.AKHIR > SYSDATE'); // ⬅️ untuk Oracle
 
       if (nipp_new) {
         sq.andWhere('MASTER_PLH.NIPP_PLH_BARU = :nipp_new', {
@@ -115,7 +127,4 @@ export class PegawaiPeoService {
 
     return await qb.getRawMany();
   }
-
-
 }
-

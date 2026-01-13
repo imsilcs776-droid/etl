@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CompanyMvService } from './mv-company.service';
 
@@ -7,7 +7,7 @@ import { CompanyMvService } from './mv-company.service';
   path: 'mv-company',
 })
 export class CompanyMvController {
-  constructor(private readonly departmentService: CompanyMvService) { }
+  constructor(private readonly departmentService: CompanyMvService) {}
 
   @Get()
   @HttpCode(HttpStatus.ACCEPTED)

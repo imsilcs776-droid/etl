@@ -20,4 +20,4 @@ import { CompaniesMvEntity } from 'src/mv-company/entities/companies.mv.entity';
   providers: [PegawaiService, PegawaiPeoService],
   exports: [PegawaiService, PegawaiPeoService],
 })
-export class SinkPegawaiModule { }
+export class SinkPegawaiModule {}

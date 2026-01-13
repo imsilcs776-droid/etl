@@ -7,7 +7,7 @@ import { PlhUserDepartmentsService } from './department.service';
   path: 'sync-plh-user-department',
 })
 export class PlhUserDepartmentsController {
-  constructor(private readonly departmentService: PlhUserDepartmentsService) { }
+  constructor(private readonly departmentService: PlhUserDepartmentsService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

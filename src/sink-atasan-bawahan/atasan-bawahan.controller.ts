@@ -2,12 +2,10 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   HttpStatus,
   HttpCode,
   Query,
   Param,
-  Delete,
 } from '@nestjs/common';
 import { AtasanBawahanService } from './atasan-bawahan.service';
 // import { CreateAtasanBawahanDto } from './dto/create-AtasanBawahan.dto';
@@ -23,7 +21,7 @@ export class AtasanBawahanController {
   constructor(
     private readonly atasanBawahanService: AtasanBawahanService,
     private readonly atasanBawahanPeoService: AtasanBawahanPeoService,
-  ) { }
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -47,11 +45,9 @@ export class AtasanBawahanController {
 
   @Get('peo/atasanBawahan/:nipp_new')
   @HttpCode(HttpStatus.OK)
-  async getUserByNippNew(
-    @Param('nipp_new') nipp_new?: string,
-  ) {
+  async getUserByNippNew(@Param('nipp_new') nipp_new?: string) {
     return await this.atasanBawahanPeoService.getAtasanBawahan({
-      nipp_new
+      nipp_new,
     });
   }
 }

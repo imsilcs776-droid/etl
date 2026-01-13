@@ -1,9 +1,7 @@
-import { UserMvEntity } from 'src/peo-user/entities/user.mv.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';

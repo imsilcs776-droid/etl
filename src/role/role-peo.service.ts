@@ -5,7 +5,8 @@ import { Connection } from 'typeorm';
 @Injectable()
 export class RolesPEOService {
   constructor(
-    @InjectConnection('pelindo_portalsi') private readonly connection: Connection,
+    @InjectConnection('pelindo_portalsi')
+    private readonly connection: Connection,
   ) {}
 
   async getRoles({ page = 1, limit = 50 }) {

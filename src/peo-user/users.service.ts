@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserMvEntity } from './entities/user.mv.entity';
-import { And, ILike, IsNull, Like, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RolePeoEntity } from 'src/peo-role/entity/role.peo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { delay } from 'src/utils/delay';
@@ -23,7 +23,7 @@ export class UsersService {
     private syncLogService: SyncLogsService,
     @InjectRepository(RoleSystem)
     private roleSystemRepository: Repository<RoleSystem>,
-  ) { }
+  ) {}
 
   public async processUser({ nipp_new = '' }) {
     const now = moment().toDate();
@@ -44,7 +44,7 @@ export class UsersService {
       const data = await this.getPeoPegawai({
         page,
         limit,
-        nipp_new
+        nipp_new,
       });
       if (data && data.length) {
         await this.bulkInsert(data);
@@ -65,7 +65,7 @@ export class UsersService {
     /**
      * setInactive old users
      */
-    let totalDeleted = 0
+    let totalDeleted = 0;
     if (!nipp_new) {
       totalDeleted = await this.setDeletedUsers();
     }
@@ -102,7 +102,7 @@ export class UsersService {
         nama_cabang,
         kd_sub,
         kd_wil_arsip,
-        kd_div_arsip
+        kd_div_arsip,
       } = users[count];
 
       const full_names: string[] = String(nama).split(' ');

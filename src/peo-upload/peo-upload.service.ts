@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, UploadedFile } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { UploadDivisiDto } from './dto/upload-divisi.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Column, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DivisiMvEntity } from './entities/divisi.mv.entity';
 import { UploadPegawaiDto } from './dto/upload-pegawai.dto';
 import { RolePegawaiMvEntity } from './entities/role-pegawai.mv.entity';
@@ -230,9 +230,8 @@ export class PeoUploadService {
           instansi_ats: atasanBawahan.INSTANSI_ATS,
           pegawai: atasanBawahan.PEGAWAI,
         };
-        const insertAtasanBawahan = await this.repoAtasanBawahan.insert(
-          insertObj,
-        );
+        const insertAtasanBawahan =
+          await this.repoAtasanBawahan.insert(insertObj);
         if (insertAtasanBawahan) {
           message = 'Insert NIPP ' + atasanBawahan.NIPP + ' success';
         } else {

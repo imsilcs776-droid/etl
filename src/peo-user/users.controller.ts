@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   HttpStatus,
   HttpCode,
   Query,
@@ -25,7 +24,7 @@ export class UsersController {
     private readonly userPrivService: UserPrivilegeService,
     private readonly userDepService: UserDepartmentService,
     private readonly usersMutationService: UsersMutationService,
-  ) { }
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

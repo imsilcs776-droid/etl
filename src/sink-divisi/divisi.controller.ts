@@ -2,12 +2,10 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   HttpStatus,
   HttpCode,
   Query,
   Param,
-  Delete,
 } from '@nestjs/common';
 import { DivisiService } from './divisi.service';
 // import { CreateDivisiDto } from './dto/create-Divisi.dto';
@@ -23,7 +21,7 @@ export class DivisiController {
   constructor(
     private readonly divisiService: DivisiService,
     private readonly divisiPeoService: DivisiPeoService,
-  ) { }
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -47,9 +45,7 @@ export class DivisiController {
 
   @Get('peo/divisi/:nipp_new')
   @HttpCode(HttpStatus.OK)
-  async getDivByNippNew(
-    @Param('nipp_new') nipp_new?: string,
-  ) {
+  async getDivByNippNew(@Param('nipp_new') nipp_new?: string) {
     return await this.divisiPeoService.getDivisiWithPlh({
       nipp_new,
     });

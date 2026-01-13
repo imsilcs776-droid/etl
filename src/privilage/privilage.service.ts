@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Privilege } from './entities/privilage.entity';
@@ -21,7 +20,7 @@ export class PrivilegesService {
     private roleRepository: Repository<Role>,
     private syncLogService: SyncLogsService,
     private readonly privilegesPortasiService: PrivilegesPortalsiService,
-  ) { }
+  ) {}
 
   async deleteOldPrivilega() {
     return await this.privilegeRepository
@@ -69,7 +68,7 @@ export class PrivilegesService {
       const { ID, IDROLE, LAST_UPDATED_DATE, IDUSER, NIPP, NAMA } =
         privileges[count];
 
-      console.log({ ID, IDROLE, LAST_UPDATED_DATE, IDUSER, NIPP, NAMA })
+      console.log({ ID, IDROLE, LAST_UPDATED_DATE, IDUSER, NIPP, NAMA });
 
       const { id: roleId } = roles.find((role) => role.i_id == IDROLE) || {
         id: null,
@@ -149,6 +148,10 @@ export class PrivilegesService {
    */
   async getPrivileges({ page, limit, nipp_new }): Promise<any> {
     console.log('pageLimit=>', page, limit);
-    return await this.privilegesPortasiService.getPrivileges({ page, limit, nipp_new });
+    return await this.privilegesPortasiService.getPrivileges({
+      page,
+      limit,
+      nipp_new,
+    });
   }
 }

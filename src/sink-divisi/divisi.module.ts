@@ -20,4 +20,4 @@ import { CompanyMvModule } from 'src/mv-company/mv-company.module';
   providers: [DivisiService, DivisiPeoService],
   exports: [DivisiService, DivisiPeoService],
 })
-export class SinkDivisiModule { }
+export class SinkDivisiModule {}

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Code, Connection, IsNull, Not, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
 import { SyncLogsService } from 'src/sync-log/sync-log.service';
 import { CreatePrivilegeDto } from 'src/privilage/dto/privilage.dto';

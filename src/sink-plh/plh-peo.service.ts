@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { InjectConnection } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 
 @Injectable()
 export class PlhPeoService {
   constructor(
     @InjectConnection('pelindo_peo') private readonly connection: Connection,
-  ) { }
+  ) {}
 
   async getPlh({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
     if (nipp_new) {

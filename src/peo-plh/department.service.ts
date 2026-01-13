@@ -1,4 +1,4 @@
-import { Injectable, Body } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { delay } from 'src/utils/delay';
@@ -18,7 +18,7 @@ export class PlhUserDepartmentsService {
     @InjectRepository(PlhPeoEntity)
     private repositoryPeoPlhUserDept: Repository<PlhPeoEntity>,
     private syncLogService: SyncLogsService,
-  ) { }
+  ) {}
 
   public async processPlhUserDepartment() {
     const now = moment().toDate();
@@ -42,7 +42,7 @@ export class PlhUserDepartmentsService {
       page++;
     }
 
-    let totalDeleted = 0
+    const totalDeleted = 0;
 
     /**
      * add new last log
@@ -56,18 +56,18 @@ export class PlhUserDepartmentsService {
     };
   }
 
-
   private async bulkInsert(plh: PlhPeoEntity[], version) {
     const now = moment().toDate();
     const stringEndda = '9999-12-31 00:00:00';
 
-    const nippPlhList = [...new Set(plh.map(p => p.nipp_plh.trim()))];
+    const nippPlhList = [...new Set(plh.map((p) => p.nipp_plh.trim()))];
 
     const users = await this.repositoryUserMv.find({
       where: { nip_new: In(nippPlhList) },
     });
-    const userMap = new Map(users.map(user => [user.nip_new.trim(), user.id]));
-
+    const userMap = new Map(
+      users.map((user) => [user.nip_new.trim(), user.id]),
+    );
 
     for (const peoPeoPlh of plh) {
       const dept = await this.repositoryDepartmentMv.findOne({
@@ -92,12 +92,13 @@ export class PlhUserDepartmentsService {
       const departments = await this.repositoryPeoPlhUserDept
         .createQueryBuilder('peo_plh')
         .leftJoin(
-          qb => qb
-            .select('MAX(updated_at)', 'last')
-            .from('ims_sync_logs', 'logs')
-            .where('logs.code = :code', { code: 'peo_plh_user_departments' }),
+          (qb) =>
+            qb
+              .select('MAX(updated_at)', 'last')
+              .from('ims_sync_logs', 'logs')
+              .where('logs.code = :code', { code: 'peo_plh_user_departments' }),
           'sync',
-          '1=1'
+          '1=1',
         )
         // updated_at MUST NOT be NULL
         .where('peo_plh.updated_at IS NOT NULL')

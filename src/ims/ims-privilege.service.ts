@@ -19,7 +19,7 @@ export class ImsPrivilegeService {
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
     private syncLogService: SyncLogsService,
-  ) { }
+  ) {}
 
   public async processAccountRole() {
     // 🔹 1. Pastikan role USER tersedia
@@ -44,12 +44,15 @@ export class ImsPrivilegeService {
     const { count_user_no_role } = await this.userRepository
       .createQueryBuilder('u')
       .select('COUNT(*)', 'count_user_no_role')
-      .where(`NOT EXISTS (
+      .where(
+        `NOT EXISTS (
         SELECT 1
         FROM "Privileges" r
         JOIN roles a ON a.id = r.role
         WHERE a.code = :code AND r.user = u.id
-      )`, { code: 'USER' })
+      )`,
+        { code: 'USER' },
+      )
       .getRawOne();
 
     // Jika semua user sudah punya role USER
@@ -68,12 +71,15 @@ export class ImsPrivilegeService {
 
       const users = await this.userRepository
         .createQueryBuilder('u')
-        .where(`NOT EXISTS (
+        .where(
+          `NOT EXISTS (
           SELECT 1
           FROM "Privileges" r
           JOIN roles a ON a.id = r.role
           WHERE a.code = :code AND r.user = u.id
-        )`, { code: 'USER' })
+        )`,
+          { code: 'USER' },
+        )
         .skip((page - 1) * limit)
         .take(limit)
         .getMany();
@@ -99,7 +105,9 @@ export class ImsPrivilegeService {
         .orIgnore() // 🔹 cegah duplikat (jika ada unique index user+role)
         .execute();
 
-      this.logger.log(`Inserted ${insertValues.length} privileges (page ${page})`);
+      this.logger.log(
+        `Inserted ${insertValues.length} privileges (page ${page})`,
+      );
 
       page++;
     }

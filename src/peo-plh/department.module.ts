@@ -12,11 +12,16 @@ import { PlhPeoEntity } from 'src/sink-plh/entities/plh.peo.entity';
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([DepartmentMvEntity, DivisiPeoEntity, PlhPeoEntity, UserMvEntity]),
+    TypeOrmModule.forFeature([
+      DepartmentMvEntity,
+      DivisiPeoEntity,
+      PlhPeoEntity,
+      UserMvEntity,
+    ]),
     SyncLogsModule,
   ],
   controllers: [PlhUserDepartmentsController],
   providers: [PlhUserDepartmentsService],
   exports: [PlhUserDepartmentsService],
 })
-export class PeoPlhUserDepartmentsModule { }
+export class PeoPlhUserDepartmentsModule {}

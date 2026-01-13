@@ -20,4 +20,4 @@ import { CompanyMvModule } from 'src/mv-company/mv-company.module';
   providers: [AtasanBawahanService, AtasanBawahanPeoService],
   exports: [AtasanBawahanService, AtasanBawahanPeoService],
 })
-export class SinkAtasanBawahanModule { }
+export class SinkAtasanBawahanModule {}

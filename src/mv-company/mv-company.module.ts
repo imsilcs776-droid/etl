@@ -6,12 +6,9 @@ import { CompanyMvService } from './mv-company.service';
 import { CompanyMvController } from './mv-company.controller';
 
 @Module({
-    imports: [
-        HttpModule,
-        TypeOrmModule.forFeature([CompaniesMvEntity]),
-    ],
-    controllers: [CompanyMvController],
-    providers: [CompanyMvService],
-    exports: [CompanyMvService, TypeOrmModule.forFeature([CompaniesMvEntity])],
+  imports: [HttpModule, TypeOrmModule.forFeature([CompaniesMvEntity])],
+  controllers: [CompanyMvController],
+  providers: [CompanyMvService],
+  exports: [CompanyMvService, TypeOrmModule.forFeature([CompaniesMvEntity])],
 })
-export class CompanyMvModule { }
+export class CompanyMvModule {}

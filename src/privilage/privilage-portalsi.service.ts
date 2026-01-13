@@ -10,7 +10,7 @@ export class PrivilegesPortalsiService {
   ) {}
 
   async getPrivileges({ page = 1, limit = 50, nipp_new = null }) {
-    if(nipp_new){
+    if (nipp_new) {
       return await this.connection
         .createQueryBuilder()
         .select('A.*')
@@ -20,7 +20,7 @@ export class PrivilegesPortalsiService {
         .innerJoin('USERLOGIN', 'L', 'A.IDUSER = L.ID')
         .innerJoin('ROLES', 'R', `R.ID = A.IDROLE AND R.IDAPLIKASI = '4162'`)
         .orderBy('A.ID')
-        .where('L.NIPP = :nipp_new', {nipp_new})
+        .where('L.NIPP = :nipp_new', { nipp_new })
         .limit(limit)
         .offset(limit * (page - 1))
         .getRawMany();

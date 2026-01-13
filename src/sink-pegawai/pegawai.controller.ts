@@ -2,12 +2,10 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   HttpStatus,
   HttpCode,
   Query,
   Param,
-  Delete,
 } from '@nestjs/common';
 import { PegawaiService } from './pegawai.service';
 // import { CreatePegawaiDto } from './dto/create-Pegawai.dto';
@@ -23,7 +21,7 @@ export class PegawaiController {
   constructor(
     private readonly pegawaiService: PegawaiService,
     private readonly pegawaiPeoService: PegawaiPeoService,
-  ) { }
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -47,9 +45,7 @@ export class PegawaiController {
 
   @Get('peo/pegawai/:nipp_new')
   @HttpCode(HttpStatus.OK)
-  async getUserByNippNew(
-    @Param('nipp_new') nipp_new?: string,
-  ) {
+  async getUserByNippNew(@Param('nipp_new') nipp_new?: string) {
     return await this.pegawaiPeoService.getPegawaiV2({
       nipp_new,
     });

@@ -61,4 +61,4 @@ dotenv.config();
   controllers: [AppController, PeoTestController],
   providers: [PeoTestService],
 })
-export class AppModule { }
+export class AppModule {}

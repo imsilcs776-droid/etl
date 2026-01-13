@@ -36,7 +36,7 @@ import { CompanyMvModule } from 'src/mv-company/mv-company.module';
       DepartmentMvEntity,
     ]),
     SyncLogsModule,
-    CompanyMvModule
+    CompanyMvModule,
   ],
   controllers: [UsersController],
   providers: [
@@ -55,8 +55,13 @@ import { CompanyMvModule } from 'src/mv-company/mv-company.module';
 
     PegawaiPeoService,
     PrivilegesPortalsiService,
-    SyncLogsService
+    SyncLogsService,
   ],
-  exports: [UsersService, UserPrivilegeService, UserDepartmentService, UsersMutationService],
+  exports: [
+    UsersService,
+    UserPrivilegeService,
+    UserDepartmentService,
+    UsersMutationService,
+  ],
 })
-export class UsersModule { }
+export class UsersModule {}

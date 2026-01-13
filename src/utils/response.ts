@@ -42,14 +42,14 @@ export const successResponse = (message: string, data) => {
   return {
     success: true,
     message,
-    data: Response.transform(data)
-  }
-}
+    data: Response.transform(data),
+  };
+};
 
 export const errorResponse = (error) => {
   return {
     success: false,
     message: error,
     data: null,
-  }
-}
+  };
+};

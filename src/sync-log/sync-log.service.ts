@@ -14,7 +14,7 @@ export class SyncLogsService {
     private syncLogRepository: Repository<SyncLog>,
     @InjectRepository(SyncFailedLog)
     private syncFailedLogRepository: Repository<SyncFailedLog>,
-  ) { }
+  ) {}
 
   async addLog(synLogDto: CreateSyncLogDto) {
     await this.syncLogRepository.upsert(synLogDto, ['code']);
@@ -29,7 +29,7 @@ export class SyncLogsService {
     const newLog: CreateSyncLogDto = {
       code: 'START_SYNC',
       updated_at: now,
-    }
+    };
     await this.syncLogRepository.upsert(newLog, ['code']);
   }
 
@@ -38,22 +38,22 @@ export class SyncLogsService {
     const newLog: CreateSyncLogDto = {
       code: 'END_SYNC',
       updated_at: now,
-    }
+    };
     await this.syncLogRepository.upsert(newLog, ['code']);
   }
 
   async isProcessing() {
     const [start, end] = await this.syncLogRepository.find({
       where: {
-        code: In(['START_SYNC', 'END_SYNC'])
+        code: In(['START_SYNC', 'END_SYNC']),
       },
       order: {
-        id: "ASC"
-      }
-    })
+        id: 'ASC',
+      },
+    });
 
-    const startTime = new Date(start?.updated_at)
-    const endTime = new Date(end?.updated_at)
+    const startTime = new Date(start?.updated_at);
+    const endTime = new Date(end?.updated_at);
 
     if (startTime > endTime) {
       return {
@@ -61,8 +61,8 @@ export class SyncLogsService {
         startTime,
         endTime,
         start,
-        end
-      }
+        end,
+      };
     }
 
     return {
@@ -70,8 +70,7 @@ export class SyncLogsService {
       startTime,
       endTime,
       start,
-      end
-    }
+      end,
+    };
   }
-
 }

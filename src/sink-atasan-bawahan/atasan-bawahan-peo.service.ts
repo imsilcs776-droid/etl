@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { InjectConnection } from '@nestjs/typeorm';
 import { CompanyMvService } from 'src/mv-company/mv-company.service';
 import { Connection } from 'typeorm';
 
@@ -8,10 +8,10 @@ export class AtasanBawahanPeoService {
   constructor(
     @InjectConnection('pelindo_peo') private readonly connection: Connection,
     private companyMvService: CompanyMvService,
-  ) { }
+  ) {}
 
   async getAtasanBawahan({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
-    const comps = await this.companyMvService.getMvCompany()
+    const comps = await this.companyMvService.getMvCompany();
     const grups = comps.map((comp) => comp.grup).filter((grup) => !!grup);
 
     const queryBuilder = this.connection
@@ -23,32 +23,44 @@ export class AtasanBawahanPeoService {
       .andWhere('ATASAN_BAWAHAN.EMAIL IS NOT NULL')
       .andWhere('ATASAN_BAWAHAN.EMAIL_ATS IS NOT NULL')
       .andWhere('ATASAN_BAWAHAN.INSTANSI IN (:...grups)', { grups: [...grups] })
-      .andWhere(
-        (qb) => {
-          const subQuery = qb
-            .subQuery()
-            .select('DISTINCT NIPP')
-            .from('PSO_ROLE_PEGAWAI', 'PSO_ROLE_PEGAWAI')
-            .where('PSO_ROLE_PEGAWAI.INSTANSI <> :instansi', { instansi: '9999' })
-            .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', { company_code: '9999' })
-            .andWhere('PSO_ROLE_PEGAWAI.GRUP IS NOT NULL')
-            .andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU IS NOT NULL')
-            .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
-            .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')
-            .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :dummy', { dummy: '%dummy%' })
-            .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :user', { user: '%user%' })
-            .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', { test: '%test%' })
-            .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :sit', { sit: '%sit -%' })
-            .andWhere('PSO_ROLE_PEGAWAI.KD_DIV_ARSIP IS NOT NULL')
-            .andWhere('PSO_ROLE_PEGAWAI.GRUP IN (:...grups)', { grups: [...grups] });
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('DISTINCT NIPP')
+          .from('PSO_ROLE_PEGAWAI', 'PSO_ROLE_PEGAWAI')
+          .where('PSO_ROLE_PEGAWAI.INSTANSI <> :instansi', { instansi: '9999' })
+          .andWhere('PSO_ROLE_PEGAWAI.COMPANY_CODE <> :company_code', {
+            company_code: '9999',
+          })
+          .andWhere('PSO_ROLE_PEGAWAI.GRUP IS NOT NULL')
+          .andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU IS NOT NULL')
+          .andWhere('PSO_ROLE_PEGAWAI.WERKS_NEW IS NOT NULL')
+          .andWhere('PSO_ROLE_PEGAWAI.EMAIL IS NOT NULL')
+          .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :dummy', {
+            dummy: '%dummy%',
+          })
+          .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :user', {
+            user: '%user%',
+          })
+          .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :test', {
+            test: '%test%',
+          })
+          .andWhere('lower(PSO_ROLE_PEGAWAI.NAMA) NOT LIKE :sit', {
+            sit: '%sit -%',
+          })
+          .andWhere('PSO_ROLE_PEGAWAI.KD_DIV_ARSIP IS NOT NULL')
+          .andWhere('PSO_ROLE_PEGAWAI.GRUP IN (:...grups)', {
+            grups: [...grups],
+          });
 
-          if (nipp_new) {
-            subQuery.andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU = :nipp_new', { nipp_new: String(nipp_new).trim() });
-          }
-
-          return `ATASAN_BAWAHAN.NIPP IN ${subQuery.getQuery()}`;
+        if (nipp_new) {
+          subQuery.andWhere('PSO_ROLE_PEGAWAI.NIPP_BARU = :nipp_new', {
+            nipp_new: String(nipp_new).trim(),
+          });
         }
-      )
+
+        return `ATASAN_BAWAHAN.NIPP IN ${subQuery.getQuery()}`;
+      })
       .orderBy('ATASAN_BAWAHAN.NIPP_BARU', 'ASC')
       .addOrderBy('ATASAN_BAWAHAN.NIPP_ATS_BARU', 'ASC')
       .offset(limit * (page - 1))
@@ -57,12 +69,11 @@ export class AtasanBawahanPeoService {
     return await queryBuilder.getRawMany();
   }
 
-
   // async getAtasanBawahan({ page = 1, limit = 50, objid = '', nipp_new = '' }) {
   //   if (nipp_new) {
   //     return await this.connection.query(`
   //       SELECT ab.*,ab.INSTANSI AS PEGAWAI
-  //         FROM ATASAN_BAWAHAN ab 
+  //         FROM ATASAN_BAWAHAN ab
   //         WHERE NIPP IN (
   //           SELECT DISTINCT NIPP
   //           FROM PSO_ROLE_PEGAWAI a
@@ -85,7 +96,7 @@ export class AtasanBawahanPeoService {
   //   } else {
   //     return await this.connection.query(`
   //       SELECT ab.*,ab.INSTANSI AS PEGAWAI
-  //         FROM ATASAN_BAWAHAN ab 
+  //         FROM ATASAN_BAWAHAN ab
   //         WHERE NIPP IN (
   //           SELECT DISTINCT NIPP
   //           FROM PSO_ROLE_PEGAWAI a
