@@ -16,7 +16,7 @@ export class PegawaiService {
     private repository: Repository<RolePeoEntity>,
     private syncLogService: SyncLogsService,
     private pegawaiPeoService: PegawaiPeoService,
-  ) {}
+  ) { }
 
   public async processPegawai({ nipp_new = '' }) {
     const now = moment().toDate();
@@ -33,7 +33,7 @@ export class PegawaiService {
         limit,
         nipp_new,
       });
-      if (pegawais && pegawais.length) {
+      if (pegawais?.length) {
         await this.bulkInsert(pegawais);
         const processedPegawai = await this.repository.count({});
         const syncData = await this.syncLogService.addLog({
@@ -57,7 +57,7 @@ export class PegawaiService {
         limit,
         nipp_new,
       });
-      if (pegawais && pegawais.length) {
+      if (pegawais?.length) {
         await this.bulkInsert(pegawais);
       } else {
         stop = true;
@@ -162,6 +162,7 @@ export class PegawaiService {
         PAYSCALETYPETEXT,
       } = pegawais[count];
 
+      const sanitizedKdDivArsip = (KD_DIV_ARSIP || '').replace(/_/g, '');
       const dto = new EmployeeDTO();
       dto.kode_sap = KODE_SAP;
       dto.nama = NAMA;
@@ -179,7 +180,7 @@ export class PegawaiService {
       dto.hp = HP;
       dto.account_ad = ACCOUNT_AD;
       dto.kd_wil_arsip = KD_WIL_ARSIP;
-      dto.kd_div_arsip = KD_DIV_ARSIP;
+      dto.kd_div_arsip = sanitizedKdDivArsip;
       dto.cookie = COOKIE;
       dto.persg = PERSG;
       dto.kd_pel = KD_PEL;
@@ -246,6 +247,8 @@ export class PegawaiService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   private async getPegawai({ page, limit, nipp_new }): Promise<any> {
     return await this.pegawaiPeoService.getPegawaiV2({ page, limit, nipp_new });
   }

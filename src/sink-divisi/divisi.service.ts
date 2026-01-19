@@ -16,7 +16,7 @@ export class DivisiService {
     private repository: Repository<DivisiPeoEntity>,
     private syncLogService: SyncLogsService,
     private divisiPeoService: DivisiPeoService,
-  ) {}
+  ) { }
 
   public async processDivisi({ nipp_new = '' }) {
     const now = moment().utcOffset('+0700').toDate();
@@ -31,7 +31,7 @@ export class DivisiService {
         limit,
         nipp_new,
       });
-      if (divisions && divisions.length) {
+      if (divisions?.length) {
         await this.bulkInsert(divisions);
       } else {
         stop = true;
@@ -104,8 +104,9 @@ export class DivisiService {
         WERKS_NEW,
       } = divisions[count];
 
+      const sanitizedKdDivArsip = (KD_DIV_ARSIP || '').replace(/_/g, '');
       const dto = new CreateDivisiPeoDto();
-      dto.kd_div_arsip = KD_DIV_ARSIP;
+      dto.kd_div_arsip = sanitizedKdDivArsip;
       dto.kd_induk = KD_INDUK;
       dto.nama_dir = NAMA_DIR;
       dto.kd_wil_arsip = KD_WIL_ARSIP;
@@ -138,7 +139,7 @@ export class DivisiService {
       dto.created_name = CREATED_NAME;
       dto.updated_by = UPDATED_BY;
       dto.updated_name = UPDATED_NAME;
-      dto.div_wil = `${KD_DIV_ARSIP};${KD_WIL_ARSIP}`;
+      dto.div_wil = `${sanitizedKdDivArsip};${KD_WIL_ARSIP}`;
       dto.werks_new = WERKS_NEW;
       dto.updated_at = now;
 
@@ -156,6 +157,8 @@ export class DivisiService {
    * }
    * @returns [OBJID,PARID,CREATED_DATE,LAST_UPDATED_DATE,COMPANY_CODE,STEXT,PERSA,WERKS_NEW]
    */
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   private async getDivisi({ page, limit, nipp_new }): Promise<any> {
     return await this.divisiPeoService.getDivisiWithPlh({
       page,
