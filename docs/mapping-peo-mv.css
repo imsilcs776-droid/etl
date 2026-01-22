@@ -1,0 +1,68 @@
+/* Global */
+body {
+  font-family: "Arial", sans-serif;
+  font-size: 12px;
+  color: #0f172a;
+  padding: 16px 26px;
+}
+
+h1, h2, h3, h4 {
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+p, li {
+  line-height: 1.35;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+th, td {
+  border: 0.5px solid #d1d5db;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+
+th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+/* Code blocks */
+pre, code {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  color: #b91c1c; /* merah untuk inline/backticks */
+}
+
+pre {
+  background: #f9fafb;
+  border: 0.5px solid #e5e7eb;
+  padding: 8px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+/* Mermaid container tweak (helps sizing) */
+.mermaid {
+  margin: 8px auto;
+  max-width: 90%;
+}
+
+/* Images (diagram) */
+img {
+  display: block;
+  max-width: 85%;
+  height: auto;
+  margin: 8px auto 12px auto;
+}
+
+/* Reduce top whitespace on first page */
+body > :first-child {
+  margin-top: 0;
+}

@@ -80,7 +80,7 @@ export class DivisiPeoService {
 
     const qb = this.connection
       .createQueryBuilder()
-      .select('PSO_DIVISI.*')
+      .select('PSO_DIVISI.*, ROLE_PEG.WERKS_NEW')
       .from('PSO_DIVISI', 'PSO_DIVISI')
 
       // LEFT JOIN PLH
@@ -98,7 +98,7 @@ export class DivisiPeoService {
       .leftJoin(
         (sub) => {
           const s = sub
-            .select(['KD_DIV_ARSIP', 'KD_WIL_ARSIP', 'NIPP_BARU'])
+            .select(['KD_DIV_ARSIP', 'KD_WIL_ARSIP', 'NIPP_BARU', 'WERKS_NEW'])
             .from('PSO_ROLE_PEGAWAI', 'R')
             .where('R.INSTANSI <> :instansi', { instansi: '9999' })
             .andWhere('R.NIPP_BARU IS NOT NULL')
